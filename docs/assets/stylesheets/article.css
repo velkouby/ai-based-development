@@ -2,9 +2,9 @@
   max-width: 14ch;
   margin-bottom: 0.7rem;
   color: var(--md-default-fg-color);
-  font-size: 2.7rem;
-  font-weight: 760;
-  line-height: 1.05;
+  font-size: 2.3rem;
+  font-weight: 740;
+  line-height: 1.08;
   letter-spacing: 0;
 }
 
@@ -32,14 +32,21 @@
   margin: 1.8rem 0;
   padding: 0.15rem 0 0.15rem 1.15rem;
   border-left: 0.18rem solid var(--md-accent-fg-color);
-  color: var(--md-default-fg-color);
+  color: var(--md-default-fg-color--light);
 }
 
 .md-typeset .article-title ~ blockquote p {
   margin: 0;
   font-size: 1.03rem;
-  font-weight: 620;
+  font-weight: 700;
   line-height: 1.62;
+}
+
+.md-typeset .article-title ~ p strong,
+.md-typeset .article-title ~ ul strong,
+.md-typeset .article-title ~ ol strong {
+  color: var(--md-default-fg-color--light);
+  font-weight: 700;
 }
 
 .md-typeset .article-references {
@@ -69,7 +76,7 @@
 @media screen and (max-width: 44.984375em) {
   .md-typeset .article-title {
     max-width: 100%;
-    font-size: 2rem;
+    font-size: 1.75rem;
   }
 
   .md-typeset .article-lead {
