@@ -14,6 +14,9 @@ theme:
     - search.highlight
     - content.code.copy
 
+extra_css:
+  - assets/stylesheets/article.css
+
 plugins:
   - search
   - i18n:

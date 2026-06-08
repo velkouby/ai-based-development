@@ -1,6 +1,13 @@
-# AI Agent-Based Coding: Best Practices
+---
+title: "AI Agent-Based Coding: Best Practices"
+description: >-
+  Vibe coding proved that natural-language intent can become a development interface. But to build maintainable software, whether alone or as a team, you need more than a conversation with an agent. You need four simple building blocks: an agent-ready repository that carries the rules, a workflow that enforces them, a plan that compiles the useful context, and execution evidence that makes the work reviewable.
+---
 
-**Subtitle —** Vibe coding proved that natural-language intent can become a development interface. But to build maintainable software, whether alone or as a team, you need more than a conversation with an agent. You need four simple building blocks: an agent-ready repository that carries the rules, a workflow that enforces them, a plan that compiles the useful context, and execution evidence that makes the work reviewable.
+# AI Agent-Based Coding: Best Practices { .article-title }
+
+Vibe coding proved that natural-language intent can become a development interface. But to build maintainable software, whether alone or as a team, you need more than a conversation with an agent. You need four simple building blocks: an agent-ready repository that carries the rules, a workflow that enforces them, a plan that compiles the useful context, and execution evidence that makes the work reviewable.
+{ .article-lead }
 
 Software development with AI is often described as an individual story. A developer opens a coding agent, describes what they want, lets the agent modify the codebase, then corrects or approves the result. That loop is real. It is also powerful. It explains why vibe coding attracted so much attention: for the first time, intent expressed in natural language became a direct interface to a software system.
 
@@ -205,6 +212,28 @@ At this point, the prompt remains useful, but it is no longer the center of the 
 That, ultimately, is what it means to industrialize AI agent-based coding: stop treating the agent as an isolated conversation partner, and start treating it as a powerful contributor embedded in a simple, verifiable, and shareable working method. A method lightweight enough to preserve speed, explicit enough to work alone or in a team, and robust enough to keep delivered code understandable, maintainable, and reviewable.
 
 ## References
+
+<div class="article-references" markdown>
+
+1. [Good Vibrations? A Qualitative Study of Co-Creation, Communication, Flow, and Trust in Vibe Coding][1]
+2. [Vibe Coding in Practice: Motivations, Challenges, and a Future Outlook — a Grey Literature Review][2]
+3. [Spec-driven development with AI: Get started with a new open source toolkit][3]
+4. [Spec Kit Documentation][4]
+5. [github/spec-kit][5]
+6. [Unrolling the Codex agent loop][6]
+7. [Agent Skills — Codex][7]
+8. [Codex CLI][8]
+9. [About pull requests][9]
+10. [Manifesto for Agile Software Development][10]
+11. [AGENTS.md][11]
+12. [Custom instructions with AGENTS.md — Codex][12]
+13. [Evaluating AGENTS.md: Are Repository-Level Context Files Helpful for Coding Agents?][13]
+14. [Harness engineering: leveraging Codex in an agent-first world][14]
+15. [Context Engineering for Coding Agents][15]
+16. [Agentic Agile-V: From Vibe Coding to Verified Engineering in Software and Hardware Development][16]
+17. [Spec Kit Agents: Context-Grounded Agentic Workflows][17]
+
+</div>
 
 [1]: https://arxiv.org/abs/2509.12491 "Good Vibrations? A Qualitative Study of Co-Creation, Communication, Flow, and Trust in Vibe Coding"
 [2]: https://arxiv.org/abs/2510.00328 "Vibe Coding in Practice: Motivations, Challenges, and a Future Outlook — a Grey Literature Review"
