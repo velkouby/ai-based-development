@@ -1,0 +1,51 @@
+site_name: AI-Native Software Engineering Notes
+site_description: Articles and technical notes about AI-native software development, agent-based coding, and software engineering practices.
+site_author: Vincent El Kouby Benichou
+site_url: https://velkouby.github.io/ai-based-development/
+
+theme:
+  name: material
+  language: en
+  features:
+    - navigation.sections
+    - navigation.indexes
+    - navigation.top
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+
+plugins:
+  - search
+  - i18n:
+      docs_structure: suffix
+      reconfigure_material: true
+      reconfigure_search: true
+      languages:
+        - locale: en
+          name: English
+          build: true
+          default: true
+        - locale: fr
+          name: Français
+          build: true
+          nav_translations:
+            Home: Accueil
+            All articles: Tous les articles
+            AI Agent-Based Coding: Développement avec agents IA
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - md_in_html
+  - toc:
+      permalink: true
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.highlight
+  - pymdownx.inlinehilite
+
+nav:
+  - Home: index.md
+  - Articles:
+      - All articles: articles/index.md
+      - AI Agent-Based Coding: articles/ai-agent-based-coding-best-practices/index.md
