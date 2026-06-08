@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="Articles and technical notes about AI-native software development, agent-based coding, and software engineering practices.">
+        <meta name="description" content="Le vibe coding a montré que l’intention en langage naturel pouvait devenir une interface de développement. Mais pour produire du logiciel maintenable, seul ou en équipe, il faut plus qu’une conversation avec un agent : il faut assembler quatre briques simples — un repository agent-ready qui porte les règles, un workflow qui les applique, un plan qui compile le contexte utile et des preuves d’exécution qui rendent le travail reviewable.">
       
       
         <meta name="author" content="Vincent El Kouby Benichou">
@@ -31,7 +31,7 @@
     
     
       
-        <title>Développement avec agents IA - AI-Native Software Engineering Notes</title>
+        <title>AI agent-based coding : bonnes pratiques - AI-Native Software Engineering Notes</title>
       
     
     
@@ -53,6 +53,8 @@
         <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
       
     
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/article.css">
     
     <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
@@ -108,7 +110,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Développement avec agents IA
+              AI agent-based coding : bonnes pratiques
             
           </span>
         </div>
@@ -690,8 +692,8 @@
 
 
 
-<h1 id="ai-agent-based-coding-bonnes-pratiques">AI agent-based coding : bonnes pratiques<a class="headerlink" href="#ai-agent-based-coding-bonnes-pratiques" title="Permanent link">&para;</a></h1>
-<p><strong>Sous-titre —</strong> Le vibe coding a montré que l’intention en langage naturel pouvait devenir une interface de développement. Mais pour produire du logiciel maintenable, seul ou en équipe, il faut plus qu’une conversation avec un agent : il faut assembler quatre briques simples — un repository agent-ready qui porte les règles, un workflow qui les applique, un plan qui compile le contexte utile et des preuves d’exécution qui rendent le travail reviewable.</p>
+<h1 class="article-title" id="ai-agent-based-coding-bonnes-pratiques">AI agent-based coding : bonnes pratiques<a class="headerlink" href="#ai-agent-based-coding-bonnes-pratiques" title="Permanent link">&para;</a></h1>
+<p class="article-lead">Le vibe coding a montré que l’intention en langage naturel pouvait devenir une interface de développement. Mais pour produire du logiciel maintenable, seul ou en équipe, il faut plus qu’une conversation avec un agent : il faut assembler quatre briques simples — un repository agent-ready qui porte les règles, un workflow qui les applique, un plan qui compile le contexte utile et des preuves d’exécution qui rendent le travail reviewable.</p>
 <p>Le développement logiciel avec IA est souvent raconté comme une histoire individuelle. Un développeur ouvre un agent de code, décrit ce qu’il veut, laisse l’agent modifier la codebase, puis corrige ou valide. Cette boucle est réelle. Elle est même puissante. Elle explique pourquoi le vibe coding a capté autant d’attention : pour la première fois, l’intention exprimée en langage naturel devient une interface directe avec le système logiciel.</p>
 <p>Mais cette description est incomplète.</p>
 <p>Même quand on développe seul, on ne développe pas seulement dans une conversation. On développe dans un repository, avec une architecture, des conventions, des dépendances, des scripts, des tests, des commits, des décisions produit et une mémoire technique. Et dès que l’on travaille en équipe, cette réalité devient plus exigeante : le repository est partagé, les pull requests doivent être relues, les règles de review doivent être explicites, les contraintes de sécurité doivent être respectées et les décisions doivent survivre aux conversations individuelles.</p>
@@ -822,12 +824,36 @@
 <p>À ce niveau, le prompt reste utile, mais il n’est plus le centre du système. Le prompt exprime l’intention du moment. Le repository porte les règles. Le plan compile le contexte utile. Le workflow orchestre, contrôle et trace. Les preuves permettent de relire, reprendre et maintenir.</p>
 <p>C’est cela, au fond, industrialiser l’AI agent-based coding : ne plus traiter l’agent comme un partenaire de conversation isolé, mais comme un contributeur puissant inséré dans une méthode de travail simple, vérifiable et partageable. Une méthode assez légère pour préserver la vitesse, assez explicite pour fonctionner seul ou en équipe, et assez robuste pour que le code livré reste compréhensible, maintenable et reviewable.</p>
 <h2 id="references">Références<a class="headerlink" href="#references" title="Permanent link">&para;</a></h2>
+<div class="article-references">
+<ol>
+<li><a href="https://arxiv.org/abs/2509.12491" title="Good Vibrations? A Qualitative Study of Co-Creation, Communication, Flow, and Trust in Vibe Coding">Good Vibrations? A Qualitative Study of Co-Creation, Communication, Flow, and Trust in Vibe Coding</a></li>
+<li><a href="https://arxiv.org/abs/2510.00328" title="Vibe Coding in Practice: Motivations, Challenges, and a Future Outlook — a Grey Literature Review">Vibe Coding in Practice: Motivations, Challenges, and a Future Outlook — a Grey Literature Review</a></li>
+<li><a href="https://github.blog/ai-and-ml/generative-ai/spec-driven-development-with-ai-get-started-with-a-new-open-source-toolkit/" title="Spec-driven development with AI: Get started with a new open source toolkit">Spec-driven development with AI: Get started with a new open source toolkit</a></li>
+<li><a href="https://github.github.com/spec-kit/" title="Spec Kit Documentation">Spec Kit Documentation</a></li>
+<li><a href="https://github.com/github/spec-kit" title="github/spec-kit">github/spec-kit</a></li>
+<li><a href="https://openai.com/index/unrolling-the-codex-agent-loop/" title="Unrolling the Codex agent loop">Unrolling the Codex agent loop</a></li>
+<li><a href="https://developers.openai.com/codex/skills" title="Agent Skills — Codex">Agent Skills — Codex</a></li>
+<li><a href="https://developers.openai.com/codex/cli" title="Codex CLI">Codex CLI</a></li>
+<li><a href="https://docs.github.com/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/about-pull-requests" title="About pull requests">About pull requests</a></li>
+<li><a href="https://agilemanifesto.org/" title="Manifesto for Agile Software Development">Manifesto for Agile Software Development</a></li>
+<li><a href="https://agents.md/" title="AGENTS.md">AGENTS.md</a></li>
+<li><a href="https://developers.openai.com/codex/guides/agents-md" title="Custom instructions with AGENTS.md — Codex">Custom instructions with AGENTS.md — Codex</a></li>
+<li><a href="https://arxiv.org/abs/2602.11988" title="Evaluating AGENTS.md: Are Repository-Level Context Files Helpful for Coding Agents?">Evaluating AGENTS.md: Are Repository-Level Context Files Helpful for Coding Agents?</a></li>
+<li><a href="https://openai.com/index/harness-engineering/" title="Harness engineering: leveraging Codex in an agent-first world">Harness engineering: leveraging Codex in an agent-first world</a></li>
+<li><a href="https://martinfowler.com/articles/exploring-gen-ai/context-engineering-coding-agents.html" title="Context Engineering for Coding Agents">Context Engineering for Coding Agents</a></li>
+<li><a href="https://arxiv.org/abs/2605.20456" title="Agentic Agile-V: From Vibe Coding to Verified Engineering in Software and Hardware Development">Agentic Agile-V: From Vibe Coding to Verified Engineering in Software and Hardware Development</a></li>
+<li><a href="https://arxiv.org/abs/2604.05278" title="Spec Kit Agents: Context-Grounded Agentic Workflows">Spec Kit Agents: Context-Grounded Agentic Workflows</a></li>
+</ol>
+</div>
 
 
 
 
 
 
+
+  
+  
 
 
 
