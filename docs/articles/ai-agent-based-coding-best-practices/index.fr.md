@@ -73,6 +73,11 @@ Cette séparation protège l’architecture. Elle permet aussi l’upgrade du so
 
 C’est précisément le type de frontière qu’un système de développement AI-native cherche à matérialiser : un socle full-stack propre, testable, documenté et upgradeable, avec une séparation stricte entre les chemins Forge-owned et Project-owned, un contrat machine, des validations, des preuves et un workflow durable indépendant de la mémoire du chat.
 
+<figure class="article-diagram">
+  <img src="agent-human-development-layers.svg" alt="Layered AI-native development system for humans and coding agents." loading="lazy" />
+  <figcaption>Human + agent development system: humans steer, agents execute, and the workflow turns repository rules into verifiable execution.</figcaption>
+</figure>
+
 ## Tous les changements ne méritent pas le même rituel
 
 L’erreur inverse serait de répondre au chaos du vibe coding par une bureaucratie généralisée. Si chaque micro-changement devient une spec complète, une équipe tuera la vitesse qui rend les agents utiles.
@@ -92,6 +97,11 @@ Le troisième mode est **guided coding**. Il couvre les besoins bornés mais non
 Le quatrième mode est **vibe coding contrôlé**. Il reste adapté aux micro-ajustements : corriger un libellé, déplacer un bouton, améliorer un état vide, ajuster une couleur avec les tokens existants, tester une variante visible, améliorer un prompt métier. La conversation garde sa valeur, mais le périmètre doit rester local, réversible et soumis aux règles du repository.
 
 > Le vibe coding garde sa valeur quand il reste local, réversible et soumis aux règles du repository.
+
+<figure class="article-diagram">
+  <img src="agent-coding-modes.svg" alt="Four agent coding modes from controlled vibe coding to foundation evolution." loading="lazy" />
+  <figcaption>Four agent coding modes calibrated by scope, risk, ceremony, and evidence.</figcaption>
+</figure>
 
 Ces modes ne s’opposent pas. Ils forment une échelle. Plus le changement est transversal, durable ou risqué, plus il doit remonter vers des modes structurés. Plus il est local, observable et réversible, plus il peut descendre vers des modes légers. Et souvent, on utilise du **vibe coding contrôlé** après une phase de **guided coding** ou de **spec-driven feature**, au sein du même contexte, afin d’ajuster et de finaliser une feature.
 
