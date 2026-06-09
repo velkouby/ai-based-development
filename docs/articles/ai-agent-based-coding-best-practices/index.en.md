@@ -12,7 +12,6 @@ Vibe coding proved that natural-language intent can become a development interfa
 
 <p class="article-meta">
   <span>By <span class="article-author">Vincent El Kouby-Benichou</span></span>
-  <a class="article-contact-link" href="https://github.com/velkouby/ai-based-development/issues/new?template=contact.yml">Message on GitHub</a>
   <a class="article-contact-link" href="https://www.linkedin.com/in/vincentelkoubybenichou/">LinkedIn</a>
 </p>
 
@@ -227,6 +226,11 @@ This framework is not only for teams. A solo developer already benefits from it 
 At this point, the prompt remains useful, but it is no longer the center of the system. The prompt expresses the intent of the moment. The repository carries the rules. The plan compiles the useful context. The workflow orchestrates, controls, and traces. Evidence makes the work readable, recoverable, and maintainable.
 
 That, ultimately, is what it means to industrialize AI agent-based coding: stop treating the agent as an isolated conversation partner, and start treating it as a powerful contributor embedded in a simple, verifiable, and shareable working method. A method lightweight enough to preserve speed, explicit enough to work alone or in a team, and robust enough to keep delivered code understandable, maintainable, and reviewable.
+
+<div class="article-footer-contact">
+  <p>To discuss this article or leave me a public message:</p>
+  <a class="article-contact-link" href="https://github.com/velkouby/ai-based-development/issues/new?template=contact.yml">Message on GitHub</a>
+</div>
 
 ## References
 
