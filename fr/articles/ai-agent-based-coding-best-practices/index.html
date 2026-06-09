@@ -9,7 +9,7 @@
         <meta name="description" content="Le vibe coding a montré que l’intention en langage naturel pouvait devenir une interface de développement. Mais pour produire du logiciel maintenable, seul ou en équipe, il faut plus qu’une conversation avec un agent : il faut assembler quatre briques simples — un repository agent-ready qui porte les règles, un workflow qui les applique, un plan qui compile le contexte utile et des preuves d’exécution qui rendent le travail reviewable.">
       
       
-        <meta name="author" content="Vincent El Kouby Benichou">
+        <meta name="author" content="Vincent El Kouby-Benichou">
       
       
         <link rel="canonical" href="https://velkouby.github.io/ai-based-development/fr/articles/ai-agent-based-coding-best-practices/">
@@ -191,6 +191,18 @@
       
     
     
+      <div class="md-header__source">
+        <a href="https://github.com/velkouby/ai-based-development" title="Aller au dépôt" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    velkouby/ai-based-development
+  </div>
+</a>
+      </div>
+    
   </nav>
   
 </header>
@@ -224,6 +236,18 @@
     </a>
     AI-Native Software Engineering Notes
   </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/velkouby/ai-based-development" title="Aller au dépôt" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    velkouby/ai-based-development
+  </div>
+</a>
+    </div>
   
   <ul class="md-nav__list" data-md-scrollfix>
     
@@ -691,9 +715,18 @@
                   
 
 
+  
+  
+
 
 <h1 class="article-title" id="ai-agent-based-coding-bonnes-pratiques">AI agent-based coding : bonnes pratiques<a class="headerlink" href="#ai-agent-based-coding-bonnes-pratiques" title="Permanent link">&para;</a></h1>
 <p class="article-lead">Le vibe coding a montré que l’intention en langage naturel pouvait devenir une interface de développement. Mais pour produire du logiciel maintenable, seul ou en équipe, il faut plus qu’une conversation avec un agent : il faut assembler quatre briques simples — un repository agent-ready qui porte les règles, un workflow qui les applique, un plan qui compile le contexte utile et des preuves d’exécution qui rendent le travail reviewable.</p>
+<p class="article-meta">
+  <span>Par <span class="article-author">Vincent El Kouby-Benichou</span></span>
+  <a class="article-contact-link" href="https://github.com/velkouby/ai-based-development/issues/new?template=contact.yml">Message sur GitHub</a>
+  <a class="article-contact-link" href="https://www.linkedin.com/in/vincentelkoubybenichou/">LinkedIn</a>
+</p>
+
 <p>Le développement logiciel avec IA est souvent raconté comme une histoire individuelle. Un développeur ouvre un agent de code, décrit ce qu’il veut, laisse l’agent modifier la codebase, puis corrige ou valide. Cette boucle est réelle. Elle est même puissante. Elle explique pourquoi le vibe coding a capté autant d’attention : pour la première fois, l’intention exprimée en langage naturel devient une interface directe avec le système logiciel.</p>
 <p>Mais cette description est incomplète.</p>
 <p>Même quand on développe seul, on ne développe pas seulement dans une conversation. On développe dans un repository, avec une architecture, des conventions, des dépendances, des scripts, des tests, des commits, des décisions produit et une mémoire technique. Et dès que l’on travaille en équipe, cette réalité devient plus exigeante : le repository est partagé, les pull requests doivent être relues, les règles de review doivent être explicites, les contraintes de sécurité doivent être respectées et les décisions doivent survivre aux conversations individuelles.</p>
