@@ -1,7 +1,9 @@
 site_name: AI-Native Software Engineering Notes
 site_description: Articles and technical notes about AI-native software development, agent-based coding, and software engineering practices.
-site_author: Vincent El Kouby Benichou
+site_author: Vincent El Kouby-Benichou
 site_url: https://velkouby.github.io/ai-based-development/
+repo_url: https://github.com/velkouby/ai-based-development
+repo_name: velkouby/ai-based-development
 
 theme:
   name: material
