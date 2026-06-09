@@ -12,7 +12,6 @@ Le vibe coding a montré que l’intention en langage naturel pouvait devenir un
 
 <p class="article-meta">
   <span>Par <span class="article-author">Vincent El Kouby-Benichou</span></span>
-  <a class="article-contact-link" href="https://github.com/velkouby/ai-based-development/issues/new?template=contact.yml">Message sur GitHub</a>
   <a class="article-contact-link" href="https://www.linkedin.com/in/vincentelkoubybenichou/">LinkedIn</a>
 </p>
 
@@ -228,7 +227,10 @@ Ce cadre n’est pas réservé aux équipes. Un développeur seul en tire déjà
 
 C’est cela, au fond, industrialiser l’AI agent-based coding : ne plus traiter l’agent comme un partenaire de conversation isolé, mais comme un contributeur puissant inséré dans une méthode de travail simple, vérifiable et partageable. Une méthode assez légère pour préserver la vitesse, assez explicite pour fonctionner seul ou en équipe, et assez robuste pour que le code livré reste compréhensible, maintenable et reviewable.
 
-
+<div class="article-footer-contact">
+  <p>Pour discuter de cet article ou me laisser un message public :</p>
+  <a class="article-contact-link" href="https://github.com/velkouby/ai-based-development/issues/new?template=contact.yml">Message sur GitHub</a>
+</div>
 
 ## Références
 
