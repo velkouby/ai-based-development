@@ -73,6 +73,11 @@ This separation protects the architecture. It also makes the foundation upgradea
 
 This is exactly the kind of boundary an AI-native development system should materialize: a clean, testable, documented, and upgradeable full-stack foundation, with a strict separation between Forge-owned and Project-owned paths, a machine-readable contract, validations, evidence, and a durable workflow that does not depend on chat memory.
 
+<figure class="article-diagram">
+  <img src="agent-human-development-layers.svg" alt="Layered AI-native development system for humans and coding agents." loading="lazy" />
+  <figcaption>Human + agent development system: humans steer, agents execute, and the workflow turns repository rules into verifiable execution.</figcaption>
+</figure>
+
 ## Not every change deserves the same ritual
 
 The opposite mistake would be to respond to the chaos of vibe coding with generalized bureaucracy. If every micro-change requires a full specification, the team will kill the speed that makes agents useful.
@@ -92,6 +97,11 @@ The third mode is **guided coding**. It covers bounded but non-trivial needs: co
 The fourth mode is **controlled vibe coding**. It remains appropriate for micro-adjustments: fixing a label, moving a button, improving an empty state, adjusting a color with existing tokens, testing a visible variant, or improving a business prompt. The conversation keeps its value, but the scope must remain local, reversible, and subject to the repository’s rules.
 
 > Vibe coding keeps its value when it remains local, reversible, and governed by repository rules.
+
+<figure class="article-diagram">
+  <img src="agent-coding-modes.svg" alt="Four agent coding modes from controlled vibe coding to foundation evolution." loading="lazy" />
+  <figcaption>Four agent coding modes calibrated by scope, risk, ceremony, and evidence.</figcaption>
+</figure>
 
 These modes are not opposed to each other. They form a scale. The more cross-cutting, durable, or risky a change is, the more it should move toward structured modes. The more local, observable, and reversible it is, the more it can stay in lightweight modes. And in practice, teams often use **controlled vibe coding** after a **guided coding** or **spec-driven feature** phase, inside the same context, to adjust and finalize a feature.
 
