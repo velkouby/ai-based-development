@@ -1,5 +1,6 @@
 ---
 title: "AI Agent-Based Coding: Best Practices"
+author: "Vincent El Kouby-Benichou"
 description: >-
   Vibe coding proved that natural-language intent can become a development interface. But to build maintainable software, whether alone or as a team, you need more than a conversation with an agent. You need four simple building blocks: an agent-ready repository that carries the rules, a workflow that enforces them, a plan that compiles the useful context, and execution evidence that makes the work reviewable.
 ---
@@ -8,6 +9,12 @@ description: >-
 
 Vibe coding proved that natural-language intent can become a development interface. But to build maintainable software, whether alone or as a team, you need more than a conversation with an agent. You need four simple building blocks: an agent-ready repository that carries the rules, a workflow that enforces them, a plan that compiles the useful context, and execution evidence that makes the work reviewable.
 { .article-lead }
+
+<p class="article-meta">
+  <span>By <span class="article-author">Vincent El Kouby-Benichou</span></span>
+  <a class="article-contact-link" href="https://github.com/velkouby/ai-based-development/issues/new?template=contact.yml">Message on GitHub</a>
+  <a class="article-contact-link" href="https://www.linkedin.com/in/vincentelkoubybenichou/">LinkedIn</a>
+</p>
 
 Software development with AI is often described as an individual story. A developer opens a coding agent, describes what they want, lets the agent modify the codebase, then corrects or approves the result. That loop is real. It is also powerful. It explains why vibe coding attracted so much attention: for the first time, intent expressed in natural language became a direct interface to a software system.
 

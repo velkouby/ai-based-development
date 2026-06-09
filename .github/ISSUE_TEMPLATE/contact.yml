@@ -1,0 +1,24 @@
+name: Contact / Message
+description: Send a public message to Vincent El Kouby-Benichou.
+title: "Message for Vincent: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reaching out. GitHub issues are public, so avoid sharing private or sensitive information here.
+  - type: input
+    id: contact
+    attributes:
+      label: Optional contact
+      description: Add an email, LinkedIn URL, or another way to reply if you want.
+      placeholder: name@example.com
+    validations:
+      required: false
+  - type: textarea
+    id: message
+    attributes:
+      label: Message
+      description: What would you like to discuss?
+      placeholder: Hi Vincent,
+    validations:
+      required: true
