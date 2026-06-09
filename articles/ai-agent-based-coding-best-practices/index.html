@@ -736,6 +736,11 @@
 </blockquote>
 <p>This separation protects the architecture. It also makes the foundation upgradeable. A template or technical foundation can evolve cleanly only if the team still knows which files belong to the framework and which files belong to the product.</p>
 <p>This is exactly the kind of boundary an AI-native development system should materialize: a clean, testable, documented, and upgradeable full-stack foundation, with a strict separation between Forge-owned and Project-owned paths, a machine-readable contract, validations, evidence, and a durable workflow that does not depend on chat memory.</p>
+<figure class="article-diagram">
+  <img src="agent-human-development-layers.svg" alt="Layered AI-native development system for humans and coding agents." loading="lazy" />
+  <figcaption>Human + agent development system: humans steer, agents execute, and the workflow turns repository rules into verifiable execution.</figcaption>
+</figure>
+
 <h2 id="not-every-change-deserves-the-same-ritual">Not every change deserves the same ritual<a class="headerlink" href="#not-every-change-deserves-the-same-ritual" title="Permanent link">&para;</a></h2>
 <p>The opposite mistake would be to respond to the chaos of vibe coding with generalized bureaucracy. If every micro-change requires a full specification, the team will kill the speed that makes agents useful.</p>
 <p>An AI-native method should calibrate the level of structure to the real impact of the change. I see four development modes.</p>
@@ -752,6 +757,11 @@
 <blockquote>
 <p>Vibe coding keeps its value when it remains local, reversible, and governed by repository rules.</p>
 </blockquote>
+<figure class="article-diagram">
+  <img src="agent-coding-modes.svg" alt="Four agent coding modes from controlled vibe coding to foundation evolution." loading="lazy" />
+  <figcaption>Four agent coding modes calibrated by scope, risk, ceremony, and evidence.</figcaption>
+</figure>
+
 <p>These modes are not opposed to each other. They form a scale. The more cross-cutting, durable, or risky a change is, the more it should move toward structured modes. The more local, observable, and reversible it is, the more it can stay in lightweight modes. And in practice, teams often use <strong>controlled vibe coding</strong> after a <strong>guided coding</strong> or <strong>spec-driven feature</strong> phase, inside the same context, to adjust and finalize a feature.</p>
 <blockquote>
 <p>An AI-native method does not impose the same ritual on every task. It imposes the right level of ritual for each type of change.</p>

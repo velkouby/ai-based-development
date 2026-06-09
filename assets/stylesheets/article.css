@@ -42,6 +42,28 @@
   line-height: 1.62;
 }
 
+.md-typeset .article-diagram {
+  max-width: 52rem;
+  margin: 2.2rem 0;
+}
+
+.md-typeset .article-diagram img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--md-default-fg-color--lightest);
+  border-radius: 8px;
+  box-shadow: 0 1rem 2.5rem rgb(15 23 42 / 10%);
+}
+
+.md-typeset .article-diagram figcaption {
+  max-width: 42rem;
+  margin: 0.7rem 0 0;
+  color: var(--md-default-fg-color--light);
+  font-size: 0.78rem;
+  line-height: 1.5;
+}
+
 .md-typeset .article-title ~ p strong,
 .md-typeset .article-title ~ ul strong,
 .md-typeset .article-title ~ ol strong {
@@ -82,5 +104,9 @@
   .md-typeset .article-lead {
     font-size: 1rem;
     line-height: 1.65;
+  }
+
+  .md-typeset .article-diagram {
+    margin: 1.7rem 0;
   }
 }

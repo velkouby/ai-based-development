@@ -736,6 +736,11 @@
 </blockquote>
 <p>Cette séparation protège l’architecture. Elle permet aussi l’upgrade du socle. Un template ou une fondation technique ne peut évoluer proprement que si l’équipe sait encore quels fichiers appartiennent au framework et quels fichiers appartiennent au produit.</p>
 <p>C’est précisément le type de frontière qu’un système de développement AI-native cherche à matérialiser : un socle full-stack propre, testable, documenté et upgradeable, avec une séparation stricte entre les chemins Forge-owned et Project-owned, un contrat machine, des validations, des preuves et un workflow durable indépendant de la mémoire du chat.</p>
+<figure class="article-diagram">
+  <img src="agent-human-development-layers.svg" alt="Layered AI-native development system for humans and coding agents." loading="lazy" />
+  <figcaption>Human + agent development system: humans steer, agents execute, and the workflow turns repository rules into verifiable execution.</figcaption>
+</figure>
+
 <h2 id="tous-les-changements-ne-meritent-pas-le-meme-rituel">Tous les changements ne méritent pas le même rituel<a class="headerlink" href="#tous-les-changements-ne-meritent-pas-le-meme-rituel" title="Permanent link">&para;</a></h2>
 <p>L’erreur inverse serait de répondre au chaos du vibe coding par une bureaucratie généralisée. Si chaque micro-changement devient une spec complète, une équipe tuera la vitesse qui rend les agents utiles.</p>
 <p>Une méthode AI-native doit calibrer le niveau de structure selon l’impact réel du changement. Je vois quatre modes de développement.</p>
@@ -752,6 +757,11 @@
 <blockquote>
 <p>Le vibe coding garde sa valeur quand il reste local, réversible et soumis aux règles du repository.</p>
 </blockquote>
+<figure class="article-diagram">
+  <img src="agent-coding-modes.svg" alt="Four agent coding modes from controlled vibe coding to foundation evolution." loading="lazy" />
+  <figcaption>Four agent coding modes calibrated by scope, risk, ceremony, and evidence.</figcaption>
+</figure>
+
 <p>Ces modes ne s’opposent pas. Ils forment une échelle. Plus le changement est transversal, durable ou risqué, plus il doit remonter vers des modes structurés. Plus il est local, observable et réversible, plus il peut descendre vers des modes légers. Et souvent, on utilise du <strong>vibe coding contrôlé</strong> après une phase de <strong>guided coding</strong> ou de <strong>spec-driven feature</strong>, au sein du même contexte, afin d’ajuster et de finaliser une feature.</p>
 <blockquote>
 <p>Une méthode AI-native n’impose pas le même rituel à toutes les tâches. Elle impose le bon niveau de rituel à chaque type de changement.</p>
