@@ -33,6 +33,15 @@
   font-weight: 700;
 }
 
+.md-typeset .article-company-link {
+  color: var(--md-default-fg-color);
+  font-weight: 800;
+}
+
+.md-typeset .article-company-link:hover {
+  color: var(--md-accent-fg-color);
+}
+
 .md-typeset .article-contact-link {
   display: inline-flex;
   min-height: 1.7rem;

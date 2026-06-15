@@ -1,6 +1,8 @@
 ---
 title: "AI agent-based coding : bonnes pratiques"
-author: "Vincent El Kouby-Benichou"
+author: "Vincent El Kouby-Benichou, Baracoda"
+company: "Baracoda"
+company_url: "https://baracoda.com"
 description: >-
   Le vibe coding a montré que l’intention en langage naturel pouvait devenir une interface de développement. Mais pour produire du logiciel maintenable, seul ou en équipe, il faut plus qu’une conversation avec un agent : il faut assembler quatre briques simples — un repository agent-ready qui porte les règles, un workflow qui les applique, un plan qui compile le contexte utile et des preuves d’exécution qui rendent le travail reviewable.
 ---
@@ -11,7 +13,7 @@ Le vibe coding a montré que l’intention en langage naturel pouvait devenir un
 { .article-lead }
 
 <p class="article-meta">
-  <span>Par <span class="article-author">Vincent El Kouby-Benichou</span></span>
+  <span>Par <span class="article-author">Vincent El Kouby-Benichou</span>, <a class="article-company-link" href="https://baracoda.com">Baracoda</a></span>
   <a class="article-contact-link" href="https://www.linkedin.com/in/vincentelkoubybenichou/">LinkedIn</a>
 </p>
 
