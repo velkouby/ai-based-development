@@ -1,3 +1,3 @@
 # Articles
 
-- [AI Agent-Based Coding: Best Practices](ai-agent-based-coding-best-practices/)
+- [From Vibe Coding to Verifiable Agentic Development](ai-agent-based-coding-best-practices/)

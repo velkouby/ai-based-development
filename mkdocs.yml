@@ -36,7 +36,7 @@ plugins:
           nav_translations:
             Home: Accueil
             All articles: Tous les articles
-            AI Agent-Based Coding: Développement avec agents IA
+            From Vibe Coding to Verifiable Agentic Development: Du Vibe Coding au développement agentique vérifiable
 
 markdown_extensions:
   - admonition
@@ -53,4 +53,4 @@ nav:
   - Home: index.md
   - Articles:
       - All articles: articles/index.md
-      - AI Agent-Based Coding: articles/ai-agent-based-coding-best-practices/index.md
+      - From Vibe Coding to Verifiable Agentic Development: articles/ai-agent-based-coding-best-practices/index.md
