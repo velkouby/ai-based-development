@@ -2,44 +2,84 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
     <url>
         <loc>https://velkouby.github.io/ai-based-development/</loc>
-        <lastmod>2026-06-15</lastmod>
+        <lastmod>2026-07-16</lastmod>
         <changefreq>daily</changefreq>
         <xhtml:link rel="alternate" hreflang="en" href="https://velkouby.github.io/ai-based-development/"/>
         <xhtml:link rel="alternate" hreflang="fr" href="https://velkouby.github.io/ai-based-development/fr/"/>
     </url>
     <url>
         <loc>https://velkouby.github.io/ai-based-development/articles/</loc>
-        <lastmod>2026-06-15</lastmod>
+        <lastmod>2026-07-16</lastmod>
         <changefreq>daily</changefreq>
         <xhtml:link rel="alternate" hreflang="en" href="https://velkouby.github.io/ai-based-development/articles/"/>
         <xhtml:link rel="alternate" hreflang="fr" href="https://velkouby.github.io/ai-based-development/fr/articles/"/>
     </url>
     <url>
         <loc>https://velkouby.github.io/ai-based-development/articles/ai-agent-based-coding-best-practices/</loc>
-        <lastmod>2026-06-15</lastmod>
+        <lastmod>2026-07-16</lastmod>
         <changefreq>daily</changefreq>
         <xhtml:link rel="alternate" hreflang="en" href="https://velkouby.github.io/ai-based-development/articles/ai-agent-based-coding-best-practices/"/>
         <xhtml:link rel="alternate" hreflang="fr" href="https://velkouby.github.io/ai-based-development/fr/articles/ai-agent-based-coding-best-practices/"/>
     </url>
     <url>
+        <loc>https://velkouby.github.io/ai-based-development/articles/drafts/feature-workflow-runbook/</loc>
+        <lastmod>2026-07-16</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://velkouby.github.io/ai-based-development/articles/drafts/feature-workflow-runbook/"/>
+        <xhtml:link rel="alternate" hreflang="fr" href="https://velkouby.github.io/ai-based-development/fr/articles/drafts/feature-workflow-runbook/"/>
+    </url>
+    <url>
+        <loc>https://velkouby.github.io/ai-based-development/articles/drafts/serie-pratique-developpement-agentique/</loc>
+        <lastmod>2026-07-16</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://velkouby.github.io/ai-based-development/articles/drafts/serie-pratique-developpement-agentique/"/>
+        <xhtml:link rel="alternate" hreflang="fr" href="https://velkouby.github.io/ai-based-development/fr/articles/drafts/serie-pratique-developpement-agentique/"/>
+    </url>
+    <url>
         <loc>https://velkouby.github.io/ai-based-development/fr/</loc>
-        <lastmod>2026-06-15</lastmod>
+        <lastmod>2026-07-16</lastmod>
         <changefreq>daily</changefreq>
         <xhtml:link rel="alternate" hreflang="fr" href="https://velkouby.github.io/ai-based-development/fr/"/>
         <xhtml:link rel="alternate" hreflang="en" href="https://velkouby.github.io/ai-based-development/"/>
     </url>
     <url>
         <loc>https://velkouby.github.io/ai-based-development/fr/articles/</loc>
-        <lastmod>2026-06-15</lastmod>
+        <lastmod>2026-07-16</lastmod>
         <changefreq>daily</changefreq>
         <xhtml:link rel="alternate" hreflang="fr" href="https://velkouby.github.io/ai-based-development/fr/articles/"/>
         <xhtml:link rel="alternate" hreflang="en" href="https://velkouby.github.io/ai-based-development/articles/"/>
     </url>
     <url>
+        <loc>https://velkouby.github.io/ai-based-development/fr/articles/agent-coding-modes/</loc>
+        <lastmod>2026-07-16</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="fr" href="https://velkouby.github.io/ai-based-development/fr/articles/agent-coding-modes/"/>
+    </url>
+    <url>
+        <loc>https://velkouby.github.io/ai-based-development/fr/articles/agent-ready-repository/</loc>
+        <lastmod>2026-07-16</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="fr" href="https://velkouby.github.io/ai-based-development/fr/articles/agent-ready-repository/"/>
+    </url>
+    <url>
         <loc>https://velkouby.github.io/ai-based-development/fr/articles/ai-agent-based-coding-best-practices/</loc>
-        <lastmod>2026-06-15</lastmod>
+        <lastmod>2026-07-16</lastmod>
         <changefreq>daily</changefreq>
         <xhtml:link rel="alternate" hreflang="fr" href="https://velkouby.github.io/ai-based-development/fr/articles/ai-agent-based-coding-best-practices/"/>
         <xhtml:link rel="alternate" hreflang="en" href="https://velkouby.github.io/ai-based-development/articles/ai-agent-based-coding-best-practices/"/>
+    </url>
+    <url>
+        <loc>https://velkouby.github.io/ai-based-development/fr/articles/drafts/feature-workflow-runbook/</loc>
+        <lastmod>2026-07-16</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="fr" href="https://velkouby.github.io/ai-based-development/fr/articles/drafts/feature-workflow-runbook/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://velkouby.github.io/ai-based-development/articles/drafts/feature-workflow-runbook/"/>
+    </url>
+    <url>
+        <loc>https://velkouby.github.io/ai-based-development/fr/articles/drafts/serie-pratique-developpement-agentique/</loc>
+        <lastmod>2026-07-16</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="fr" href="https://velkouby.github.io/ai-based-development/fr/articles/drafts/serie-pratique-developpement-agentique/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://velkouby.github.io/ai-based-development/articles/drafts/serie-pratique-developpement-agentique/"/>
     </url>
 </urlset>

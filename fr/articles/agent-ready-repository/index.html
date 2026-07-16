@@ -1,0 +1,850 @@
+
+<!doctype html>
+<html lang="fr" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Avant de coder, un agent doit savoir où agir, quelles règles font autorité, comment valider et quand s'arrêter. Voici le contrat minimal d'un repository agent-ready.">
+      
+      
+        <meta name="author" content="Vincent El Kouby-Benichou, Baracoda">
+      
+      
+        <link rel="canonical" href="https://velkouby.github.io/ai-based-development/fr/articles/agent-ready-repository/">
+      
+      
+      
+      
+        
+          <link rel="alternate" href="/ai-based-development/" hreflang="en">
+        
+          <link rel="alternate" href="./" hreflang="fr">
+        
+      
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>Mon repository agent-ready : ce que l'agent doit savoir avant de coder - AI-Native Software Engineering Notes</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.484c7ddc.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/article.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#mon-repository-agent-ready-ce-que-lagent-doit-savoir-avant-de-coder" class="md-skip">
+          Aller au contenu
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="En-tête">
+    <a href="../../" title="AI-Native Software Engineering Notes" class="md-header__button md-logo" aria-label="AI-Native Software Engineering Notes" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            AI-Native Software Engineering Notes
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Mon repository agent-ready : ce que l'agent doit savoir avant de coder
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+      <div class="md-header__option">
+  <div class="md-select">
+    
+    <button class="md-header__button md-icon" aria-label="Sélectionner la langue">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m12.87 15.07-2.54-2.51.03-.03A17.5 17.5 0 0 0 14.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2zm-2.62 7 1.62-4.33L19.12 17z"/></svg>
+    </button>
+    <div class="md-select__inner">
+      <ul class="md-select__list">
+        
+          <li class="md-select__item">
+            <a href="/ai-based-development/" hreflang="en" class="md-select__link">
+              English
+            </a>
+          </li>
+        
+          <li class="md-select__item">
+            <a href="./" hreflang="fr" class="md-select__link">
+              Français
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</div>
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Rechercher" placeholder="Rechercher" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Recherche">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Effacer" aria-label="Effacer" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initialisation de la recherche
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/velkouby/ai-based-development" title="Aller au dépôt" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    velkouby/ai-based-development
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../" title="AI-Native Software Engineering Notes" class="md-nav__button md-logo" aria-label="AI-Native Software Engineering Notes" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    AI-Native Software Engineering Notes
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/velkouby/ai-based-development" title="Aller au dépôt" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    velkouby/ai-based-development
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Accueil
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Articles
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Articles
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ai-agent-based-coding-best-practices/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Du Vibe Coding au développement agentique vérifiable
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table des matières">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table des matières
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#le-repository-doit-repondre-avant-lagent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Le repository doit répondre avant l'agent
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#une-meme-regle-quatre-supports" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Une même règle, quatre supports
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#rendre-les-responsabilites-visibles" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Rendre les responsabilités visibles
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#un-contrat-reduit-pour-une-tache-reelle" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Un contrat réduit pour une tâche réelle
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#un-fichier-dinstructions-est-une-porte-dentree" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Un fichier d'instructions est une porte d'entrée
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ce-que-le-workflow-peut-reellement-controler" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ce que le workflow peut réellement contrôler
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#quand-lagent-doit-sarreter" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Quand l'agent doit s'arrêter
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ce-que-ce-dispositif-ne-garantit-pas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ce que ce dispositif ne garantit pas
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#checklist-rendre-son-repository-agent-ready" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Checklist : rendre son repository agent-ready
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#conclusion" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Conclusion
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 class="article-title" id="mon-repository-agent-ready-ce-que-lagent-doit-savoir-avant-de-coder">Mon repository agent-ready : ce que l'agent doit savoir avant de coder<a class="headerlink" href="#mon-repository-agent-ready-ce-que-lagent-doit-savoir-avant-de-coder" title="Permanent link">&para;</a></h1>
+<p class="article-lead">Avant de coder, un agent doit savoir où agir, quoi réutiliser, quelles limites respecter, comment valider et quand s'arrêter. Un repository agent-ready rend ces réponses visibles pour l'humain, actionnables par l'agent et vérifiables par le workflow.</p>
+<p class="article-meta">
+  <span>Par <span class="article-author">Vincent El Kouby-Benichou</span>, <a class="article-company-link" href="https://baracoda.com">Baracoda</a></span>
+  <a class="article-contact-link" href="https://www.linkedin.com/in/vincentelkoubybenichou/">LinkedIn</a>
+</p>
+
+<p>Un agent de code ne devrait pas travailler dans une conversation isolée, mais dans un système qui le guide, le limite et rend son travail relisible. C'était la thèse de <a href="../ai-agent-based-coding-best-practices/">l'article précédent</a>. Ici, la question est plus concrète : <strong>que doit contenir le repository avant que l'agent ne modifie une ligne de code ?</strong></p>
+<p>Imaginons une demande apparemment locale : enrichir l'état vide d'un annuaire clients. L'agent trouve une primitive d'interface partagée, la modifie, ajoute le bouton demandé et fait passer les tests. Fonctionnellement, le résultat semble correct. Pourtant, une demande produit vient d'entraîner une modification du socle commun à toute l'application.</p>
+<p>Le problème n'est pas que l'agent n'a pas compris le code. Il n'a pas compris l'autorité attachée aux différentes parties du code.</p>
+<p>Un développeur expérimenté connaît souvent ces frontières sans les lire. Il sait quels dossiers contiennent le produit, quelles primitives sont partagées, quels fichiers sont générés, quelles commandes font foi et quels changements exigent une discussion d'architecture. Un agent ne possède pas cette mémoire implicite.</p>
+<blockquote>
+<p>Un repository agent-ready ne donne pas seulement du contexte à l'agent. Il lui donne un cadre d'action que le workflow peut confronter aux modifications réellement produites.</p>
+</blockquote>
+<p>Ces principes sont expérimentés dans un framework interne qui prépare le contexte de l'agent et contrôle une partie de son exécution. Les exemples qui suivent sont volontairement simplifiés : ils exposent un contrat observable, pas l'implémentation du framework.</p>
+<h2 id="le-repository-doit-repondre-avant-lagent">Le repository doit répondre avant l'agent<a class="headerlink" href="#le-repository-doit-repondre-avant-lagent" title="Permanent link">&para;</a></h2>
+<p>Explorer le code fait partie du travail. L'agent doit chercher les composants existants, lire les conventions locales et comprendre la surface concernée. Mais cette exploration ne devrait pas devenir, à chaque tâche, une enquête sur les règles fondamentales du projet.</p>
+<p>Avant d'agir, l'agent doit pouvoir obtenir rapidement des réponses à sept questions :</p>
+<ol>
+<li>Quel résultat observable est demandé ?</li>
+<li>Où se trouve le code produit concerné ?</li>
+<li>Quels composants, contrats ou modèles existants faut-il réutiliser ?</li>
+<li>Quels chemins peut-il modifier pour cette tâche ?</li>
+<li>Quels chemins peut-il consulter sans les modifier ?</li>
+<li>Quelles validations doivent être exécutées ?</li>
+<li>Dans quelles situations doit-il s'arrêter et demander une décision ?</li>
+</ol>
+<p>Ces réponses ne doivent pas dépendre de la mémoire d'une personne, ni rester enfouies dans une ancienne revue de code. Elles doivent vivre dans le repository et être suffisamment stables pour être retrouvées par un humain, un agent et un workflow.</p>
+<p>Cela ne signifie pas tout mettre dans un immense fichier d'instructions. Une règle d'architecture, une consigne destinée à l'agent, une politique de chemins et un résultat de validation n'ont pas le même rôle. Les confondre produit soit une documentation bavarde, soit une automatisation opaque.</p>
+<h2 id="une-meme-regle-quatre-supports">Une même règle, quatre supports<a class="headerlink" href="#une-meme-regle-quatre-supports" title="Permanent link">&para;</a></h2>
+<p>Une règle critique gagne à être déclinée sur quatre supports complémentaires.</p>
+<table>
+<thead>
+<tr>
+<th>Support</th>
+<th>Fonction</th>
+<th>Limite</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Documentation humaine</td>
+<td>Explique l'architecture, les responsabilités et les raisons d'un choix</td>
+<td>Elle informe, mais n'empêche aucune modification</td>
+</tr>
+<tr>
+<td>Instructions destinées à l'agent</td>
+<td>Orientent l'agent au moment d'explorer, planifier et coder</td>
+<td>Elles restent interprétées par le modèle</td>
+</tr>
+<tr>
+<td>Contrat de tâche</td>
+<td>Déclare précisément le périmètre, les validations et les conditions d'arrêt</td>
+<td>Sans contrôle, il ne s'agit que d'une intention structurée</td>
+</tr>
+<tr>
+<td>Contrôles du workflow</td>
+<td>Comparent les faits observés au contrat et enregistrent les résultats</td>
+<td>Ils ne prouvent que ce qu'ils ont effectivement observé</td>
+</tr>
+</tbody>
+</table>
+<p>Prenons la règle « une tâche produit ne doit pas modifier le socle partagé ».</p>
+<p>La documentation explique pourquoi cette séparation existe. Le fichier d'instructions dit à l'agent de privilégier une extension locale. Le contrat de la tâche désigne les chemins modifiables et les zones en lecture seule. Enfin, le workflow inspecte le diff et signale si une zone protégée a été touchée.</p>
+<p>Si la règle n'existe que dans la tête d'un développeur, elle est invisible. Si elle n'existe que dans la documentation, elle reste une recommandation. Si elle est déclarée dans un contrat sans être contrôlée, elle reste une politique théorique.</p>
+<blockquote>
+<p>Une règle utile doit être compréhensible par l'humain, actionnable par l'agent et vérifiable par le workflow.</p>
+</blockquote>
+<p>Cette distinction évite aussi une confusion fréquente : une instruction n'est pas une autorisation système. Dire à l'agent « ne modifie pas ce dossier » ne retire pas ses droits d'écriture. Pour parler de garantie technique, il faut préciser quel mécanisme empêche ou détecte la modification.</p>
+<h2 id="rendre-les-responsabilites-visibles">Rendre les responsabilités visibles<a class="headerlink" href="#rendre-les-responsabilites-visibles" title="Permanent link">&para;</a></h2>
+<p>Un agent qui voit tout le repository ne doit pas nécessairement pouvoir agir partout avec la même liberté. La structure du projet doit rendre visibles des zones ayant des responsabilités différentes.</p>
+<table>
+<thead>
+<tr>
+<th>Zone conceptuelle</th>
+<th>Ce qu'elle contient</th>
+<th>Politique habituelle pour une tâche produit</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Code produit</td>
+<td>Fonctionnalités métier, écrans, API et documentation fonctionnelle</td>
+<td>Écriture autorisée dans le périmètre précis de la tâche</td>
+</tr>
+<tr>
+<td>Socle partagé</td>
+<td>Primitives d'interface, architecture, configuration commune et contrats transversaux</td>
+<td>Lecture autorisée, modification traitée comme un changement séparé</td>
+</tr>
+<tr>
+<td>Outillage du projet</td>
+<td>Scripts, commandes de validation, génération et configuration de développement</td>
+<td>Hors périmètre par défaut ; modification soumise à une demande explicite</td>
+</tr>
+<tr>
+<td>Artefacts générés ou de contrôle</td>
+<td>Résultats, journaux, preuves et fichiers produits par le workflow</td>
+<td>Produits par le mécanisme de contrôle ; toute altération par l'agent doit être détectée</td>
+</tr>
+</tbody>
+</table>
+<p>Les noms de dossiers importent moins que la politique qu'ils matérialisent. Deux projets peuvent avoir des arborescences très différentes tout en exprimant la même séparation.</p>
+<p>La zone produit n'est d'ailleurs pas intégralement ouverte. Une tâche sur l'annuaire clients n'autorise pas automatiquement une modification du tunnel de paiement. La répartition générale des responsabilités définit les grandes zones ; le contrat de la tâche réduit ensuite l'autorité au périmètre nécessaire.</p>
+<p>Le socle partagé, lui, n'est pas immuable. Il doit pouvoir évoluer. Mais une évolution du socle change les règles et les primitives dont dépendront d'autres fonctionnalités. Elle mérite donc une intention explicite, une analyse d'impact et des validations plus larges. Elle ne devrait pas apparaître comme l'effet secondaire discret d'une demande produit.</p>
+<p>La règle pratique est simple :</p>
+<blockquote>
+<p>Si le besoin peut être satisfait dans la couche produit, il ne doit pas être résolu en modifiant le socle.</p>
+</blockquote>
+<p>Cette séparation protège également les artefacts de contrôle. L'agent peut expliquer ce qu'il pense avoir fait, mais il ne devrait pas être le seul auteur des fichiers censés attester que les frontières ont été respectées ou que les validations ont réussi. Sinon, il devient à la fois exécutant et greffier de sa propre exécution.</p>
+<h2 id="un-contrat-reduit-pour-une-tache-reelle">Un contrat réduit pour une tâche réelle<a class="headerlink" href="#un-contrat-reduit-pour-une-tache-reelle" title="Permanent link">&para;</a></h2>
+<p>Le contrat du repository contient les règles stables : zones de responsabilité, chemins protégés, commandes de référence et politique de validation. Pour chaque tâche, le plan ou le workflow en dérive un ordre de mission plus étroit.</p>
+<p>Voici un exemple pédagogique pour ajouter une pagination serveur à un annuaire clients. Ce document est volontairement réduit : ce n'est ni le schéma d'un outil existant, ni une configuration prête à copier telle quelle.</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Exemple conceptuel, indépendant de tout outil.</span>
+<span class="nt">objectif</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">&gt;-</span>
+<span class="w">  </span><span class="no">Ajouter une pagination serveur à l&#39;annuaire clients sans modifier</span>
+<span class="w">  </span><span class="no">les primitives partagées de l&#39;application.</span>
+
+<span class="nt">perimetre</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">modifiables</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;app/customers/**&quot;</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;api/customers/**&quot;</span>
+<span class="w">  </span><span class="nt">lecture_seule</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;shared/ui/**&quot;</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;platform/routing/**&quot;</span>
+<span class="w">  </span><span class="nt">hors_perimetre</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;tooling/**&quot;</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;generated/**&quot;</span>
+
+<span class="nt">criteres_acceptation</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;La</span><span class="nv"> </span><span class="s">réponse</span><span class="nv"> </span><span class="s">de</span><span class="nv"> </span><span class="s">l&#39;API</span><span class="nv"> </span><span class="s">expose</span><span class="nv"> </span><span class="s">la</span><span class="nv"> </span><span class="s">page</span><span class="nv"> </span><span class="s">courante</span><span class="nv"> </span><span class="s">et</span><span class="nv"> </span><span class="s">le</span><span class="nv"> </span><span class="s">nombre</span><span class="nv"> </span><span class="s">total</span><span class="nv"> </span><span class="s">de</span><span class="nv"> </span><span class="s">résultats.&quot;</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;L&#39;interface</span><span class="nv"> </span><span class="s">gère</span><span class="nv"> </span><span class="s">le</span><span class="nv"> </span><span class="s">chargement,</span><span class="nv"> </span><span class="s">l&#39;absence</span><span class="nv"> </span><span class="s">de</span><span class="nv"> </span><span class="s">résultat</span><span class="nv"> </span><span class="s">et</span><span class="nv"> </span><span class="s">l&#39;erreur.&quot;</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;Changer</span><span class="nv"> </span><span class="s">de</span><span class="nv"> </span><span class="s">page</span><span class="nv"> </span><span class="s">charge</span><span class="nv"> </span><span class="s">les</span><span class="nv"> </span><span class="s">données</span><span class="nv"> </span><span class="s">correspondantes.&quot;</span>
+
+<span class="nt">validations</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;make</span><span class="nv"> </span><span class="s">test&quot;</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;make</span><span class="nv"> </span><span class="s">build&quot;</span>
+
+<span class="nt">controles_apres_execution</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;Comparer</span><span class="nv"> </span><span class="s">les</span><span class="nv"> </span><span class="s">chemins</span><span class="nv"> </span><span class="s">réellement</span><span class="nv"> </span><span class="s">modifiés</span><span class="nv"> </span><span class="s">au</span><span class="nv"> </span><span class="s">périmètre</span><span class="nv"> </span><span class="s">déclaré.&quot;</span>
+
+<span class="nt">arreter_si</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;Une</span><span class="nv"> </span><span class="s">nouvelle</span><span class="nv"> </span><span class="s">dépendance</span><span class="nv"> </span><span class="s">est</span><span class="nv"> </span><span class="s">nécessaire.&quot;</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;La</span><span class="nv"> </span><span class="s">solution</span><span class="nv"> </span><span class="s">impose</span><span class="nv"> </span><span class="s">une</span><span class="nv"> </span><span class="s">rupture</span><span class="nv"> </span><span class="s">de</span><span class="nv"> </span><span class="s">compatibilité</span><span class="nv"> </span><span class="s">du</span><span class="nv"> </span><span class="s">contrat</span><span class="nv"> </span><span class="s">public</span><span class="nv"> </span><span class="s">de</span><span class="nv"> </span><span class="s">l&#39;API.&quot;</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;La</span><span class="nv"> </span><span class="s">solution</span><span class="nv"> </span><span class="s">exige</span><span class="nv"> </span><span class="s">une</span><span class="nv"> </span><span class="s">modification</span><span class="nv"> </span><span class="s">du</span><span class="nv"> </span><span class="s">socle</span><span class="nv"> </span><span class="s">partagé.&quot;</span>
+</code></pre></div>
+<p>L'objectif empêche de confondre la demande et une solution particulière. Les critères d'acceptation rendent le résultat observable. Les chemins <code>modifiables</code> définissent l'autorité d'écriture. Les chemins en <code>lecture_seule</code> fournissent un contexte nécessaire sans autoriser leur modification. Les chemins <code>hors_perimetre</code> ne sont pas nécessaires à la tâche et ne doivent pas être touchés.</p>
+<p>Les validations disent quelles commandes doivent être exécutées. Le contrôle après exécution confronte séparément les fichiers réellement modifiés au périmètre déclaré. Enfin, les conditions d'arrêt rendent explicites les décisions que l'agent n'a pas l'autorité de prendre seul.</p>
+<p>Un tel ordre de mission ne devrait pas être rédigé entièrement à la main pour chaque micro-tâche. Les règles stables viennent du repository ; l'ordre de mission les contextualise pour le cas traité. Le point essentiel est que l'agent reçoive un objectif, une portée, des références, des validations et des limites adaptés à la tâche.</p>
+<h2 id="un-fichier-dinstructions-est-une-porte-dentree">Un fichier d'instructions est une porte d'entrée<a class="headerlink" href="#un-fichier-dinstructions-est-une-porte-dentree" title="Permanent link">&para;</a></h2>
+<p>Un fichier comme <code>AGENTS.md</code> reste utile, à condition de ne pas lui demander de porter toute la méthode.</p>
+<p>Son rôle est d'abord d'orienter : quels documents lire, où se trouvent les règles d'architecture, quelles commandes sont stables et quels changements exigent un arrêt. Il peut aussi rappeler quelques règles critiques, par exemple ne pas modifier les fichiers générés ou ne pas introduire une dépendance sans accord.</p>
+<p>Il ne devrait pas recopier toute l'architecture, tous les cas particuliers et toutes les politiques de chaque sous-système. Plus il accumule de contenu, plus les règles importantes se diluent et plus les duplications risquent de dériver.</p>
+<p>Le point d'entrée renvoie vers la documentation stable, le contrat du repository et l'ordre de mission ; les contrôles restent distincts. Le repository ne demande ainsi pas à l'agent de tout mémoriser. Il lui permet de retrouver la bonne information au bon moment.</p>
+<h2 id="ce-que-le-workflow-peut-reellement-controler">Ce que le workflow peut réellement contrôler<a class="headerlink" href="#ce-que-le-workflow-peut-reellement-controler" title="Permanent link">&para;</a></h2>
+<p>Après l'exécution, le workflow peut confronter le contrat à plusieurs faits observables.</p>
+<table>
+<thead>
+<tr>
+<th>Élément du contrat</th>
+<th>Observation possible</th>
+<th>Conclusion légitime</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Périmètre de chemins</td>
+<td>Fichiers inclus dans le périmètre d'observation annoncé</td>
+<td>Les fichiers observés appartiennent ou non au périmètre déclaré</td>
+</tr>
+<tr>
+<td>Validations</td>
+<td>Commande lancée, code de retour et sortie enregistrée</td>
+<td>Cette commande a retourné ce résultat dans cet environnement local</td>
+</tr>
+<tr>
+<td>Validations attendues</td>
+<td>Présence ou absence d'un résultat</td>
+<td>Une validation a été exécutée, a échoué ou n'a pas été lancée</td>
+</tr>
+</tbody>
+</table>
+<p>La formulation compte. Un code de retour nul ne signifie pas « le logiciel est correct ». Il signifie que la commande enregistrée s'est terminée avec succès. Un contrôle de chemins réussi ne signifie pas que l'agent était techniquement incapable d'écrire ailleurs. Il signifie qu'aucun fichier inclus dans l'observation annoncée n'est sorti du périmètre.</p>
+<p>Le rapport doit donc préciser ce que couvre cette observation, notamment si l'index Git et les fichiers non suivis sont inclus. Dans un workflow local classique, le contrôle des chemins intervient après l'écriture. Il peut bloquer l'acceptation du résultat ou déclencher une reprise, mais il ne constitue pas un mécanisme d'isolation. De même, si la copie de travail Git contenait déjà des changements, le workflow doit les identifier ou reconnaître qu'il ne peut pas attribuer chaque ligne à l'exécution courante.</p>
+<blockquote>
+<p>Le workflow établit des faits sur une exécution. Il n'établit pas à lui seul la justesse du logiciel.</p>
+</blockquote>
+<p>Cette modestie rend la preuve plus utile, pas moins. Une revue humaine peut prendre une décision mieux étayée lorsqu'elle sait précisément ce qui a été observé, ce qui ne l'a pas été et quelles validations manquent encore.</p>
+<h2 id="quand-lagent-doit-sarreter">Quand l'agent doit s'arrêter<a class="headerlink" href="#quand-lagent-doit-sarreter" title="Permanent link">&para;</a></h2>
+<p>Revenons à l'état vide de l'annuaire clients. Supposons que le composant partagé ne permette pas d'ajouter l'action demandée. La tâche autorise une modification de la fonctionnalité, mais place les primitives communes en lecture seule.</p>
+<p>L'agent ne doit ni élargir silencieusement son périmètre, ni contourner la règle en dupliquant intégralement la primitive sans en mesurer les conséquences. Il doit produire un arrêt utile :</p>
+<blockquote>
+<ul>
+<li><strong>Constat :</strong> le composant partagé ne propose pas le point d'extension nécessaire.</li>
+<li><strong>Limite :</strong> sa modification sort du périmètre autorisé.</li>
+<li><strong>Options :</strong> créer une variante locale dans le code produit, ou ouvrir séparément une évolution du socle partagé.</li>
+<li><strong>Décision attendue :</strong> choisir entre la solution locale et le changement transversal.</li>
+</ul>
+</blockquote>
+<p>Cet arrêt n'est pas un échec de l'agent. C'est le signe que le repository a rendu visible un choix de gouvernance. La demande initiale ne donne pas automatiquement l'autorité de modifier toutes les couches nécessaires à la solution la plus directe.</p>
+<p>Les bonnes conditions d'arrêt concernent typiquement :</p>
+<ul>
+<li>une décision produit encore ouverte ;</li>
+<li>une migration ou une incompatibilité de contrat ;</li>
+<li>une nouvelle dépendance ;</li>
+<li>un changement de sécurité ou d'autorisation ;</li>
+<li>une modification du socle ou de l'outillage ;</li>
+<li>une validation requise impossible à exécuter sans modifier l'environnement ou élargir le périmètre.</li>
+</ul>
+<p>Dans ces situations, la meilleure contribution de l'agent n'est pas toujours du code supplémentaire. C'est parfois un constat précis, des options compréhensibles et un point de reprise clair.</p>
+<h2 id="ce-que-ce-dispositif-ne-garantit-pas">Ce que ce dispositif ne garantit pas<a class="headerlink" href="#ce-que-ce-dispositif-ne-garantit-pas" title="Permanent link">&para;</a></h2>
+<p>Un repository agent-ready réduit l'ambiguïté et rend certaines dérives visibles. Il ne rend pas l'exécution de l'agent sûre par nature.</p>
+<p>En particulier :</p>
+<ul>
+<li>des instructions ne remplacent pas des autorisations système ;</li>
+<li>un contrôle de diff a posteriori n'est pas une isolation du processus ;</li>
+<li>des chemins respectés n'excluent pas une erreur sémantique dans une zone autorisée ;</li>
+<li>des tests réussis ne prouvent pas que la couverture est suffisante ;</li>
+<li>une preuve locale ne vaut pas automatiquement pour un commit ou une exécution de CI ;</li>
+<li>dans ce dispositif, l'automatisation n'établit pas à elle seule que le risque résiduel est acceptable.</li>
+</ul>
+<p>La formule « agent-ready » ne signifie donc pas « agent autonome ». Elle signifie que le repository fournit un environnement de travail explicite, que le workflow sait observer une partie des règles et que l'humain conserve une base factuelle pour décider.</p>
+<h2 id="checklist-rendre-son-repository-agent-ready">Checklist : rendre son repository agent-ready<a class="headerlink" href="#checklist-rendre-son-repository-agent-ready" title="Permanent link">&para;</a></h2>
+<p>Il n'est pas nécessaire de construire immédiatement un orchestrateur complet. Une équipe peut préparer son repository par étapes.</p>
+<ul>
+<li>☐ Créer un point d'entrée court pour les agents.</li>
+<li>☐ Documenter l'architecture et les modèles à réutiliser.</li>
+<li>☐ Distinguer clairement le code produit, le socle partagé et l'outillage.</li>
+<li>☐ Identifier les fichiers générés et les artefacts que l'agent ne doit pas modifier.</li>
+<li>☐ Stabiliser les commandes de test, de compilation et de contrôle architectural.</li>
+<li>☐ Définir, pour chaque tâche, les chemins modifiables et consultables en lecture seule.</li>
+<li>☐ Écrire les conditions qui doivent provoquer un arrêt et une décision humaine.</li>
+<li>☐ Inspecter le diff réel au lieu de se fier à la liste déclarée par l'agent.</li>
+<li>☐ Enregistrer les validations exécutées, leurs résultats et celles qui manquent.</li>
+<li>☐ Nommer la personne responsable de la décision finale.</li>
+</ul>
+<p>Le premier objectif n'est pas d'automatiser les dix points. Il est de rendre les règles visibles et de supprimer les ambiguïtés les plus coûteuses. L'automatisation vient ensuite, en priorité là où une règle peut être comparée à un fait observable.</p>
+<h2 id="conclusion">Conclusion<a class="headerlink" href="#conclusion" title="Permanent link">&para;</a></h2>
+<p>Avant de coder, un agent doit connaître plus que la demande. Il doit savoir dans quelle partie du système il agit, quelles règles font autorité, quel contexte il peut consulter, quelles validations seront attendues et quelles décisions ne lui appartiennent pas.</p>
+<p>Le repository agent-ready rend ce cadre durable. La documentation explique. Les instructions orientent. Le contrat borne la tâche. Le workflow observe le résultat. L'humain décide si les faits obtenus suffisent.</p>
+<p>Une fois cette base en place, une autre question apparaît : faut-il appliquer le même niveau de contrôle à la correction d'un libellé, à une fonctionnalité de bout en bout et à une évolution du socle ?</p>
+<p>C'est le sujet de l'article suivant : <a href="../agent-coding-modes/"><strong>quatre modes, deux parcours pour choisir le bon niveau de contrôle</strong></a>.</p>
+<div class="article-footer-contact">
+  <p>Pour discuter de cet article ou me laisser un message public :</p>
+  <a class="article-contact-link" href="https://github.com/velkouby/ai-based-development/issues/new?template=contact.yml">Message sur GitHub</a>
+</div>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Retour en haut de la page
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.sections", "navigation.indexes", "navigation.top", "search.suggest", "search.highlight", "content.code.copy"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copi\u00e9 dans le presse-papier", "clipboard.copy": "Copier dans le presse-papier", "search.result.more.one": "1 de plus sur cette page", "search.result.more.other": "# de plus sur cette page", "search.result.none": "Aucun document trouv\u00e9", "search.result.one": "1 document trouv\u00e9", "search.result.other": "# documents trouv\u00e9s", "search.result.placeholder": "Taper pour d\u00e9marrer la recherche", "search.result.term.missing": "Non trouv\u00e9", "select.version": "S\u00e9lectionner la version"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

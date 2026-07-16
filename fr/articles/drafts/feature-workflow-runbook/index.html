@@ -1,0 +1,919 @@
+
+<!doctype html>
+<html lang="fr" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Articles and technical notes about AI-native software development, agent-based coding, and software engineering practices.">
+      
+      
+        <meta name="author" content="Vincent El Kouby-Benichou, Baracoda">
+      
+      
+        <link rel="canonical" href="https://velkouby.github.io/ai-based-development/fr/articles/drafts/feature-workflow-runbook/">
+      
+      
+      
+      
+        
+          <link rel="alternate" href="../../../../articles/drafts/feature-workflow-runbook/" hreflang="en">
+        
+          <link rel="alternate" href="./" hreflang="fr">
+        
+      
+      
+      <link rel="icon" href="../../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>AppForge Feature Workflow Runbook - AI-Native Software Engineering Notes</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../../assets/stylesheets/main.484c7ddc.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../../assets/stylesheets/article.css">
+    
+    <script>__md_scope=new URL("../../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#appforge-feature-workflow-runbook" class="md-skip">
+          Aller au contenu
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="En-tête">
+    <a href="../../../" title="AI-Native Software Engineering Notes" class="md-header__button md-logo" aria-label="AI-Native Software Engineering Notes" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            AI-Native Software Engineering Notes
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              AppForge Feature Workflow Runbook
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+      <div class="md-header__option">
+  <div class="md-select">
+    
+    <button class="md-header__button md-icon" aria-label="Sélectionner la langue">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m12.87 15.07-2.54-2.51.03-.03A17.5 17.5 0 0 0 14.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2zm-2.62 7 1.62-4.33L19.12 17z"/></svg>
+    </button>
+    <div class="md-select__inner">
+      <ul class="md-select__list">
+        
+          <li class="md-select__item">
+            <a href="../../../../articles/drafts/feature-workflow-runbook/" hreflang="en" class="md-select__link">
+              English
+            </a>
+          </li>
+        
+          <li class="md-select__item">
+            <a href="./" hreflang="fr" class="md-select__link">
+              Français
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</div>
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Rechercher" placeholder="Rechercher" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Recherche">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Effacer" aria-label="Effacer" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initialisation de la recherche
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/velkouby/ai-based-development" title="Aller au dépôt" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    velkouby/ai-based-development
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../../" title="AI-Native Software Engineering Notes" class="md-nav__button md-logo" aria-label="AI-Native Software Engineering Notes" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    AI-Native Software Engineering Notes
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/velkouby/ai-based-development" title="Aller au dépôt" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    velkouby/ai-based-development
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Accueil
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Articles
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Articles
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../ai-agent-based-coding-best-practices/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Du Vibe Coding au développement agentique vérifiable
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table des matières">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table des matières
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#sequence-recommandee" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Sequence recommandee
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-creer-la-feature" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Creer la feature
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-ecrire-le-brief" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Ecrire le brief
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-planifier-la-feature" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Planifier la feature
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-executer-les-taches" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Executer les taches
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-controler-la-qualite" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Controler la qualite
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-reparer-la-qualite" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Reparer la qualite
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-verifier-la-feature" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Verifier la feature
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-finaliser-la-feature" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. Finaliser la feature
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#exemple-complet-commentable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Exemple complet commentable
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#points-de-controle-rapides" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Points de controle rapides
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="appforge-feature-workflow-runbook">AppForge Feature Workflow Runbook<a class="headerlink" href="#appforge-feature-workflow-runbook" title="Permanent link">&para;</a></h1>
+<p>Ce document decrit le workflow AppForge pour livrer une feature depuis sa creation jusqu'a sa fermeture. Il sert a expliquer ce que fait chaque commande, quels fichiers sont produits, et quelles sous-etapes verifier pendant un run.</p>
+<p>Note de syntaxe: la commande correcte est <code>appforge feature</code>, pas <code>appforge fearture</code>. Dans la CLI actuelle, <code>--yolo</code> n'est pas supporte par <code>appforge feature plan</code>; il s'utilise sur <code>appforge feature run</code>, <code>appforge feature resume</code>, ou <code>appforge feature guided --confirm</code>.</p>
+<h2 id="sequence-recommandee">Sequence recommandee<a class="headerlink" href="#sequence-recommandee" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code>appforge<span class="w"> </span>feature<span class="w"> </span>create<span class="w"> </span>feature-name
+<span class="c1"># edit .appforge/features/feature-name/brief.md</span>
+appforge<span class="w"> </span>feature<span class="w"> </span>plan<span class="w"> </span>feature-name
+appforge<span class="w"> </span>feature<span class="w"> </span>run<span class="w"> </span>feature-name<span class="w"> </span>--live<span class="w"> </span>--yolo
+appforge<span class="w"> </span>check<span class="w"> </span>quality<span class="w"> </span>--profile<span class="w"> </span>default
+appforge<span class="w"> </span>repair<span class="w"> </span>quality
+appforge<span class="w"> </span>check<span class="w"> </span>quality<span class="w"> </span>--profile<span class="w"> </span>default
+appforge<span class="w"> </span>check<span class="w"> </span>feature<span class="w"> </span>feature-name
+appforge<span class="w"> </span>feature<span class="w"> </span>finalize<span class="w"> </span>feature-name
+</code></pre></div>
+<p>Pour un run plus controle, remplacer <code>appforge feature run feature-name --live --yolo</code> par des runs de taches:</p>
+<div class="highlight"><pre><span></span><code>appforge<span class="w"> </span>task<span class="w"> </span>run<span class="w"> </span>feature-name<span class="w"> </span>task-001
+appforge<span class="w"> </span>task<span class="w"> </span>run<span class="w"> </span>feature-name<span class="w"> </span>task-002
+appforge<span class="w"> </span>feature<span class="w"> </span>status<span class="w"> </span>feature-name
+</code></pre></div>
+<h2 id="1-creer-la-feature">1. Creer la feature<a class="headerlink" href="#1-creer-la-feature" title="Permanent link">&para;</a></h2>
+<p>Commande:</p>
+<div class="highlight"><pre><span></span><code>appforge<span class="w"> </span>feature<span class="w"> </span>create<span class="w"> </span>feature-name
+</code></pre></div>
+<p>Ce que fait AppForge:</p>
+<ul>
+<li>verifie que le dossier courant est un projet AppForge genere;</li>
+<li>valide le slug <code>feature-name</code>;</li>
+<li>cree ou checkout la branche Git <code>appforge/feature-name</code> si le projet est un depot Git;</li>
+<li>cree le dossier <code>.appforge/features/feature-name/</code>;</li>
+<li>ecrit un brief initial dans <code>.appforge/features/feature-name/brief.md</code>;</li>
+<li>ecrit l'etat machine dans <code>.appforge/features/feature-name/feature.json</code>.</li>
+</ul>
+<p>Fichiers importants apres creation:</p>
+<div class="highlight"><pre><span></span><code>.appforge/features/feature-name/
+|-- brief.md
+|-- feature.json
+</code></pre></div>
+<p>Etat attendu:</p>
+<ul>
+<li><code>feature.json</code> contient <code>status: draft</code>;</li>
+<li><code>plan.md</code> et <code>tasks.json</code> n'existent pas encore;</li>
+<li>le brief contient une structure de depart: objectif, scope, criteres d'acceptation, notes.</li>
+</ul>
+<h2 id="2-ecrire-le-brief">2. Ecrire le brief<a class="headerlink" href="#2-ecrire-le-brief" title="Permanent link">&para;</a></h2>
+<p>Action humaine:</p>
+<div class="highlight"><pre><span></span><code><span class="nv">$EDITOR</span><span class="w"> </span>.appforge/features/feature-name/brief.md
+</code></pre></div>
+<p>Le brief est le contrat produit de depart. Il doit contenir assez de contexte pour que l'agent puisse planifier sans inventer les intentions produit.</p>
+<p>Sections utiles:</p>
+<ul>
+<li><code>Objective</code>: resultat utilisateur visible a construire;</li>
+<li><code>Scope</code>: ce qui est inclus et exclu;</li>
+<li><code>Acceptance Criteria</code>: criteres mesurables qui diront si la feature est terminee;</li>
+<li><code>Notes</code>: contraintes, liens Figma, decisions connues, donnees de test, risques.</li>
+</ul>
+<p>Bonne pratique:</p>
+<ul>
+<li>utiliser des criteres d'acceptation verifiables;</li>
+<li>nommer les surfaces concernees: backend, frontend, Android;</li>
+<li>indiquer les chemins ou domaines metier attendus quand ils sont connus;</li>
+<li>mettre explicitement les choix hors scope pour eviter que l'agent elargisse la feature.</li>
+</ul>
+<h2 id="3-planifier-la-feature">3. Planifier la feature<a class="headerlink" href="#3-planifier-la-feature" title="Permanent link">&para;</a></h2>
+<p>Commande:</p>
+<div class="highlight"><pre><span></span><code>appforge<span class="w"> </span>feature<span class="w"> </span>plan<span class="w"> </span>feature-name
+</code></pre></div>
+<p>Options utiles:</p>
+<div class="highlight"><pre><span></span><code>appforge<span class="w"> </span>feature<span class="w"> </span>plan<span class="w"> </span>feature-name<span class="w"> </span>--runner<span class="w"> </span>claude
+appforge<span class="w"> </span>feature<span class="w"> </span>plan<span class="w"> </span>feature-name<span class="w"> </span>--mock
+appforge<span class="w"> </span>feature<span class="w"> </span>plan<span class="w"> </span>feature-name<span class="w"> </span>--no-interactive
+appforge<span class="w"> </span>feature<span class="w"> </span>plan<span class="w"> </span>feature-name<span class="w"> </span>--debug-runtime
+</code></pre></div>
+<p>Ce que fait AppForge:</p>
+<ul>
+<li>resout le slug depuis l'argument, la branche <code>appforge/&lt;slug&gt;</code>, ou l'unique feature presente;</li>
+<li>recharge le brief;</li>
+<li>genere ou recharge le contrat AppForge du projet;</li>
+<li>collecte les instructions agent, les docs <code>agent-docs/</code>, les sources design detectees et un apercu des fichiers du repo;</li>
+<li>ajoute les reponses utilisateur deja stockees dans <code>answers.json</code> si des questions avaient ete posees;</li>
+<li>appelle le runner agent pour produire un plan structure;</li>
+<li>exige un <code>plan_markdown</code>, une liste de <code>tasks</code>, des commandes de validation, des questions ouvertes et des warnings;</li>
+<li>refuse le plan si le markdown ne contient pas de section <code>Write Boundary Matrix</code>;</li>
+<li>normalise les taches en ids stables <code>task-001</code>, <code>task-002</code>, etc.;</li>
+<li>valide les chemins autorises, read-only et interdits contre le contrat AppForge;</li>
+<li>ecrit <code>.appforge/features/feature-name/plan.md</code>;</li>
+<li>ecrit <code>.appforge/features/feature-name/tasks.json</code>;</li>
+<li>met a jour <code>feature.json</code>.</li>
+</ul>
+<p>Fichiers importants apres planification:</p>
+<div class="highlight"><pre><span></span><code>.appforge/features/feature-name/
+|-- brief.md
+|-- feature.json
+|-- plan.md
+|-- tasks.json
+|-- answers.json          # cree ou complete si des questions humaines sont necessaires
+</code></pre></div>
+<p>Etat attendu:</p>
+<ul>
+<li><code>feature.json</code> passe a <code>planned</code> si aucune question n'est ouverte;</li>
+<li><code>feature.json</code> passe a <code>needs_user_input</code> si l'agent demande des decisions;</li>
+<li><code>tasks.json</code> contient les taches, leurs dependances, leurs chemins autorises et leurs validations;</li>
+<li>chaque tache garde son historique d'essais dans <code>attempts</code>.</li>
+</ul>
+<p>Si AppForge pose des questions:</p>
+<div class="highlight"><pre><span></span><code>appforge<span class="w"> </span>feature<span class="w"> </span>status<span class="w"> </span>feature-name
+<span class="nv">$EDITOR</span><span class="w"> </span>.appforge/features/feature-name/answers.json
+appforge<span class="w"> </span>feature<span class="w"> </span>plan<span class="w"> </span>feature-name
+</code></pre></div>
+<p>En mode interactif, la CLI peut demander les reponses directement puis relancer la planification une fois.</p>
+<h2 id="4-executer-les-taches">4. Executer les taches<a class="headerlink" href="#4-executer-les-taches" title="Permanent link">&para;</a></h2>
+<p>Commande autonome recommandee:</p>
+<div class="highlight"><pre><span></span><code>appforge<span class="w"> </span>feature<span class="w"> </span>run<span class="w"> </span>feature-name<span class="w"> </span>--live<span class="w"> </span>--yolo
+</code></pre></div>
+<p>Sans <code>--yolo</code>:</p>
+<div class="highlight"><pre><span></span><code>appforge<span class="w"> </span>feature<span class="w"> </span>run<span class="w"> </span>feature-name<span class="w"> </span>--live
+</code></pre></div>
+<p>Ce que fait AppForge:</p>
+<ul>
+<li>charge <code>feature.json</code> et <code>tasks.json</code>;</li>
+<li>bloque si une tache precedente est <code>blocked</code>, <code>failed</code>, <code>needs_user_input</code> ou <code>needs_retry</code>;</li>
+<li>selectionne les taches <code>pending</code> dont les dependances sont satisfaites;</li>
+<li>construit un paquet d'execution avec brief, plan, contrat, matrice des droits d'ecriture, reponses utilisateur et contexte Git;</li>
+<li>lance le runner agent sur les taches eligibles;</li>
+<li>attend un resultat structure avec status, resume, fichiers modifies, validations, questions, bloqueurs et warnings;</li>
+<li>verifie que les fichiers modifies respectent <code>allowed_paths</code>, <code>read_only_paths</code> et <code>forbidden_paths</code>;</li>
+<li>lance les boundary checks;</li>
+<li>lance les commandes de validation declarees par les taches;</li>
+<li>lance aussi <code>appforge check quality --profile default</code> comme evidence qualite quand les gates precedentes passent;</li>
+<li>ecrit une evidence JSON sous <code>.appforge/features/feature-name/evidence/</code>;</li>
+<li>met a jour <code>tasks.json</code> et <code>feature.json</code>.</li>
+</ul>
+<p>Avec <code>--live</code>, les evenements du workflow sont affiches pendant l'execution. Avec <code>--yolo</code>, AppForge peut accepter certaines recommandations basse criticite ou tenter des recoveries automatiques si la politique du projet l'autorise. Les decisions sensibles restent humaines.</p>
+<p>Fichiers produits pendant le run:</p>
+<div class="highlight"><pre><span></span><code>.appforge/features/feature-name/
+|-- events.jsonl
+|-- evidence/
+|   |-- feature-run-attempt-001.json
+|-- interventions/
+|-- recovery/
+|-- sessions/
+</code></pre></div>
+<p>Etats possibles:</p>
+<ul>
+<li><code>in_progress</code>: certaines taches sont terminees, d'autres restent a faire;</li>
+<li><code>completed</code>: toutes les taches sont <code>done</code>;</li>
+<li><code>needs_user_input</code>: une decision humaine est necessaire;</li>
+<li><code>blocked</code> ou <code>failed</code>: un bloqueur, une violation de policy, une validation ou un runner a echoue.</li>
+</ul>
+<p>Pour reprendre apres un arret:</p>
+<div class="highlight"><pre><span></span><code>appforge<span class="w"> </span>feature<span class="w"> </span>status<span class="w"> </span>feature-name
+appforge<span class="w"> </span>feature<span class="w"> </span>interventions<span class="w"> </span>feature-name
+appforge<span class="w"> </span>feature<span class="w"> </span>resume<span class="w"> </span>feature-name<span class="w"> </span>--live
+</code></pre></div>
+<p>Pour reessayer une tache specifique:</p>
+<div class="highlight"><pre><span></span><code>appforge<span class="w"> </span>task<span class="w"> </span>retry<span class="w"> </span>feature-name<span class="w"> </span>task-001
+</code></pre></div>
+<h2 id="5-controler-la-qualite">5. Controler la qualite<a class="headerlink" href="#5-controler-la-qualite" title="Permanent link">&para;</a></h2>
+<p>Commande:</p>
+<div class="highlight"><pre><span></span><code>appforge<span class="w"> </span>check<span class="w"> </span>quality<span class="w"> </span>--profile<span class="w"> </span>default
+</code></pre></div>
+<p>Ce que fait AppForge:</p>
+<ul>
+<li>detecte les surfaces activees du projet: backend, frontend, Android;</li>
+<li>charge <code>appforge.quality.toml</code> si present, sinon les checks par defaut;</li>
+<li>selectionne les checks du profil <code>default</code>;</li>
+<li>execute les commandes avec leur dossier de travail et timeout;</li>
+<li>parse les sorties des outils supportes;</li>
+<li>normalise les diagnostics;</li>
+<li>groupe les diagnostics en repair blocks;</li>
+<li>ecrit un rapport JSON dans <code>.appforge/quality/reports/</code>;</li>
+<li>retourne un code non-zero si un check bloquant echoue.</li>
+</ul>
+<p>Exemples de checks par defaut:</p>
+<ul>
+<li>backend Python: <code>ruff check</code>, <code>ruff format --check</code>, <code>pyflakes</code>, <code>python backend/manage.py check</code>;</li>
+<li>frontend: <code>eslint</code>, <code>tsc --noEmit</code>, <code>prettier --check</code>;</li>
+<li>Android: <code>./gradlew lint</code>, <code>./gradlew spotlessCheck</code>.</li>
+</ul>
+<p>Sortie attendue:</p>
+<div class="highlight"><pre><span></span><code>[OK] quality report: &lt;report-id&gt;
+Report: .appforge/quality/reports/&lt;report-id&gt;.json
+Checks: &lt;n&gt; passed, &lt;n&gt; failed, &lt;n&gt; environment issue(s).
+Diagnostics: &lt;n&gt; unresolved / &lt;n&gt; total.
+</code></pre></div>
+<p>Si le rapport est <code>[FAIL]</code>, ouvrir le JSON pour voir:</p>
+<ul>
+<li><code>checks</code>: resultat brut par outil;</li>
+<li><code>diagnostics</code>: erreurs normalisees avec fichier, ligne, code et message;</li>
+<li><code>repair_blocks</code>: groupes que <code>appforge repair quality</code> essaiera de corriger.</li>
+</ul>
+<h2 id="6-reparer-la-qualite">6. Reparer la qualite<a class="headerlink" href="#6-reparer-la-qualite" title="Permanent link">&para;</a></h2>
+<p>Commande:</p>
+<div class="highlight"><pre><span></span><code>appforge<span class="w"> </span>repair<span class="w"> </span>quality
+</code></pre></div>
+<p>Variantes:</p>
+<div class="highlight"><pre><span></span><code>appforge<span class="w"> </span>repair<span class="w"> </span>quality<span class="w"> </span>&lt;report-id&gt;
+appforge<span class="w"> </span>repair<span class="w"> </span>quality<span class="w"> </span>--report<span class="w"> </span>.appforge/quality/reports/&lt;report-id&gt;.json
+appforge<span class="w"> </span>repair<span class="w"> </span>quality<span class="w"> </span>--mechanical-only
+appforge<span class="w"> </span>repair<span class="w"> </span>quality<span class="w"> </span>--runner<span class="w"> </span>claude
+</code></pre></div>
+<p>Ce que fait AppForge:</p>
+<ul>
+<li>charge le dernier rapport qualite si aucun id ou path n'est donne;</li>
+<li>regroupe les diagnostics non resolus par repair block;</li>
+<li>ignore les problemes d'environnement ou de configuration qui ne sont pas des erreurs de code;</li>
+<li>tente d'abord les reparations mecaniques disponibles;</li>
+<li>par exemple <code>ruff --fix</code>, <code>ruff format</code>, <code>eslint --fix</code>, <code>prettier --write</code>, <code>spotlessApply</code>;</li>
+<li>relance les commandes de verification associees au block;</li>
+<li>marque les diagnostics <code>fixed</code>, <code>failed</code>, <code>skipped</code> ou <code>not_fixable</code>;</li>
+<li>si un runner agent est configure et que la reparation mecanique n'est pas suffisante, construit un prompt limite aux diagnostics de code eligibles;</li>
+<li>ecrit les traces de reparation dans le rapport qualite.</li>
+</ul>
+<p>Apres reparation, toujours relancer:</p>
+<div class="highlight"><pre><span></span><code>appforge<span class="w"> </span>check<span class="w"> </span>quality<span class="w"> </span>--profile<span class="w"> </span>default
+</code></pre></div>
+<p>La reparation peut modifier du code. Il faut donc verifier aussi le statut Git:</p>
+<div class="highlight"><pre><span></span><code>git<span class="w"> </span>status<span class="w"> </span>--short
+</code></pre></div>
+<h2 id="7-verifier-la-feature">7. Verifier la feature<a class="headerlink" href="#7-verifier-la-feature" title="Permanent link">&para;</a></h2>
+<p>Commande:</p>
+<div class="highlight"><pre><span></span><code>appforge<span class="w"> </span>check<span class="w"> </span>feature<span class="w"> </span>feature-name
+</code></pre></div>
+<p>Ce que fait AppForge:</p>
+<ul>
+<li>verifie la coherence du workflow;</li>
+<li>verifie que <code>plan.md</code> et <code>tasks.json</code> existent pour une feature planifiee;</li>
+<li>verifie l'unicite des ids de taches;</li>
+<li>verifie les champs obligatoires des taches;</li>
+<li>verifie les dependances;</li>
+<li>verifie les politiques de chemins;</li>
+<li>verifie les evidences pour les taches <code>done</code>;</li>
+<li>execute aussi les boundary checks du projet;</li>
+<li>signale les duplications UI ou imports directs interdits selon les politiques AppForge.</li>
+</ul>
+<p>Cette etape est importante avant <code>finalize</code>, car <code>feature finalize</code> exige que les checks feature passent.</p>
+<h2 id="8-finaliser-la-feature">8. Finaliser la feature<a class="headerlink" href="#8-finaliser-la-feature" title="Permanent link">&para;</a></h2>
+<p>Commande:</p>
+<div class="highlight"><pre><span></span><code>appforge<span class="w"> </span>feature<span class="w"> </span>finalize<span class="w"> </span>feature-name
+</code></pre></div>
+<p>Ce que fait AppForge:</p>
+<ul>
+<li>relit <code>tasks.json</code>;</li>
+<li>refuse la fermeture si une tache n'est pas <code>done</code>;</li>
+<li>lance les checks feature;</li>
+<li>refuse la fermeture si un check feature echoue;</li>
+<li>genere ou regenere une review finale;</li>
+<li>ecrit <code>.appforge/features/feature-name/reviews/final-review.md</code>;</li>
+<li>met <code>feature.json</code> a <code>status: completed</code>;</li>
+<li>ajoute <code>finalized_at</code>;</li>
+<li>enregistre <code>last_action.name: feature_finalize</code>.</li>
+</ul>
+<p>Fichiers de cloture:</p>
+<div class="highlight"><pre><span></span><code>.appforge/features/feature-name/
+|-- feature.json
+|-- reviews/
+|   |-- final-review.md
+</code></pre></div>
+<p>La review finale resume:</p>
+<ul>
+<li>le brief;</li>
+<li>le plan execute;</li>
+<li>les taches et leur statut;</li>
+<li>les fichiers modifies;</li>
+<li>les evidences de run;</li>
+<li>les validations;</li>
+<li>les risques et questions restantes.</li>
+</ul>
+<h2 id="exemple-complet-commentable">Exemple complet commentable<a class="headerlink" href="#exemple-complet-commentable" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><span class="c1"># 1. Creation de la feature et de sa branche appforge/feature-name.</span>
+appforge<span class="w"> </span>feature<span class="w"> </span>create<span class="w"> </span>feature-name
+
+<span class="c1"># 2. Description produit humaine.</span>
+<span class="nv">$EDITOR</span><span class="w"> </span>.appforge/features/feature-name/brief.md
+
+<span class="c1"># 3. Transformation du brief en plan et taches.</span>
+appforge<span class="w"> </span>feature<span class="w"> </span>plan<span class="w"> </span>feature-name
+
+<span class="c1"># 4. Execution autonome des taches eligibles.</span>
+appforge<span class="w"> </span>feature<span class="w"> </span>run<span class="w"> </span>feature-name<span class="w"> </span>--live<span class="w"> </span>--yolo
+
+<span class="c1"># 5. Inspection de l&#39;etat courant.</span>
+appforge<span class="w"> </span>feature<span class="w"> </span>status<span class="w"> </span>feature-name
+
+<span class="c1"># 6. Qualite globale du projet.</span>
+appforge<span class="w"> </span>check<span class="w"> </span>quality<span class="w"> </span>--profile<span class="w"> </span>default
+
+<span class="c1"># 7. Reparation si le rapport qualite echoue.</span>
+appforge<span class="w"> </span>repair<span class="w"> </span>quality
+appforge<span class="w"> </span>check<span class="w"> </span>quality<span class="w"> </span>--profile<span class="w"> </span>default
+
+<span class="c1"># 8. Controle des gates specifiques a la feature.</span>
+appforge<span class="w"> </span>check<span class="w"> </span>feature<span class="w"> </span>feature-name
+
+<span class="c1"># 9. Fermeture durable de la feature.</span>
+appforge<span class="w"> </span>feature<span class="w"> </span>finalize<span class="w"> </span>feature-name
+</code></pre></div>
+<h2 id="points-de-controle-rapides">Points de controle rapides<a class="headerlink" href="#points-de-controle-rapides" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Apres <code>create</code>: <code>brief.md</code> et <code>feature.json</code> existent.</li>
+<li>Apres edition du brief: l'objectif, le scope et les criteres d'acceptation sont clairs.</li>
+<li>Apres <code>plan</code>: <code>plan.md</code> contient <code>Write Boundary Matrix</code> et <code>tasks.json</code> contient des <code>task-001</code>, <code>task-002</code>, etc.</li>
+<li>Apres <code>run</code>: chaque tache terminee a une evidence sous <code>evidence/</code>.</li>
+<li>Apres <code>check quality</code>: le dernier rapport sous <code>.appforge/quality/reports/</code> est vert.</li>
+<li>Apres <code>repair quality</code>: relancer <code>check quality</code>, car <code>repair</code> modifie le code puis annote le rapport.</li>
+<li>Avant <code>finalize</code>: <code>appforge check feature feature-name</code> passe.</li>
+<li>Apres <code>finalize</code>: <code>feature.json</code> contient <code>status: completed</code> et <code>finalized_at</code>.</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Retour en haut de la page
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../../..", "features": ["navigation.sections", "navigation.indexes", "navigation.top", "search.suggest", "search.highlight", "content.code.copy"], "search": "../../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copi\u00e9 dans le presse-papier", "clipboard.copy": "Copier dans le presse-papier", "search.result.more.one": "1 de plus sur cette page", "search.result.more.other": "# de plus sur cette page", "search.result.none": "Aucun document trouv\u00e9", "search.result.one": "1 document trouv\u00e9", "search.result.other": "# documents trouv\u00e9s", "search.result.placeholder": "Taper pour d\u00e9marrer la recherche", "search.result.term.missing": "Non trouv\u00e9", "select.version": "S\u00e9lectionner la version"}, "version": null}</script>
+    
+    
+      <script src="../../../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

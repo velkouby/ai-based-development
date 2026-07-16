@@ -1,0 +1,903 @@
+
+<!doctype html>
+<html lang="fr" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Une correction locale, une fonctionnalité de bout en bout et une évolution du socle n'appellent pas le même niveau de contrôle. Voici comment choisir un dispositif proportionné au risque du changement.">
+      
+      
+        <meta name="author" content="Vincent El Kouby-Benichou, Baracoda">
+      
+      
+        <link rel="canonical" href="https://velkouby.github.io/ai-based-development/fr/articles/agent-coding-modes/">
+      
+      
+      
+      
+        
+          <link rel="alternate" href="/ai-based-development/" hreflang="en">
+        
+          <link rel="alternate" href="./" hreflang="fr">
+        
+      
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>Quatre modes, deux parcours : choisir le bon niveau de contrôle - AI-Native Software Engineering Notes</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.484c7ddc.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/article.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#quatre-modes-deux-parcours-choisir-le-bon-niveau-de-controle" class="md-skip">
+          Aller au contenu
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="En-tête">
+    <a href="../../" title="AI-Native Software Engineering Notes" class="md-header__button md-logo" aria-label="AI-Native Software Engineering Notes" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            AI-Native Software Engineering Notes
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Quatre modes, deux parcours : choisir le bon niveau de contrôle
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+      <div class="md-header__option">
+  <div class="md-select">
+    
+    <button class="md-header__button md-icon" aria-label="Sélectionner la langue">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m12.87 15.07-2.54-2.51.03-.03A17.5 17.5 0 0 0 14.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2zm-2.62 7 1.62-4.33L19.12 17z"/></svg>
+    </button>
+    <div class="md-select__inner">
+      <ul class="md-select__list">
+        
+          <li class="md-select__item">
+            <a href="/ai-based-development/" hreflang="en" class="md-select__link">
+              English
+            </a>
+          </li>
+        
+          <li class="md-select__item">
+            <a href="./" hreflang="fr" class="md-select__link">
+              Français
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</div>
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Rechercher" placeholder="Rechercher" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Recherche">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Effacer" aria-label="Effacer" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initialisation de la recherche
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/velkouby/ai-based-development" title="Aller au dépôt" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    velkouby/ai-based-development
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../" title="AI-Native Software Engineering Notes" class="md-nav__button md-logo" aria-label="AI-Native Software Engineering Notes" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    AI-Native Software Engineering Notes
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/velkouby/ai-based-development" title="Aller au dépôt" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    velkouby/ai-based-development
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Accueil
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Articles
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Articles
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ai-agent-based-coding-best-practices/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Du Vibe Coding au développement agentique vérifiable
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table des matières">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table des matières
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#mode-parcours-et-outil-ne-repondent-pas-a-la-meme-question" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Mode, parcours et outil ne répondent pas à la même question
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cinq-dimensions-pour-qualifier-le-changement" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cinq dimensions pour qualifier le changement
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#les-signaux-qui-fixent-un-minimum-de-controle" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Les signaux qui fixent un minimum de contrôle
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#la-fiche-de-decision" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        La fiche de décision
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#quatre-variations-dun-meme-annuaire-clients" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Quatre variations d'un même annuaire clients
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Quatre variations d&#39;un même annuaire clients">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#vibe-coding-controle-corriger-le-libelle-de-letat-vide" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Vibe coding contrôlé : corriger le libellé de l'état vide
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#codage-guide-ajouter-une-action-locale-avec-les-contrats-existants" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Codage guidé : ajouter une action locale avec les contrats existants
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fonctionnalite-structuree-ajouter-la-pagination-serveur" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fonctionnalité structurée : ajouter la pagination serveur
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#evolution-du-socle-modifier-une-primitive-partagee" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Évolution du socle : modifier une primitive partagée
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#deux-parcours-pas-quatre-chaines-dexecution" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Deux parcours, pas quatre chaînes d'exécution
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fiche-remplie-pour-la-pagination" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fiche remplie pour la pagination
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#le-mode-est-un-point-de-depart-pas-une-autorisation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Le mode est un point de départ, pas une autorisation
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#conclusion" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Conclusion
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 class="article-title" id="quatre-modes-deux-parcours-choisir-le-bon-niveau-de-controle">Quatre modes, deux parcours : choisir le bon niveau de contrôle<a class="headerlink" href="#quatre-modes-deux-parcours-choisir-le-bon-niveau-de-controle" title="Permanent link">&para;</a></h1>
+<p class="article-lead">Une correction locale, une fonctionnalité de bout en bout et une évolution du socle ne justifient ni le même contexte, ni les mêmes validations, ni la même autorité de décision. Le bon niveau de contrôle dépend du profil de risque du changement, pas du nombre de lignes ni de l'outil qui les produit.</p>
+<p class="article-meta">
+  <span>Par <span class="article-author">Vincent El Kouby-Benichou</span>, <a class="article-company-link" href="https://baracoda.com">Baracoda</a></span>
+  <a class="article-contact-link" href="https://www.linkedin.com/in/vincentelkoubybenichou/">LinkedIn</a>
+</p>
+
+<p>Un <a href="../agent-ready-repository/">repository agent-ready</a> indique où l'agent peut agir, quelles règles il doit respecter et dans quelles situations il doit s'arrêter. Il ne dit pas encore combien de structure mérite chaque demande.</p>
+<p>Corriger le libellé de l'état vide, ajouter une action locale, paginer l'annuaire clients de bout en bout et modifier une primitive partagée sont quatre changements de nature différente. Leur appliquer exactement le même parcours serait une erreur dans les deux sens : trop peu de contrôle rend le changement fragile ; trop de contrôle transforme une correction locale en cérémonie.</p>
+<p>Le nombre de lignes aide peu à trancher. Une modification de quelques caractères dans une règle d'autorisation peut affecter tous les utilisateurs. À l'inverse, une adaptation visuelle répartie sur plusieurs fichiers peut rester locale, visible et facile à annuler. La taille du diff Git ne dit ni qui doit décider, ni ce que le changement engage.</p>
+<p>Le texte fondateur, <a href="../ai-agent-based-coding-best-practices/">Du vibe coding au développement agentique vérifiable</a>, distinguait déjà quatre modes de développement avec agents. Ici, ils deviennent une grille de décision concrète.</p>
+<blockquote>
+<p>Le bon niveau de contrôle n'est ni le maximum systématique, ni le minimum choisi par défaut. C'est le dispositif le plus léger qui rende le risque et l'autorité de décision visibles.</p>
+</blockquote>
+<h2 id="mode-parcours-et-outil-ne-repondent-pas-a-la-meme-question">Mode, parcours et outil ne répondent pas à la même question<a class="headerlink" href="#mode-parcours-et-outil-ne-repondent-pas-a-la-meme-question" title="Permanent link">&para;</a></h2>
+<p>Avant de choisir, il faut séparer trois notions.</p>
+<ul>
+<li>Le <strong>mode</strong> qualifie le changement et le niveau de gouvernance qu'il exige.</li>
+<li>Le <strong>parcours</strong> organise le travail : entrée, étapes, artefacts, contrôles et relecture.</li>
+<li>L'<strong>outil</strong> exécute tout ou partie du parcours.</li>
+</ul>
+<p>Ces distinctions empêchent de transformer une méthode éditoriale en documentation de logiciel. Les quatre modes présentés ici ne sont ni des valeurs de configuration, ni les états d'une machine interne. Une équipe peut les appliquer avec des fichiers Markdown, des scripts, une plateforme maison ou une combinaison d'outils existants.</p>
+<blockquote>
+<p>Le mode qualifie le changement. Le parcours organise le travail. L'outil reste un détail d'implémentation.</p>
+</blockquote>
+<p>Les modes ne forment pas non plus une échelle de maturité. Une fonctionnalité structurée n'est pas « meilleure » qu'une correction locale contrôlée. Elle répond simplement à un autre profil. L'évolution du socle est encore différente : elle exprime aussi une question de responsabilité. Dès qu'une primitive, une règle ou un élément d'outillage partagé doit changer, cette catégorie prend le dessus, même si le diff attendu paraît minuscule.</p>
+<h2 id="cinq-dimensions-pour-qualifier-le-changement">Cinq dimensions pour qualifier le changement<a class="headerlink" href="#cinq-dimensions-pour-qualifier-le-changement" title="Permanent link">&para;</a></h2>
+<p>La décision peut commencer par cinq questions. Elles ne servent pas à calculer une note ; elles rendent le risque discutable.</p>
+<table>
+<thead>
+<tr>
+<th>Dimension</th>
+<th>Question à poser</th>
+<th>Profil léger</th>
+<th>Signal de contrôle supplémentaire</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Portée</td>
+<td>Le changement reste-t-il dans une zone produit connue ?</td>
+<td>Un comportement local, des chemins évidents</td>
+<td>Plusieurs couches, domaines ou zones partagées</td>
+</tr>
+<tr>
+<td>Ambiguïté</td>
+<td>Le résultat attendu et les choix structurants sont-ils déjà arrêtés ?</td>
+<td>Résultat observable, solution contrainte par les conventions existantes</td>
+<td>Décision produit, technique ou architecturale encore ouverte</td>
+</tr>
+<tr>
+<td>Réversibilité</td>
+<td>Une annulation dans Git suffit-elle réellement pour supprimer l'effet ?</td>
+<td>Pas de donnée durable ni d'utilisateur déjà dépendant du changement</td>
+<td>Migration, effet externe ou retour coordonné nécessaire</td>
+</tr>
+<tr>
+<td>Surfaces et contrats</td>
+<td>Combien d'interfaces doivent évoluer ensemble ?</td>
+<td>Un module, sans contrat partagé modifié</td>
+<td>Interface, API, données, infrastructure ou clients multiples</td>
+</tr>
+<tr>
+<td>Autorité</td>
+<td>Qui peut accepter les décisions induites par le changement ?</td>
+<td>Auteur et responsable du module</td>
+<td>Produit, plateforme, sécurité, architecture ou partenaire externe</td>
+</tr>
+</tbody>
+</table>
+<p>La portée et les surfaces affectées semblent proches, mais elles ne décrivent pas la même chose. La portée mesure l'étendue du travail dans le repository. Les surfaces et contrats mesurent le couplage : une petite modification peut rester dans un seul fichier tout en changeant un contrat consommé par plusieurs systèmes.</p>
+<p>La réversibilité doit, elle aussi, être évaluée sur l'effet réel, pas seulement sur Git. Annuler une révision Git est simple. Récupérer des données migrées, retirer une réponse d'API déjà consommée ou annuler un message envoyé à un système externe peut ne pas l'être.</p>
+<p>Enfin, l'autorité ne mesure pas la difficulté technique. Elle répond à une autre question : la personne qui demande ou implémente le changement a-t-elle le droit d'accepter les conséquences ? Si l'acceptation exige l'accord du responsable de la sécurité, du propriétaire d'une API ou de l'équipe plateforme, le parcours doit rendre cette décision visible.</p>
+<h2 id="les-signaux-qui-fixent-un-minimum-de-controle">Les signaux qui fixent un minimum de contrôle<a class="headerlink" href="#les-signaux-qui-fixent-un-minimum-de-controle" title="Permanent link">&para;</a></h2>
+<p>Avant même de comparer les cinq dimensions, certains signaux empêchent de retenir un mode léger sans décision explicite :</p>
+<ul>
+<li>sécurité, authentification ou autorisations ;</li>
+<li>données sensibles ou obligations réglementaires ;</li>
+<li>migration, suppression de données ou opération destructive ;</li>
+<li>nouvelle dépendance ou nouveau service d'infrastructure ;</li>
+<li>contrat public, externe ou difficile à faire évoluer ;</li>
+<li>socle partagé, outillage ou règle commune ;</li>
+<li>effet externe difficilement réversible.</li>
+</ul>
+<p>Ces signaux ne prescrivent pas tous le même mode. Un changement d'autorisation dans une fonctionnalité produit n'est pas nécessairement une évolution du socle. Il exige une décision explicite d'un responsable habilité et peut justifier un parcours orchestré.</p>
+<p>Il ne faut donc pas additionner des points et faire une moyenne. Quatre indicateurs de faible risque n'annulent pas une migration de données ou une décision de sécurité. La dimension la plus contraignante fixe le niveau minimal de contrôle.</p>
+<p>La règle de lecture tient en quatre étapes :</p>
+<ol>
+<li>repérer les signaux qui imposent un contrôle renforcé ;</li>
+<li>qualifier les cinq dimensions ;</li>
+<li>choisir le mode compatible avec le risque dominant ;</li>
+<li>consigner le décideur et les faits qui obligeraient à réévaluer ce choix.</li>
+</ol>
+<h2 id="la-fiche-de-decision">La fiche de décision<a class="headerlink" href="#la-fiche-de-decision" title="Permanent link">&para;</a></h2>
+<p>La décision doit pouvoir être relue sans rouvrir la conversation. Une fiche courte suffit si elle consigne le raisonnement et l'autorité.</p>
+<p>L'exemple suivant est un support de décision destiné aux humains et indépendant de tout outil. Il ne s'agit ni d'une configuration, ni de l'ordre de mission envoyé à l'agent.</p>
+<div class="highlight"><pre><span></span><code><span class="gh"># Fiche de décision</span>
+
+Demande :
+Résultat observable :
+Périmètre initial :
+
+| Dimension | Observation | Niveau |
+| --- | --- | --- |
+| Portée | | faible / modérée / élevée |
+| Ambiguïté | | faible / modérée / élevée |
+| Réversibilité | | simple / coordonnée / difficile |
+| Surfaces et contrats | | une / plusieurs / partagés ou externes |
+| Autorité nécessaire | | module / domaine / produit, plateforme ou sécurité |
+
+Signaux d&#39;escalade :
+<span class="k">- [ ]</span> sécurité, autorisations ou données sensibles
+<span class="k">- [ ]</span> migration ou opération destructive
+<span class="k">- [ ]</span> nouvelle dépendance ou infrastructure
+<span class="k">- [ ]</span> contrat public ou externe
+<span class="k">- [ ]</span> socle, outillage ou règle commune
+<span class="k">- [ ]</span> effet externe difficilement réversible
+
+Décision :
+<span class="k">-</span><span class="w"> </span>Mode de départ :
+<span class="k">-</span><span class="w"> </span>Parcours :
+<span class="k">-</span><span class="w"> </span>Justification :
+<span class="k">-</span><span class="w"> </span>Entrée minimale :
+<span class="k">-</span><span class="w"> </span>Sortie minimale :
+<span class="k">-</span><span class="w"> </span>Décideur(s) ou rôle d&#39;approbation :
+<span class="k">-</span><span class="w"> </span>Réévaluer si :
+</code></pre></div>
+<p>Cette fiche intervient avant le contrat de tâche présenté dans l'article précédent. La fiche choisit le niveau de gouvernance ; le contrat borne ensuite l'exécution. Dans la fiche, le périmètre reste exprimé en surfaces et en responsabilités ; les chemins précis appartiennent au contrat de tâche. Décider comment travailler n'est pas encore dire précisément où l'agent peut écrire.</p>
+<h2 id="quatre-variations-dun-meme-annuaire-clients">Quatre variations d'un même annuaire clients<a class="headerlink" href="#quatre-variations-dun-meme-annuaire-clients" title="Permanent link">&para;</a></h2>
+<p>Les quatre modes deviennent plus clairs lorsqu'ils s'appliquent au même produit. Pour la suite pratique, je retiens ces libellés publics, qui francisent et stabilisent la taxonomie esquissée dans le texte fondateur.</p>
+<table>
+<thead>
+<tr>
+<th>Mode</th>
+<th>Profil dominant</th>
+<th>Entrée minimale</th>
+<th>Sortie minimale</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Vibe coding contrôlé</strong></td>
+<td>Local, visible et réversible</td>
+<td>Demande bornée</td>
+<td>Diff relu et validation ciblée</td>
+</tr>
+<tr>
+<td><strong>Codage guidé</strong></td>
+<td>Non trivial, mais contenu dans une zone produit connue</td>
+<td>Brief court et plan</td>
+<td>Suivi, validations consignées et relecture</td>
+</tr>
+<tr>
+<td><strong>Fonctionnalité structurée</strong></td>
+<td>Transversale ou encore ambiguë</td>
+<td>Brief clarifié, puis spécification si nécessaire</td>
+<td>Tâches bornées, contrôles et résultats consignés</td>
+</tr>
+<tr>
+<td><strong>Évolution du socle</strong></td>
+<td>Modification d'une primitive, d'une règle ou d'un outillage commun</td>
+<td>Proposition d'impact et responsable identifié</td>
+<td>Changement séparé, compatibilité, validations élargies et revue dédiée</td>
+</tr>
+</tbody>
+</table>
+<h3 id="vibe-coding-controle-corriger-le-libelle-de-letat-vide">Vibe coding contrôlé : corriger le libellé de l'état vide<a class="headerlink" href="#vibe-coding-controle-corriger-le-libelle-de-letat-vide" title="Permanent link">&para;</a></h3>
+<p>Le besoin est visible, local et facilement réversible. Il ne modifie aucun contrat, aucune dépendance ni aucun comportement partagé. Une demande précise, un diff relu et une validation ciblée peuvent suffire.</p>
+<p>Le mot « contrôlé » est essentiel. Ce mode ne signifie pas que la conversation remplace les règles du repository. L'agent reste borné à la zone concernée, réutilise les conventions existantes et montre le résultat réel. Si le changement révèle un problème plus large dans le composant partagé, la tâche sort de ce mode.</p>
+<h3 id="codage-guide-ajouter-une-action-locale-avec-les-contrats-existants">Codage guidé : ajouter une action locale avec les contrats existants<a class="headerlink" href="#codage-guide-ajouter-une-action-locale-avec-les-contrats-existants" title="Permanent link">&para;</a></h3>
+<p>Ajouter une action dans l'annuaire peut toucher plusieurs fichiers, nécessiter de retrouver un composant existant et demander un test de comportement. Le résultat reste toutefois contenu dans une zone produit connue et ne modifie pas le contrat de l'API.</p>
+<p>Un brief court et un plan constituent alors une entrée proportionnée : comportement attendu, fichiers probablement concernés, conventions à réutiliser et validations ciblées. Le suivi conservé hors de la conversation facilite la reprise et la relecture sans imposer toute la mécanique d'une fonctionnalité structurée.</p>
+<p>Si l'action nécessite finalement une nouvelle route d'API, une dépendance ou une autorisation supplémentaire, le profil change. Le plan initial ne donne pas à l'agent l'autorité d'absorber silencieusement cette découverte.</p>
+<h3 id="fonctionnalite-structuree-ajouter-la-pagination-serveur">Fonctionnalité structurée : ajouter la pagination serveur<a class="headerlink" href="#fonctionnalite-structuree-ajouter-la-pagination-serveur" title="Permanent link">&para;</a></h3>
+<p>La pagination relie l'interface, l'API, le contrat de réponse, les états de chargement et les tests. Plusieurs décisions doivent être prises de manière cohérente : forme du contrat, page initiale, taille des pages, comportement aux limites et compatibilité avec les consommateurs existants.</p>
+<p>Le travail mérite donc un brief clarifié, un découpage en tâches, des frontières explicites, des résultats de validation consignés et une synthèse de revue. Une spécification complète n'est pas automatique : elle devient utile si les décisions ouvertes ne peuvent pas être résolues proprement dans le brief et le plan.</p>
+<h3 id="evolution-du-socle-modifier-une-primitive-partagee">Évolution du socle : modifier une primitive partagée<a class="headerlink" href="#evolution-du-socle-modifier-une-primitive-partagee" title="Permanent link">&para;</a></h3>
+<p>Supposons enfin que la pagination exige de changer le routeur commun ou une primitive d'interface utilisée ailleurs. Le diff peut être court, mais la décision et la portée de l'impact ne le sont pas.</p>
+<p>Ce changement doit devenir une unité de travail séparée. Son entrée n'est plus seulement le besoin de l'annuaire clients, mais une proposition d'impact : consommateurs affectés, compatibilité, stratégie de transition, validations élargies et responsable de la décision. Une évolution du socle ne donne pas carte blanche sur les fichiers partagés ; elle rend au contraire leur modification explicite et plus exigeante.</p>
+<h2 id="deux-parcours-pas-quatre-chaines-dexecution">Deux parcours, pas quatre chaînes d'exécution<a class="headerlink" href="#deux-parcours-pas-quatre-chaines-dexecution" title="Permanent link">&para;</a></h2>
+<p>Les quatre modes n'exigent pas quatre systèmes différents. Deux parcours, avec des variantes proportionnées, suffisent à mettre ces décisions en œuvre.</p>
+<div class="highlight"><pre><span></span><code>demande qualifiée
+├── parcours léger
+│   ├── variante directe  → vibe coding contrôlé
+│   └── variante suivie   → codage guidé
+└── parcours orchestré
+    ├── travail produit   → fonctionnalité structurée
+    └── travail partagé   → évolution du socle, traitée séparément
+</code></pre></div>
+<p>Le <strong>parcours léger</strong> minimise le coût de coordination. Dans sa variante directe, la demande bornée mène à la modification, à une validation ciblée puis à la relecture du diff. Dans sa variante suivie, un brief court, un plan et un journal persistant sont ajoutés avant la relecture.</p>
+<p>Cette mémoire reste proportionnée à la tâche. Si l'agent tient lui-même le journal, celui-ci aide à comprendre et reprendre le travail ; il ne devient pas pour autant une attestation indépendante.</p>
+<p>Le <strong>parcours orchestré</strong> sépare davantage les rôles. Le brief est clarifié, le travail est découpé, le périmètre est borné, les résultats de contrôle et de validation sont conservés, puis une revue locale prépare le passage vers Git et la CI. L'évolution du socle suit la même séquence générale, mais dans une unité distincte et avec une analyse de compatibilité plus large.</p>
+<p>Le parcours choisi décrit le dispositif minimal attendu. Il ne préjuge ni du modèle utilisé, ni de l'interface à partir de laquelle l'agent est appelé.</p>
+<h2 id="fiche-remplie-pour-la-pagination">Fiche remplie pour la pagination<a class="headerlink" href="#fiche-remplie-pour-la-pagination" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Dimension</th>
+<th>Observation</th>
+<th>Qualification</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Portée</td>
+<td>Une fonctionnalité cohérente et bornée</td>
+<td>Modérée</td>
+</tr>
+<tr>
+<td>Ambiguïté</td>
+<td>Le résultat est clair ; la forme exacte du contrat reste à confirmer</td>
+<td>Modérée</td>
+</tr>
+<tr>
+<td>Réversibilité</td>
+<td>Pas de migration prévue, mais l'annulation doit être coordonnée entre l'interface et l'API</td>
+<td>Coordonnée</td>
+</tr>
+<tr>
+<td>Surfaces et contrats</td>
+<td>Interface, API interne, tests et documentation</td>
+<td>Plusieurs surfaces et un contrat d'API interne</td>
+</tr>
+<tr>
+<td>Autorité nécessaire</td>
+<td>Responsable de la fonctionnalité et propriétaire de l'API</td>
+<td>Domaine</td>
+</tr>
+</tbody>
+</table>
+<p>Les facteurs dominants sont le travail sur plusieurs surfaces et l'évolution coordonnée d'un contrat interne. Aucun signal imposant à lui seul un contrôle renforcé n'est identifié : le périmètre initial ne prévoit ni migration, ni nouvelle dépendance, ni contrat public, ni donnée sensible, ni modification du socle.</p>
+<p>La décision devient donc :</p>
+<ul>
+<li><strong>mode de départ :</strong> fonctionnalité structurée ;</li>
+<li><strong>parcours :</strong> orchestré ;</li>
+<li><strong>entrée minimale :</strong> brief clarifié, critères d'acceptation et périmètre initial ;</li>
+<li><strong>sortie minimale :</strong> plan et tâches bornées, résultats de contrôle et de validation consignés, diff relisible et revue humaine ;</li>
+<li><strong>décideurs :</strong> responsable de la fonctionnalité avec le propriétaire de l'API ;</li>
+<li><strong>réévaluer si :</strong> la solution exige une primitive de routage partagée, un contrat incompatible, une migration ou une nouvelle dépendance.</li>
+</ul>
+<p>La fiche ne prouve pas que cette décision est parfaite. Elle rend le choix explicite, contestable et modifiable avant que l'agent ne transforme les hypothèses en code.</p>
+<h2 id="le-mode-est-un-point-de-depart-pas-une-autorisation">Le mode est un point de départ, pas une autorisation<a class="headerlink" href="#le-mode-est-un-point-de-depart-pas-une-autorisation" title="Permanent link">&para;</a></h2>
+<p>Une classification initiale est une hypothèse de travail. L'exploration peut révéler un fait qui change le profil : dépendance manquante, contrat externe, migration nécessaire ou composant partagé insuffisant.</p>
+<p>Dans ce cas, l'exécution doit être suspendue. L'agent peut recommander une reclassification, mais il ne doit pas élargir seul son périmètre. La personne qui pilote la tâche, éventuellement aidée par le workflow, doit ensuite :</p>
+<ol>
+<li>consigner le nouveau fait et son impact ;</li>
+<li>confirmer ou modifier le mode et le parcours ;</li>
+<li>identifier le décideur compétent ;</li>
+<li>redéfinir le périmètre et les validations avant la reprise.</li>
+</ol>
+<p>Pour l'annuaire clients, découvrir que la synchronisation de la page dans l'URL exige une modification du routeur partagé ne transforme pas rétroactivement la sortie de périmètre en changement acceptable. La tâche produit s'arrête ; l'équipe choisit une solution locale ou ouvre une évolution du socle séparée.</p>
+<p>Cette capacité à reclasser compte davantage qu'une taxonomie parfaite dès le départ. Une grille utile n'essaie pas de prédire toute l'implémentation. Elle rend visibles les événements qui exigent une nouvelle décision.</p>
+<h2 id="conclusion">Conclusion<a class="headerlink" href="#conclusion" title="Permanent link">&para;</a></h2>
+<p>Choisir un mode revient à choisir le dispositif le plus léger qui reste compatible avec le risque dominant. Le nombre de lignes, le modèle ou l'outil ne suffisent pas. La portée, l'ambiguïté, la réversibilité, les contrats affectés et l'autorité nécessaire donnent une base plus solide.</p>
+<p>Le contrat du repository fixe les règles du terrain. Le mode fixe le niveau de gouvernance. Le parcours fixe les étapes et les faits qui devront être conservés.</p>
+<p>Pour la pagination de l'annuaire clients, la grille conduit à une fonctionnalité structurée et à un parcours orchestré. Le prochain article suivra ce parcours de bout en bout : du brief clarifié à la revue locale, en montrant ce que chaque étape produit et ce qu'elle permet réellement d'affirmer.</p>
+<div class="article-footer-contact">
+  <p>Pour discuter de cet article ou me laisser un message public :</p>
+  <a class="article-contact-link" href="https://github.com/velkouby/ai-based-development/issues/new?template=contact.yml">Message sur GitHub</a>
+</div>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Retour en haut de la page
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.sections", "navigation.indexes", "navigation.top", "search.suggest", "search.highlight", "content.code.copy"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copi\u00e9 dans le presse-papier", "clipboard.copy": "Copier dans le presse-papier", "search.result.more.one": "1 de plus sur cette page", "search.result.more.other": "# de plus sur cette page", "search.result.none": "Aucun document trouv\u00e9", "search.result.one": "1 document trouv\u00e9", "search.result.other": "# documents trouv\u00e9s", "search.result.placeholder": "Taper pour d\u00e9marrer la recherche", "search.result.term.missing": "Non trouv\u00e9", "select.version": "S\u00e9lectionner la version"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>
