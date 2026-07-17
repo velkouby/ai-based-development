@@ -1,0 +1,903 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="A local fix, an end-to-end feature, and a foundation change do not call for the same level of control. Here is how to choose a process that is proportionate to the risk of the change.">
+      
+      
+        <meta name="author" content="Vincent El Kouby-Benichou, Baracoda">
+      
+      
+        <link rel="canonical" href="https://velkouby.github.io/ai-based-development/articles/agent-coding-modes/">
+      
+      
+      
+      
+        
+          <link rel="alternate" href="./" hreflang="en">
+        
+          <link rel="alternate" href="../../fr/articles/agent-coding-modes/" hreflang="fr">
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>Four Modes, Two Paths: Choosing the Right Level of Control - AI-Native Software Engineering Notes</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/article.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#four-modes-two-paths-choosing-the-right-level-of-control" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="AI-Native Software Engineering Notes" class="md-header__button md-logo" aria-label="AI-Native Software Engineering Notes" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            AI-Native Software Engineering Notes
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Four Modes, Two Paths: Choosing the Right Level of Control
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+      <div class="md-header__option">
+  <div class="md-select">
+    
+    <button class="md-header__button md-icon" aria-label="Select language">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m12.87 15.07-2.54-2.51.03-.03A17.5 17.5 0 0 0 14.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2zm-2.62 7 1.62-4.33L19.12 17z"/></svg>
+    </button>
+    <div class="md-select__inner">
+      <ul class="md-select__list">
+        
+          <li class="md-select__item">
+            <a href="./" hreflang="en" class="md-select__link">
+              English
+            </a>
+          </li>
+        
+          <li class="md-select__item">
+            <a href="../../fr/articles/agent-coding-modes/" hreflang="fr" class="md-select__link">
+              Français
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</div>
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/velkouby/ai-based-development" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    velkouby/ai-based-development
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="AI-Native Software Engineering Notes" class="md-nav__button md-logo" aria-label="AI-Native Software Engineering Notes" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    AI-Native Software Engineering Notes
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/velkouby/ai-based-development" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    velkouby/ai-based-development
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Articles
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Articles
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ai-agent-based-coding-best-practices/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    From Vibe Coding to Verifiable Agentic Development
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#mode-path-and-tool-answer-different-questions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Mode, path, and tool answer different questions
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#five-dimensions-for-characterizing-a-change" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Five dimensions for characterizing a change
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#triggers-that-set-a-minimum-level-of-control" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Triggers that set a minimum level of control
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-decision-record" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The decision record
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#four-variations-on-the-same-customer-directory" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Four variations on the same customer directory
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Four variations on the same customer directory">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#controlled-vibe-coding-change-the-empty-state-label" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Controlled Vibe Coding: change the empty-state label
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#guided-coding-add-a-local-action-using-existing-contracts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Guided Coding: add a local action using existing contracts
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#structured-feature-add-server-side-pagination" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Structured Feature: add server-side pagination
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#foundation-evolution-modify-a-shared-primitive" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Foundation Evolution: modify a shared primitive
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#two-paths-not-four-execution-pipelines" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Two paths, not four execution pipelines
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#a-completed-decision-record-for-pagination" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A completed decision record for pagination
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-mode-is-a-starting-point-not-authorization" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The mode is a starting point, not authorization
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#conclusion" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Conclusion
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 class="article-title" id="four-modes-two-paths-choosing-the-right-level-of-control">Four Modes, Two Paths: Choosing the Right Level of Control<a class="headerlink" href="#four-modes-two-paths-choosing-the-right-level-of-control" title="Permanent link">&para;</a></h1>
+<p class="article-lead">A local fix, an end-to-end feature, and a foundation change do not justify the same context, validations, or decision authority. The right level of control depends on the risk profile of the change, not on the number of lines or the tool that produces them.</p>
+<p class="article-meta">
+  <span>By <span class="article-author">Vincent El Kouby-Benichou</span>, <a class="article-company-link" href="https://baracoda.com">Baracoda</a></span>
+  <a class="article-contact-link" href="https://www.linkedin.com/in/vincentelkoubybenichou/">LinkedIn</a>
+</p>
+
+<p>An <a href="../agent-ready-repository/">agent-ready repository</a> tells the agent where it may act, which rules it must follow, and when it must stop. It does not yet tell us how much structure each request deserves.</p>
+<p>Changing the empty-state label, adding a local action, implementing end-to-end pagination for the customer directory, and modifying a shared primitive are four fundamentally different kinds of change. Sending all four through exactly the same path would be a mistake in both directions: too little control makes a change fragile; too much turns a local fix into a ceremony.</p>
+<p>Line count is a poor guide. A change of a few characters in an authorization rule can affect every user. Conversely, a visual adjustment spread across several files may remain local, visible, and easy to reverse. The size of the Git diff tells us neither who should decide nor what the change commits us to.</p>
+<p>The foundational article, <a href="../ai-agent-based-coding-best-practices/">From Vibe Coding to Verifiable Agentic Development</a>, introduced four modes of agent-assisted development. Here, they become a practical decision model.</p>
+<blockquote>
+<p>The right level of control is neither the systematic maximum nor the default minimum. It is the lightest process that makes both risk and decision authority visible.</p>
+</blockquote>
+<h2 id="mode-path-and-tool-answer-different-questions">Mode, path, and tool answer different questions<a class="headerlink" href="#mode-path-and-tool-answer-different-questions" title="Permanent link">&para;</a></h2>
+<p>Before choosing, we need to separate three concepts.</p>
+<ul>
+<li>The <strong>mode</strong> characterizes the change and the level of governance it requires.</li>
+<li>The <strong>path</strong> organizes the work: inputs, steps, artifacts, controls, and review.</li>
+<li>The <strong>tool</strong> executes some or all of that path.</li>
+</ul>
+<p>These distinctions keep a decision model from turning into software documentation. The four modes presented here are neither configuration values nor runtime states. A team can apply them with Markdown files, scripts, an internal platform, or a combination of existing tools.</p>
+<blockquote>
+<p>The mode characterizes the change. The path organizes the work. The tool remains an implementation detail.</p>
+</blockquote>
+<p>The modes are not a maturity ladder, either. A Structured Feature is not “better” than a controlled local fix. It simply addresses a different profile. Foundation Evolution is different again because it also raises a question of ownership. As soon as a shared primitive, rule, or piece of tooling must change, that category takes precedence, even if the expected diff is tiny.</p>
+<h2 id="five-dimensions-for-characterizing-a-change">Five dimensions for characterizing a change<a class="headerlink" href="#five-dimensions-for-characterizing-a-change" title="Permanent link">&para;</a></h2>
+<p>The decision can begin with five questions. They are not a scoring system; they make the risk open to discussion.</p>
+<table>
+<thead>
+<tr>
+<th>Dimension</th>
+<th>Question to ask</th>
+<th>Lightweight profile</th>
+<th>Signal for additional control</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Scope</td>
+<td>Does the change remain within a known product area?</td>
+<td>Local behavior, obvious paths</td>
+<td>Multiple layers, domains, or shared areas</td>
+</tr>
+<tr>
+<td>Ambiguity</td>
+<td>Are the expected outcome and the defining choices already settled?</td>
+<td>Observable outcome, solution constrained by existing conventions</td>
+<td>Product, technical, or architectural decision still open</td>
+</tr>
+<tr>
+<td>Reversibility</td>
+<td>Would reverting the change in Git actually remove its effects?</td>
+<td>No persistent data or users already depending on the change</td>
+<td>Migration, external effect, or coordinated rollback required</td>
+</tr>
+<tr>
+<td>Surfaces and contracts</td>
+<td>How many interfaces must evolve together?</td>
+<td>One module, with no shared contract change</td>
+<td>UI, API, data, infrastructure, or multiple clients</td>
+</tr>
+<tr>
+<td>Authority</td>
+<td>Who can accept the decisions introduced by the change?</td>
+<td>Implementer and module owner</td>
+<td>Product, platform, security, architecture, or an external partner</td>
+</tr>
+</tbody>
+</table>
+<p>Scope and affected surfaces may look similar, but they describe different things. Scope measures how far the work extends across the repository. Surfaces and contracts measure coupling: a small change may stay within a single file while altering a contract consumed by several systems.</p>
+<p>Reversibility must also be assessed against the real-world effect, not Git alone. Reverting a Git revision is straightforward. Restoring data after a migration, withdrawing an API response that consumers already rely on, or undoing a message sent to an external system may not be.</p>
+<p>Authority does not measure technical difficulty. It answers a different question: does the person requesting or implementing the change have the authority to accept its consequences? If approval requires the security lead, an API owner, or the platform team, the path must make that decision visible.</p>
+<h2 id="triggers-that-set-a-minimum-level-of-control">Triggers that set a minimum level of control<a class="headerlink" href="#triggers-that-set-a-minimum-level-of-control" title="Permanent link">&para;</a></h2>
+<p>Even before comparing the five dimensions, certain triggers rule out a lightweight mode unless there is an explicit decision:</p>
+<ul>
+<li>security, authentication, or authorization;</li>
+<li>sensitive data or regulatory obligations;</li>
+<li>a migration, data deletion, or destructive operation;</li>
+<li>a new dependency or infrastructure service;</li>
+<li>a public, external, or difficult-to-evolve contract;</li>
+<li>shared foundation, tooling, or a common rule;</li>
+<li>an external effect that is difficult to reverse.</li>
+</ul>
+<p>These triggers do not all prescribe the same mode. An authorization change within a product feature is not necessarily Foundation Evolution. It does require an explicit decision from someone with the appropriate authority and may justify an orchestrated path.</p>
+<p>The answer is not to add points and calculate an average. Four low-risk indicators do not cancel out a data migration or a security decision. The most constraining factor sets the minimum level of control.</p>
+<p>The decision process has four steps:</p>
+<ol>
+<li>identify triggers that require stronger control;</li>
+<li>characterize the five dimensions;</li>
+<li>select the mode compatible with the dominant risk;</li>
+<li>record the decision owner and the facts that would require the choice to be reassessed.</li>
+</ol>
+<h2 id="the-decision-record">The decision record<a class="headerlink" href="#the-decision-record" title="Permanent link">&para;</a></h2>
+<p>The decision should be reviewable without reopening the conversation. A short record is enough if it captures the reasoning and the decision authority.</p>
+<p>The following example is a human-facing decision aid that is independent of any tool. It is neither a configuration file nor the execution brief sent to the agent.</p>
+<div class="highlight"><pre><span></span><code><span class="gh"># Decision Record</span>
+
+Request:
+Observable outcome:
+Initial scope:
+
+| Dimension | Observation | Level |
+| --- | --- | --- |
+| Scope | | low / moderate / high |
+| Ambiguity | | low / moderate / high |
+| Reversibility | | simple / coordinated / difficult |
+| Surfaces and contracts | | one / several / shared or external |
+| Required authority | | module / domain / product, platform, or security |
+
+Escalation triggers:
+<span class="k">- [ ]</span> security, authorization, or sensitive data
+<span class="k">- [ ]</span> migration or destructive operation
+<span class="k">- [ ]</span> new dependency or infrastructure
+<span class="k">- [ ]</span> public or external contract
+<span class="k">- [ ]</span> foundation, tooling, or common rule
+<span class="k">- [ ]</span> external effect that is difficult to reverse
+
+Decision:
+<span class="k">-</span><span class="w"> </span>Initial mode:
+<span class="k">-</span><span class="w"> </span>Path:
+<span class="k">-</span><span class="w"> </span>Rationale:
+<span class="k">-</span><span class="w"> </span>Minimum input:
+<span class="k">-</span><span class="w"> </span>Minimum output:
+<span class="k">-</span><span class="w"> </span>Decision owner(s) or approval role:
+<span class="k">-</span><span class="w"> </span>Reassess if:
+</code></pre></div>
+<p>This record comes before the task contract introduced in the previous article. The record selects the level of governance; the contract then bounds execution. In the record, scope is still expressed in terms of surfaces and responsibilities. Exact paths belong in the task contract. Deciding how to work is not yet the same as specifying exactly where the agent may write.</p>
+<h2 id="four-variations-on-the-same-customer-directory">Four variations on the same customer directory<a class="headerlink" href="#four-variations-on-the-same-customer-directory" title="Permanent link">&para;</a></h2>
+<p>The four modes become clearer when they are applied to the same product. For the practical articles that follow, I use these public labels to standardize the taxonomy first outlined in the foundational article.</p>
+<table>
+<thead>
+<tr>
+<th>Mode</th>
+<th>Dominant profile</th>
+<th>Minimum input</th>
+<th>Minimum output</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Controlled Vibe Coding</strong></td>
+<td>Local, visible, and reversible</td>
+<td>Bounded request</td>
+<td>Reviewed diff and targeted validation</td>
+</tr>
+<tr>
+<td><strong>Guided Coding</strong></td>
+<td>Nontrivial but contained within a known product area</td>
+<td>Short brief and plan</td>
+<td>Tracking, recorded validations, and review</td>
+</tr>
+<tr>
+<td><strong>Structured Feature</strong></td>
+<td>Cross-cutting or still ambiguous</td>
+<td>Clarified brief, then a specification if needed</td>
+<td>Bounded tasks, controls, and recorded results</td>
+</tr>
+<tr>
+<td><strong>Foundation Evolution</strong></td>
+<td>Change to a shared primitive, rule, or piece of tooling</td>
+<td>Impact proposal and identified owner</td>
+<td>Separate change, compatibility analysis, broader validations, and dedicated review</td>
+</tr>
+</tbody>
+</table>
+<h3 id="controlled-vibe-coding-change-the-empty-state-label">Controlled Vibe Coding: change the empty-state label<a class="headerlink" href="#controlled-vibe-coding-change-the-empty-state-label" title="Permanent link">&para;</a></h3>
+<p>The change is visible, local, and easy to reverse. It affects no contract, dependency, or shared behavior. A precise request, a reviewed diff, and targeted validation may be enough.</p>
+<p>The word “controlled” matters. This mode does not mean that conversation replaces repository rules. The agent remains bounded to the relevant area, reuses existing conventions, and exposes the actual result for review. If the change reveals a broader issue in the shared component, the task no longer fits this mode.</p>
+<h3 id="guided-coding-add-a-local-action-using-existing-contracts">Guided Coding: add a local action using existing contracts<a class="headerlink" href="#guided-coding-add-a-local-action-using-existing-contracts" title="Permanent link">&para;</a></h3>
+<p>Adding an action to the directory may touch several files, require finding an existing component, and call for a behavioral test. The result still remains within a known product area and does not modify the API contract.</p>
+<p>A short brief and a plan are proportionate inputs: expected behavior, files likely to be affected, conventions to reuse, and targeted validations. Keeping the work log outside the conversation makes the task easier to resume and review without imposing the full machinery of a Structured Feature.</p>
+<p>If the action ultimately requires a new API route, dependency, or permission, the profile changes. The initial plan does not give the agent authority to silently expand the task to accommodate that discovery.</p>
+<h3 id="structured-feature-add-server-side-pagination">Structured Feature: add server-side pagination<a class="headerlink" href="#structured-feature-add-server-side-pagination" title="Permanent link">&para;</a></h3>
+<p>Pagination connects the UI, the API, the response contract, loading states, and tests. Several decisions must be made consistently: contract shape, initial page, page size, boundary behavior, and compatibility with existing consumers.</p>
+<p>The work therefore calls for a clarified brief, task breakdown, explicit boundaries, recorded validation results, and a review summary. A full specification is not required by default: it becomes useful when open decisions cannot be resolved cleanly in the brief and plan.</p>
+<h3 id="foundation-evolution-modify-a-shared-primitive">Foundation Evolution: modify a shared primitive<a class="headerlink" href="#foundation-evolution-modify-a-shared-primitive" title="Permanent link">&para;</a></h3>
+<p>Now suppose pagination requires a change to the common router or to a UI primitive used elsewhere. The diff may be short, but the decision and its impact are not.</p>
+<p>This change must become a separate unit of work. Its starting point is no longer only the customer directory's need, but an impact proposal: affected consumers, compatibility, transition strategy, broader validations, and the decision owner. Foundation Evolution is not a blank check to modify shared files. On the contrary, it makes those modifications explicit and holds them to a higher standard.</p>
+<h2 id="two-paths-not-four-execution-pipelines">Two paths, not four execution pipelines<a class="headerlink" href="#two-paths-not-four-execution-pipelines" title="Permanent link">&para;</a></h2>
+<p>The four modes do not require four different systems. Two paths, with proportionate variants, are enough to put these decisions into practice.</p>
+<div class="highlight"><pre><span></span><code>characterized request
+├── lightweight path
+│   ├── direct variant   → Controlled Vibe Coding
+│   └── tracked variant  → Guided Coding
+└── orchestrated path
+    ├── product work     → Structured Feature
+    └── shared work      → Foundation Evolution, handled separately
+</code></pre></div>
+<p>The <strong>lightweight path</strong> minimizes coordination cost. In its direct variant, the bounded request leads to the change, targeted validation, and then review of the diff. In its tracked variant, a short brief, a plan, and a persistent work log are added before review.</p>
+<p>The retained context remains proportionate to the task. If the agent maintains the log itself, the log helps people understand and resume the work; it does not become independent evidence.</p>
+<p>The <strong>orchestrated path</strong> separates responsibilities more clearly. The brief is clarified, the work is broken down, the scope is bounded, control and validation results are retained, and then a local review prepares the handoff to Git and CI. Foundation Evolution follows the same general sequence, but as a separate unit with a broader compatibility analysis.</p>
+<p>The selected path describes the minimum process expected. It does not assume a particular model or the interface through which the agent is invoked.</p>
+<h2 id="a-completed-decision-record-for-pagination">A completed decision record for pagination<a class="headerlink" href="#a-completed-decision-record-for-pagination" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Dimension</th>
+<th>Observation</th>
+<th>Characterization</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Scope</td>
+<td>One coherent, bounded feature</td>
+<td>Moderate</td>
+</tr>
+<tr>
+<td>Ambiguity</td>
+<td>The outcome is clear; the exact contract shape still needs confirmation</td>
+<td>Moderate</td>
+</tr>
+<tr>
+<td>Reversibility</td>
+<td>No migration is planned, but rollback must be coordinated across the UI and API</td>
+<td>Coordinated</td>
+</tr>
+<tr>
+<td>Surfaces and contracts</td>
+<td>UI, internal API, tests, and documentation</td>
+<td>Several surfaces and one internal API contract</td>
+</tr>
+<tr>
+<td>Required authority</td>
+<td>Feature owner and API owner</td>
+<td>Domain-level</td>
+</tr>
+</tbody>
+</table>
+<p>The dominant factors are the work across multiple surfaces and the coordinated evolution of an internal contract. No trigger independently requires stronger control: the initial scope includes no migration, new dependency, public contract, sensitive data, or foundation change.</p>
+<p>The decision is therefore:</p>
+<ul>
+<li><strong>initial mode:</strong> Structured Feature;</li>
+<li><strong>path:</strong> orchestrated;</li>
+<li><strong>minimum input:</strong> clarified brief, acceptance criteria, and initial scope;</li>
+<li><strong>minimum output:</strong> plan and bounded tasks, recorded control and validation results, a reviewable diff, and human review;</li>
+<li><strong>decision owners:</strong> the feature owner together with the API owner;</li>
+<li><strong>reassess if:</strong> the solution requires a shared routing primitive, an incompatible contract, a migration, or a new dependency.</li>
+</ul>
+<p>The record does not prove that this decision is perfect. It makes the choice explicit, contestable, and changeable before the agent turns assumptions into code.</p>
+<h2 id="the-mode-is-a-starting-point-not-authorization">The mode is a starting point, not authorization<a class="headerlink" href="#the-mode-is-a-starting-point-not-authorization" title="Permanent link">&para;</a></h2>
+<p>An initial classification is a working hypothesis. Exploration may reveal a fact that changes the profile: a missing dependency, an external contract, a required migration, or an insufficient shared component.</p>
+<p>In that case, execution must pause. The agent may recommend reclassification, but it must not expand its own scope. The person leading the task, potentially with support from the workflow, must then:</p>
+<ol>
+<li>record the new fact and its impact;</li>
+<li>confirm or change the mode and path;</li>
+<li>identify the appropriate decision owner;</li>
+<li>redefine the scope and validations before resuming.</li>
+</ol>
+<p>For the customer directory, discovering that synchronizing the page number with the URL requires a change to the shared router does not retroactively make an out-of-scope change acceptable. Work on the product task stops; the team chooses a local solution or opens a separate Foundation Evolution effort.</p>
+<p>The ability to reclassify matters more than getting the taxonomy perfect at the outset. A useful decision model does not try to predict the entire implementation. It makes the events that require a new decision visible.</p>
+<h2 id="conclusion">Conclusion<a class="headerlink" href="#conclusion" title="Permanent link">&para;</a></h2>
+<p>Choosing a mode means selecting the lightest process compatible with the dominant risk. Line count, model, and tool are not enough. Scope, ambiguity, reversibility, affected contracts, and required authority provide a stronger basis.</p>
+<p>The repository contract defines the rules of the terrain. The mode sets the level of governance. The path sets the steps and the facts that must be retained.</p>
+<p>For customer-directory pagination, the decision model leads to a Structured Feature and an orchestrated path. The next article will follow that path end to end, from a clarified brief to local review, showing what each step produces and what it actually allows us to claim.</p>
+<div class="article-footer-contact">
+  <p>To discuss this article or leave me a public message:</p>
+  <a class="article-contact-link" href="https://github.com/velkouby/ai-based-development/issues/new?template=contact.yml">Message on GitHub</a>
+</div>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.sections", "navigation.indexes", "navigation.top", "search.suggest", "search.highlight", "content.code.copy"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>
