@@ -197,6 +197,8 @@ Ce n’est pas contradictoire avec l’esprit agile : préserver la vitesse et s
 
 C’est cela, industrialiser l’AI agent-based coding : ne plus traiter l’agent comme un partenaire de conversation isolé, mais comme un contributeur puissant inséré dans une méthode de travail simple, vérifiable et partageable.
 
+Pour rendre cette méthode concrète, il faut commencer par le terrain sur lequel l'agent intervient : [**ce que le repository doit lui apprendre et lui interdire avant qu'il ne code**](../agent-ready-repository/index.md).
+
 <div class="article-footer-contact">
   <p>Pour discuter de cet article ou me laisser un message public :</p>
   <a class="article-contact-link" href="https://github.com/velkouby/ai-based-development/issues/new?template=contact.yml">Message sur GitHub</a>

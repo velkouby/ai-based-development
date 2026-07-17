@@ -226,7 +226,7 @@ Choisir un mode revient à choisir le dispositif le plus léger qui reste compat
 
 Le contrat du repository fixe les règles du terrain. Le mode fixe le niveau de gouvernance. Le parcours fixe les étapes et les faits qui devront être conservés.
 
-Pour la pagination de l'annuaire clients, la grille conduit à une fonctionnalité structurée et à un parcours orchestré. Le prochain article suivra ce parcours de bout en bout : du brief clarifié à la revue locale, en montrant ce que chaque étape produit et ce qu'elle permet réellement d'affirmer.
+Pour la pagination de l'annuaire clients, la grille conduit à une fonctionnalité structurée et à un parcours orchestré. [Le prochain article suit ce parcours de bout en bout](../agentic-feature-end-to-end/index.md) : du brief clarifié à la revue locale, en montrant ce que chaque étape produit et ce qu'elle permet réellement d'affirmer.
 
 <div class="article-footer-contact">
   <p>Pour discuter de cet article ou me laisser un message public :</p>
