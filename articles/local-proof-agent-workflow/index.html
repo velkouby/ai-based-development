@@ -1,0 +1,990 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="A zero exit code is not a verdict on a feature. Here is how to read local evidence, make its gaps visible, and prepare to connect it to Git, CI, and human judgment.">
+      
+      
+        <meta name="author" content="Vincent El Kouby-Benichou, Baracoda">
+      
+      
+        <link rel="canonical" href="https://velkouby.github.io/ai-based-development/articles/local-proof-agent-workflow/">
+      
+      
+      
+      
+        
+          <link rel="alternate" href="./" hreflang="en">
+        
+          <link rel="alternate" href="../../fr/articles/local-proof-agent-workflow/" hreflang="fr">
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>“The Tests Pass”: What Does the Workflow Prove? - AI-Native Software Engineering Notes</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/article.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#the-tests-pass-what-does-the-workflow-prove" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="AI-Native Software Engineering Notes" class="md-header__button md-logo" aria-label="AI-Native Software Engineering Notes" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            AI-Native Software Engineering Notes
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              “The Tests Pass”: What Does the Workflow Prove?
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+      <div class="md-header__option">
+  <div class="md-select">
+    
+    <button class="md-header__button md-icon" aria-label="Select language">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m12.87 15.07-2.54-2.51.03-.03A17.5 17.5 0 0 0 14.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2zm-2.62 7 1.62-4.33L19.12 17z"/></svg>
+    </button>
+    <div class="md-select__inner">
+      <ul class="md-select__list">
+        
+          <li class="md-select__item">
+            <a href="./" hreflang="en" class="md-select__link">
+              English
+            </a>
+          </li>
+        
+          <li class="md-select__item">
+            <a href="../../fr/articles/local-proof-agent-workflow/" hreflang="fr" class="md-select__link">
+              Français
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</div>
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/velkouby/ai-based-development" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    velkouby/ai-based-development
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="AI-Native Software Engineering Notes" class="md-nav__button md-logo" aria-label="AI-Native Software Engineering Notes" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    AI-Native Software Engineering Notes
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/velkouby/ai-based-development" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    velkouby/ai-based-development
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Articles
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Articles
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ai-agent-based-coding-best-practices/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    From Vibe Coding to Verifiable Agentic Development
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#green-is-not-a-property-of-the-code" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        “Green” is not a property of the code
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#four-sources-of-truth-to-keep-separate" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Four sources of truth to keep separate
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#inspecting-local-evidence" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Inspecting local evidence
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-a-framework-can-establish-locally" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What a framework can establish locally
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#a-command-is-only-meaningful-with-its-scope" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A command is only meaningful with its scope
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#connecting-acceptance-criteria-to-validations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Connecting acceptance criteria to validations
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#gaps-must-be-data" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Gaps must be data
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-local-evidence-to-revision-bound-evidence" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        From local evidence to revision-bound evidence
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-target-manifest" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The target manifest
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-ci-addsand-what-it-does-not" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What CI adds—and what it does not
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#a-review-checklist-that-resists-the-green-badge" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A review checklist that resists the green badge
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#conclusion" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Conclusion
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 class="article-title" id="the-tests-pass-what-does-the-workflow-prove">“The Tests Pass”: What Does the Workflow Prove?<a class="headerlink" href="#the-tests-pass-what-does-the-workflow-prove" title="Permanent link">&para;</a></h1>
+<p class="article-lead">A passing test result is a useful fact. It is not yet a conclusion about the feature. To understand what it proves, we need to know which command ran, what it covered, which revision it concerned, which environment it used, and everything it did not verify.</p>
+<p class="article-meta">
+  <span>By <span class="article-author">Vincent El Kouby-Benichou</span>, <a class="article-company-link" href="https://baracoda.com">Baracoda</a></span>
+  <a class="article-contact-link" href="https://www.linkedin.com/in/vincentelkoubybenichou/">LinkedIn</a>
+</p>
+
+<p>In the <a href="../agent-task-stop-and-resume/">previous article</a>, a teaching scenario involving URL synchronization helped us examine stopping and resuming work. To analyze evidence without mixing that scenario into the main execution, let us return to the original pagination feature described in the <a href="../agentic-feature-end-to-end/">end-to-end trace</a>, without the URL extension. Assume that its tasks are complete, the observed files remain within the authorized scope, and every command that ran returned <code>0</code>.</p>
+<p>Can we now write, “customer directory pagination has been validated”?</p>
+<p>Not yet. We can make a more precise claim: in a given local context, certain commands completed without errors against the observed working-tree state. That sentence may sound less impressive. It is far more useful to the person reviewing the change.</p>
+<p>A framework applying these principles can retain some of these facts: attempts, detected files, scope checks, executed commands, exit codes, and a review summary. That does not turn the local artifact it produces into a complete attestation for a pull request.</p>
+<blockquote>
+<p>The color of a check summarizes a result. The evidence must make it possible to reconstruct that result's scope.</p>
+</blockquote>
+<h2 id="green-is-not-a-property-of-the-code">“Green” is not a property of the code<a class="headerlink" href="#green-is-not-a-property-of-the-code" title="Permanent link">&para;</a></h2>
+<p>Saying that a test passes almost always omits the rest of the sentence: which test, run where, when, against what, and under which assumptions?</p>
+<p>A validation result can be represented as a tuple:</p>
+<div class="highlight"><pre><span></span><code>result = (
+  revision or working state,
+  environment,
+  command,
+  covered scope,
+  timestamp,
+  exit code,
+  useful output,
+  known limitations
+)
+</code></pre></div>
+<p>Removing one of these elements does not necessarily make the result false. It reduces what someone else can conclude from it.</p>
+<p>A backend unit-test command returning <code>0</code> establishes that the cases present in that suite did not fail in that environment. It does not demonstrate that the interface can consume the new contract. A frontend type check does not demonstrate that the pagination controls behave correctly. A successful build does not demonstrate that the <code>loading</code>, <code>empty</code>, and <code>error</code> states are understandable to a user.</p>
+<p>Even an end-to-end suite does not “prove the feature” in an absolute sense. It exercises the paths it contains, with the data and environment it is given. Its value may be high; its scope remains bounded.</p>
+<p>The right question is therefore not:</p>
+<blockquote>
+<p>Are the tests green?</p>
+</blockquote>
+<p>But:</p>
+<blockquote>
+<p>Which hypotheses does the green result rule out, and which ones remain open?</p>
+</blockquote>
+<h2 id="four-sources-of-truth-to-keep-separate">Four sources of truth to keep separate<a class="headerlink" href="#four-sources-of-truth-to-keep-separate" title="Permanent link">&para;</a></h2>
+<p>An agentic execution can easily mix several categories of information. They must remain distinct during review.</p>
+<table>
+<thead>
+<tr>
+<th>Source</th>
+<th>Example</th>
+<th>What we can claim</th>
+<th>Main limitation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Agent declaration</strong></td>
+<td>“I added pagination and the tests pass”</td>
+<td>The agent reports completion and describes its result</td>
+<td>The declaration is not an independent check</td>
+</tr>
+<tr>
+<td><strong>Workflow observation</strong></td>
+<td>A command returned <code>0</code> between two timestamps</td>
+<td>The command completed successfully according to its exit code</td>
+<td>By default, the workflow does not know whether the command is sufficient</td>
+</tr>
+<tr>
+<td><strong>Git-reported state</strong></td>
+<td>Paths are modified in the working tree</td>
+<td>Git sees those differences at inspection time</td>
+<td>Without identified base and head commits, attribution to a revision remains incomplete</td>
+</tr>
+<tr>
+<td><strong>Human decision</strong></td>
+<td>“These checks are sufficient to submit the change for merge”</td>
+<td>An authorized person accepts the level of residual risk</td>
+<td>The decision depends on the quality of the facts available to that person</td>
+</tr>
+</tbody>
+</table>
+<p>These four sources can agree without being interchangeable. The agent may report one modified file while the workflow observes a different list in Git. When they diverge, the difference itself becomes a fact to examine.</p>
+<p>Likewise, a tool may record “completed” because every declared command succeeded. That status does not say whether an important validation was omitted. An absent command has no red exit code.</p>
+<blockquote>
+<p>An omitted validation must never appear as a successful check. It must appear as missing information, an explicit choice, or a residual risk.</p>
+</blockquote>
+<h2 id="inspecting-local-evidence">Inspecting local evidence<a class="headerlink" href="#inspecting-local-evidence" title="Permanent link">&para;</a></h2>
+<p>For the pagination example, imagine the following local artifact. Its field names and values were chosen for teaching purposes: they illustrate one way a framework can retain the facts that matter during review.</p>
+<div class="highlight"><pre><span></span><code><span class="nt">attempt</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">run-002</span>
+<span class="w">  </span><span class="nt">created_at</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2026-07-17T09:42:18Z</span>
+
+<span class="nt">agent</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">declared_result</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">completed</span>
+<span class="w">  </span><span class="nt">summary</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">&gt;-</span>
+<span class="w">    </span><span class="no">Pagination contract added to the API and integrated into the directory.</span>
+
+<span class="nt">git_observed</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">before</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">already_modified_files</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span>
+<span class="w">  </span><span class="nt">after</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">modified_files</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">backend/customers/api.py</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">backend/customers/tests/test_pagination.py</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">frontend/customers/customer-list.tsx</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">frontend/customers/customer-list.test.tsx</span>
+<span class="w">  </span><span class="nt">changed_during_attempt</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">backend/customers/api.py</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">backend/customers/tests/test_pagination.py</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">frontend/customers/customer-list.tsx</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">frontend/customers/customer-list.test.tsx</span>
+
+<span class="nt">boundaries</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">status</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">passed</span>
+<span class="w">  </span><span class="nt">violations</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span>
+
+<span class="nt">validations</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">command</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">backend-tests customers</span>
+<span class="w">    </span><span class="nt">exit_code</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0</span>
+<span class="w">    </span><span class="nt">started_at</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2026-07-17T09:43:02Z</span>
+<span class="w">    </span><span class="nt">ended_at</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2026-07-17T09:43:07Z</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">command</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">frontend-tests customer-list</span>
+<span class="w">    </span><span class="nt">exit_code</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0</span>
+<span class="w">    </span><span class="nt">started_at</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2026-07-17T09:43:07Z</span>
+<span class="w">    </span><span class="nt">ended_at</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2026-07-17T09:43:13Z</span>
+
+<span class="nt">global_quality</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">status</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">not_run</span>
+</code></pre></div>
+<p>The paths and commands are illustrative. The excerpt nevertheless raises concrete questions:</p>
+<ul>
+<li>were there truly no files modified before execution, or were they captured incorrectly?</li>
+<li>does the final list include staged, unstaged, and untracked changes?</li>
+<li>were the commands selected from the repository contract, from the plan, or by the agent?</li>
+<li>is their complete output retained elsewhere, or only an excerpt?</li>
+<li>why was the global quality check not run?</li>
+<li>which acceptance criterion does each command exercise?</li>
+<li>on which commit can this attempt be replayed?</li>
+</ul>
+<p>Useful evidence does not make these questions disappear. It makes them visible early enough for review to address them.</p>
+<h2 id="what-a-framework-can-establish-locally">What a framework can establish locally<a class="headerlink" href="#what-a-framework-can-establish-locally" title="Permanent link">&para;</a></h2>
+<p>To make local evidence inspectable, an implementation can:</p>
+<ul>
+<li>give each attempt an identifier, a timestamp, and a link to its detailed result;</li>
+<li>inspect Git state before and after the runner executes;</li>
+<li>calculate which files changed during execution, rather than automatically treating the entire working tree as the agent's work;</li>
+<li>compare observed paths with declared boundaries;</li>
+<li>run configured validations only after certain structural checks;</li>
+<li>retain each command's exit code, timestamps, and a portion of its standard output and error streams;</li>
+<li>keep earlier attempts when a correction and another validation pass are required;</li>
+<li>gather files, checks, risks, and open questions into a summary that prepares the review.</li>
+</ul>
+<p>With these capabilities, the workflow can support a precise claim: a significant part of the local execution is inspectable.</p>
+<p>This setup does not, however, establish that:</p>
+<ul>
+<li>the Git capture necessarily covers every possible state of the index and working tree;</li>
+<li>the initial state was clean or explicitly accepted;</li>
+<li>the artifact identifies immutable base and head commits;</li>
+<li>all system, runtime, dependency, and tool versions were recorded;</li>
+<li>the commands that ran cover every acceptance criterion;</li>
+<li>CI repeated the checks in an isolated environment;</li>
+<li>the retained output is exhaustive;</li>
+<li>the business behavior is correct.</li>
+</ul>
+<p>These gaps do not invalidate local evidence. They simply prevent claims that exceed its actual scope.</p>
+<h2 id="a-command-is-only-meaningful-with-its-scope">A command is only meaningful with its scope<a class="headerlink" href="#a-command-is-only-meaningful-with-its-scope" title="Permanent link">&para;</a></h2>
+<p>For pagination, validations can be classified by the question they answer.</p>
+<table>
+<thead>
+<tr>
+<th>Check</th>
+<th>Question actually tested</th>
+<th>What it does not cover by itself</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Backend unit tests</td>
+<td>Do boundary calculations and metadata satisfy the coded cases?</td>
+<td>Actual serialization, database behavior, consumers</td>
+</tr>
+<tr>
+<td>API integration test</td>
+<td>Does the route return the expected contract with test data?</td>
+<td>Interface rendering and compatibility with every client</td>
+</tr>
+<tr>
+<td>Frontend type check</td>
+<td>Do the interface and its calls satisfy the types known at compile time?</td>
+<td>Runtime behavior and visual quality</td>
+</tr>
+<tr>
+<td>Component tests</td>
+<td>Do the “previous” and “next” controls and the implemented states behave as expected in the test scenarios?</td>
+<td>Complete navigation, real network behavior, exhaustive accessibility</td>
+</tr>
+<tr>
+<td>End-to-end test</td>
+<td>Does the tested user journey work in the test environment?</td>
+<td>Cases absent from the scenario, load, production</td>
+</tr>
+<tr>
+<td>Visual review</td>
+<td>Do the main states appear correct with the observed data?</td>
+<td>Automated regression detection and behaviors not exercised during review</td>
+</tr>
+</tbody>
+</table>
+<p>This table prevents two opposite mistakes. The first is mechanically requiring every possible validation. The second is treating a few green checks as implicit coverage of the entire feature.</p>
+<p>The level of validation should remain proportional to the <a href="../agent-coding-modes/">mode selected for the change</a>. A full-stack Structured Feature requires a combination of checks across its surfaces and contracts. It does not necessarily require testing the entire monorepo on every local attempt. Any check not run must be deferred to an identified stage or explicitly accepted as a risk.</p>
+<h2 id="connecting-acceptance-criteria-to-validations">Connecting acceptance criteria to validations<a class="headerlink" href="#connecting-acceptance-criteria-to-validations" title="Permanent link">&para;</a></h2>
+<p>The pagination brief can contain four observable criteria:</p>
+<table>
+<thead>
+<tr>
+<th>Acceptance criterion</th>
+<th>Planned validation</th>
+<th>Result source</th>
+<th>Remaining gap or human follow-up</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>The API returns the items, current page, and total result count</td>
+<td>Unit tests and API integration test</td>
+<td>Local workflow, then CI</td>
+<td>Verify compatibility with existing consumers</td>
+</tr>
+<tr>
+<td>The user can move forward and backward without going past the first or last page</td>
+<td>Component tests and end-to-end journey</td>
+<td>Local workflow or CI, depending on the environment</td>
+<td>Verify keyboard behavior and focus</td>
+</tr>
+<tr>
+<td>The <code>loading</code>, <code>empty</code>, and <code>error</code> states remain distinct</td>
+<td>Component tests</td>
+<td>Local workflow</td>
+<td>Visual review with representative data</td>
+</tr>
+<tr>
+<td>The directory loads the first page when opened</td>
+<td>Targeted component test</td>
+<td>Local workflow</td>
+<td>Confirm the default value in the brief and contract</td>
+</tr>
+</tbody>
+</table>
+<p>This matrix does not guarantee that the tests are good. It reveals when a criterion has no validation, when a test claims to cover too much, or when a product decision is hiding inside a technical scenario.</p>
+<p>It also reveals the role of manual review. “Manual review completed” is neither a weakness nor equivalent to <code>passed</code>. Proper evidence records who checked what, against which version, and with what result. If that information is unavailable, the status must remain “to do” or “unknown.”</p>
+<h2 id="gaps-must-be-data">Gaps must be data<a class="headerlink" href="#gaps-must-be-data" title="Permanent link">&para;</a></h2>
+<p>A workflow interface is tempted to show only green and red. Evidence needs at least two additional states: <strong>not run</strong> and <strong>unknown</strong>.</p>
+<ul>
+<li><strong>Not run</strong> means the check was identified but did not execute. The reason may be legitimate: unavailable environment, cost, a check deferred to CI, or a planned manual validation.</li>
+<li><strong>Unknown</strong> means the information needed to reach a conclusion was not captured. Examples include the initial state of the index or the exact version of a tool.</li>
+<li><strong>Truncated</strong> must be explicit when only part of the output is retained. The exit code remains available, but detailed analysis may require the complete artifact.</li>
+<li><strong>Unstable</strong> means a check failed and then passed without a known cause. The latest green result does not erase the previous attempt.</li>
+</ul>
+<p>An execution can therefore be acceptable overall while still containing gaps. The manifest is not meant to turn everything into a failure. It enables the reviewer to distinguish a known absence from an invisible omission.</p>
+<h2 id="from-local-evidence-to-revision-bound-evidence">From local evidence to revision-bound evidence<a class="headerlink" href="#from-local-evidence-to-revision-bound-evidence" title="Permanent link">&para;</a></h2>
+<p>The <a href="../agentic-feature-end-to-end/">end-to-end trace</a> prepares the handoff to Git; it does not replace it. As long as the evidence describes a mutable working tree, another change can be added, removed, or staged after the evidence is produced.</p>
+<p>To connect results to a proposed change, we must at least identify:</p>
+<ul>
+<li>the base commit from which the work started;</li>
+<li>the head commit containing exactly the reviewed change;</li>
+<li>the branch or pull request reference;</li>
+<li>the state of the working tree and index at the relevant time;</li>
+<li>the source of the result: local workstation, ephemeral environment, or CI;</li>
+<li>essential environment versions;</li>
+<li>the artifacts or logs that make the output retrievable.</li>
+</ul>
+<p>Git then provides a content identity and a stable diff between two revisions. CI can run checks against the pull request head in an environment described by the pipeline. Neither decides whether the coverage is sufficient. Together, they make the connection between a revision and its results much stronger.</p>
+<p>There is also a timing problem. If a fix is added after a green run, the previous validation does not automatically apply to the new commit. A review interface should make that mismatch visible rather than preserving a green badge detached from its revision.</p>
+<h2 id="the-target-manifest">The target manifest<a class="headerlink" href="#the-target-manifest" title="Permanent link">&para;</a></h2>
+<p>The following example is a <strong>design target</strong>: one possible manifest for moving from inspectable local evidence to revision-bound provenance. It remains a proposed structure; every field should be populated from a real, verifiable observation if it is to support the associated conclusion.</p>
+<div class="highlight"><pre><span></span><code><span class="nt">evidence</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">execution</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">stable-run-id</span>
+<span class="w">    </span><span class="nt">attempt</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span>
+<span class="w">    </span><span class="nt">source</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">local</span><span class="w">  </span><span class="c1"># local | ci</span>
+<span class="w">    </span><span class="nt">started_at</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2026-07-17T09:42:18Z</span>
+<span class="w">    </span><span class="nt">ended_at</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2026-07-17T09:43:19Z</span>
+
+<span class="w">  </span><span class="nt">revision</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">base_commit</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">abc123</span>
+<span class="w">    </span><span class="nt">head_commit</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">def456</span>
+<span class="w">    </span><span class="nt">branch</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">feature/customer-pagination</span>
+<span class="w">    </span><span class="nt">working_tree_clean_before</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">    </span><span class="nt">index_clean_before</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+
+<span class="w">  </span><span class="nt">changes</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">observed_files</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span>
+<span class="w">    </span><span class="nt">allowed_files</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span>
+<span class="w">    </span><span class="nt">violations</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span>
+
+<span class="w">  </span><span class="nt">environment</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">system</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">linux</span>
+<span class="w">    </span><span class="nt">runtime</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">identified-version</span>
+<span class="w">    </span><span class="nt">dependencies</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">identified-lockfile</span>
+
+<span class="w">  </span><span class="nt">validations</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">backend-pagination</span>
+<span class="w">      </span><span class="nt">command</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">stable-repository-command</span>
+<span class="w">      </span><span class="nt">status</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">passed</span>
+<span class="w">      </span><span class="nt">exit_code</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0</span>
+<span class="w">      </span><span class="nt">validated_revision</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">def456</span>
+<span class="w">      </span><span class="nt">index_at_check</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">clean</span>
+<span class="w">      </span><span class="nt">working_tree_at_check</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">clean</span>
+<span class="w">      </span><span class="nt">criteria</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">AC-1</span><span class="p p-Indicator">]</span>
+<span class="w">      </span><span class="nt">output</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">artifact://validation/backend-pagination</span>
+
+<span class="w">  </span><span class="nt">checks_not_run</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">end-to-end</span>
+<span class="w">      </span><span class="nt">reason</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">deferred_to_ci</span>
+<span class="w">      </span><span class="nt">risk</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">browser_integration_not_verified_locally</span>
+
+<span class="w">  </span><span class="nt">agent_declarations</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">result</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">completed</span>
+
+<span class="w">  </span><span class="nt">human_review</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">status</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pending</span>
+<span class="w">    </span><span class="nt">residual_risks</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span>
+</code></pre></div>
+<p>A few details matter:</p>
+<ul>
+<li><code>passed</code>, <code>not_run</code>, and <code>unknown</code> are distinct;</li>
+<li>the agent's declaration remains separate from workflow observations;</li>
+<li>the acceptance-criteria-to-validation matrix is readable without interpreting command names;</li>
+<li>the risk attached to a deferred validation does not disappear;</li>
+<li>human review remains <code>pending</code> even when every command is green.</li>
+</ul>
+<p>The manifest can be shorter for a local fix and richer for a Foundation Evolution effort. Its function does not change: expose provenance, scope, and gaps before the decision.</p>
+<h2 id="what-ci-addsand-what-it-does-not">What CI adds—and what it does not<a class="headerlink" href="#what-ci-addsand-what-it-does-not" title="Permanent link">&para;</a></h2>
+<p>CI provides three important properties: execution tied to a revision, a more reproducible environment, and visibility shared across the team. It can also enforce a version matrix, retain artifacts, and block merges when certain checks fail.</p>
+<p>It does not automatically correct a poor choice of validations. A pipeline can be perfectly green while ignoring an acceptance criterion. It can also succeed because a command has become too permissive or because a suite does not exercise the new behavior.</p>
+<p>The local workflow and CI are therefore complementary:</p>
+<div class="highlight"><pre><span></span><code>local evidence
+  -&gt; prepares review and detects problems early
+  -&gt; is tied to a commit
+  -&gt; CI repeats or completes the checks on that revision
+  -&gt; the PR gathers the diff, results, decisions, and risks
+  -&gt; a human accepts, requests another attempt, or rejects
+</code></pre></div>
+<p>The best handoff is not “everything was green on my machine.” It is an evidence manifest that says which checks can be replayed, which are reserved for CI, and which checks still require human judgment.</p>
+<h2 id="a-review-checklist-that-resists-the-green-badge">A review checklist that resists the green badge<a class="headerlink" href="#a-review-checklist-that-resists-the-green-badge" title="Permanent link">&para;</a></h2>
+<p>Before accepting the sentence “the tests pass,” the reviewer can ask ten questions:</p>
+<ol>
+<li>Is the exact revision or working-tree state that was checked identifiable?</li>
+<li>Was the initial state clean, or are its pre-existing changes known?</li>
+<li>Are the commands that actually ran visible?</li>
+<li>Are their exit codes, timestamps, and useful outputs available?</li>
+<li>Does their scope match the modified surfaces?</li>
+<li>Does every acceptance criterion have a check or an explicit decision?</li>
+<li>Are unrun validations and unknown information visible?</li>
+<li>Was a red attempt, a retry, or an unstable result retained?</li>
+<li>Did CI check the commit currently under review?</li>
+<li>Who has the authority to accept the residual risk?</li>
+</ol>
+<p>If the answers are accessible without reopening the conversation with the agent, the workflow has already become more valuable. If they are connected to the revision and CI artifacts, the pull request becomes substantially easier to challenge and approve.</p>
+<h2 id="conclusion">Conclusion<a class="headerlink" href="#conclusion" title="Permanent link">&para;</a></h2>
+<p>“The tests pass” is neither useless nor sufficient. It is the beginning of a demonstration: one or more commands completed without error in a given context.</p>
+<p>Local evidence makes that context inspectable. Git ties the change to revisions. CI replays or completes the checks on an identified head commit. The acceptance-criteria-to-validation matrix shows the expected coverage. Human review ultimately decides whether the facts and gaps are compatible with the risk.</p>
+<p>A framework applying these principles can already make this first step substantially more useful. The target manifest shows how to connect it to a revision without presenting a design intention as an achieved guarantee.</p>
+<p>One question remains: how many decisions can reasonably be stabilized in a brief before its gray areas become more expensive than writing a specification? That will be the subject of the next article: <strong>When the Brief Is Not Enough: Introducing a Spec Without Bureaucracy</strong>.</p>
+<div class="article-footer-contact">
+  <p>To discuss this article or leave me a public message:</p>
+  <a class="article-contact-link" href="https://github.com/velkouby/ai-based-development/issues/new?template=contact.yml">Message on GitHub</a>
+</div>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.sections", "navigation.indexes", "navigation.top", "search.suggest", "search.highlight", "content.code.copy"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>

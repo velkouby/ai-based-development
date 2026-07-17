@@ -1,0 +1,796 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="A missing decision, a scope violation, and a failing test do not call for the same response. Here is how to stop an agentic task cleanly, preserve the relevant facts, and resume without erasing its history.">
+      
+      
+        <meta name="author" content="Vincent El Kouby-Benichou, Baracoda">
+      
+      
+        <link rel="canonical" href="https://velkouby.github.io/ai-based-development/articles/agent-task-stop-and-resume/">
+      
+      
+      
+      
+        
+          <link rel="alternate" href="./" hreflang="en">
+        
+          <link rel="alternate" href="../../fr/articles/agent-task-stop-and-resume/" hreflang="fr">
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>When a Task Must Stop: Decisions, Boundaries, and Resumption - AI-Native Software Engineering Notes</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/article.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#when-a-task-must-stop-decisions-boundaries-and-resumption" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="AI-Native Software Engineering Notes" class="md-header__button md-logo" aria-label="AI-Native Software Engineering Notes" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            AI-Native Software Engineering Notes
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              When a Task Must Stop: Decisions, Boundaries, and Resumption
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+      <div class="md-header__option">
+  <div class="md-select">
+    
+    <button class="md-header__button md-icon" aria-label="Select language">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m12.87 15.07-2.54-2.51.03-.03A17.5 17.5 0 0 0 14.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2zm-2.62 7 1.62-4.33L19.12 17z"/></svg>
+    </button>
+    <div class="md-select__inner">
+      <ul class="md-select__list">
+        
+          <li class="md-select__item">
+            <a href="./" hreflang="en" class="md-select__link">
+              English
+            </a>
+          </li>
+        
+          <li class="md-select__item">
+            <a href="../../fr/articles/agent-task-stop-and-resume/" hreflang="fr" class="md-select__link">
+              Français
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</div>
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/velkouby/ai-based-development" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    velkouby/ai-based-development
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="AI-Native Software Engineering Notes" class="md-nav__button md-logo" aria-label="AI-Native Software Engineering Notes" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    AI-Native Software Engineering Notes
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/velkouby/ai-based-development" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    velkouby/ai-based-development
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Articles
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Articles
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ai-agent-based-coding-best-practices/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    From Vibe Coding to Verifiable Agentic Development
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#three-stops-three-different-authorities" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Three stops, three different authorities
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#a-missing-decision-must-block-before-coding" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A missing decision must block before coding
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#a-scope-violation-is-an-observed-fact-after-writing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A scope violation is an observed fact after writing
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#teaching-variant-pagination-and-the-url" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Teaching variant: pagination and the URL
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#reverting-retrying-and-splitting-the-work-are-not-synonyms" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reverting, retrying, and splitting the work are not synonyms
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#repairable-failure-a-bounded-loop-not-a-blank-check" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Repairable failure: a bounded loop, not a blank check
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#resuming-means-reconstructing-the-tasks-authority" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Resuming means reconstructing the task's authority
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-the-scope-check-does-not-guarantee" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What the scope check does not guarantee
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-minimal-stop-record" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The minimal stop record
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#conclusion" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Conclusion
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 class="article-title" id="when-a-task-must-stop-decisions-boundaries-and-resumption">When a Task Must Stop: Decisions, Boundaries, and Resumption<a class="headerlink" href="#when-a-task-must-stop-decisions-boundaries-and-resumption" title="Permanent link">&para;</a></h1>
+<p class="article-lead">A missing decision, a scope violation, and a failing test do not call for the same response. A reliable agentic workflow must know why it is stopping, who can unblock the situation, and which facts will allow the work to resume.</p>
+<p class="article-meta">
+  <span>By <span class="article-author">Vincent El Kouby-Benichou</span>, <a class="article-company-link" href="https://baracoda.com">Baracoda</a></span>
+  <a class="article-contact-link" href="https://www.linkedin.com/in/vincentelkoubybenichou/">LinkedIn</a>
+</p>
+
+<p>In <a href="../agent-execution-package/">the previous article</a>, the brief, the plan, the repository rules, and the decisions already made became a bounded execution brief. It told the agent where to write, what to consult, how to validate, and when not to continue.</p>
+<p>Stop conditions are not a precautionary add-on to the execution package. They are an operational part of it. Without them, the agent is encouraged to turn every uncertainty into an implementation choice and every obstacle into a silent expansion of scope.</p>
+<p>But “the task is blocked” is still insufficient information. An unresolved product question before coding, a change observed in a protected area, and a failing unit test do not have the same owner, remedy, or resumption point.</p>
+<blockquote>
+<p>A useful stop does more than say that the work is unfinished. It establishes what happened, what is missing, who must decide, and what will need to be checked again.</p>
+</blockquote>
+<p>The mechanisms presented here—persistent state, write boundaries, attempt history, human decisions, and controlled resumption—form a protocol that a framework applying these principles can implement. The artifacts below show how to make that protocol actionable.</p>
+<h2 id="three-stops-three-different-authorities">Three stops, three different authorities<a class="headerlink" href="#three-stops-three-different-authorities" title="Permanent link">&para;</a></h2>
+<p>A minimal taxonomy already prevents many incorrect attempts to resume work.</p>
+<table>
+<thead>
+<tr>
+<th>Situation</th>
+<th>Triggering fact</th>
+<th>Who can act?</th>
+<th>Legitimate resumption</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Missing decision</strong></td>
+<td>A question changes the expected outcome or requires authority that is not present</td>
+<td>Product owner, architect, security owner, or domain owner</td>
+<td>Record the decision, update the relevant input, then recompile the work</td>
+</tr>
+<tr>
+<td><strong>Scope violation</strong></td>
+<td>The observed files touch an unauthorized, read-only, or forbidden area</td>
+<td>Task lead and, when necessary, owner of the shared foundation</td>
+<td>Isolate or remove the change, split or reclassify the work, then resume from a valid scope</td>
+</tr>
+<tr>
+<td><strong>Repairable failure</strong></td>
+<td>A validation or mechanical step fails without raising a new decision</td>
+<td>Agent or developer, within a bounded repair policy</td>
+<td>Fix the cause, rerun the affected checks, and record a new attempt</td>
+</tr>
+</tbody>
+</table>
+<p>The essential difference is authority. An agent can fix a formatting error when both the command and the remedy are deterministic. It cannot decide on its own that an API incompatibility is acceptable, that a shared primitive may change, or that a permission may be broadened.</p>
+<p>We must also distinguish a <strong>stop</strong> from a <strong>failure</strong>. Waiting for a product decision is a normal workflow stop, not a malfunction. Detecting a scope violation means the guardrail worked, even if the attempt cannot be accepted. Conversely, mechanically repeating a failing validation without a diagnosis is not resumption; it is a loop.</p>
+<h2 id="a-missing-decision-must-block-before-coding">A missing decision must block before coding<a class="headerlink" href="#a-missing-decision-must-block-before-coding" title="Permanent link">&para;</a></h2>
+<p>The best time to stop a task is often before the agent runner is launched.</p>
+<p>Suppose the brief asks for pagination in the customer directory but does not specify what should happen when a page above the new maximum is requested. Should the API return an empty page, clamp the request to the last valid page, or return an explicit error? This choice affects the user experience, the UI contract, and the tests.</p>
+<p>The planner can propose options and describe their consequences. It must not present one of them as a mere technical convention. The workflow should then retain an intervention record containing at least:</p>
+<ul>
+<li>the problem stated without unnecessary jargon;</li>
+<li>the exact question that needs a decision;</li>
+<li>the known options and their effects;</li>
+<li>the role expected to make the decision;</li>
+<li>the tasks and criteria affected;</li>
+<li>the answer, its source, and any supporting rationale.</li>
+</ul>
+<p>As long as this intervention remains open, no dependent task should be executable. Once the answer is given, it should not merely be injected into a new conversation. It becomes a persistent decision, linked to the intervention that prompted it, and is then included in the next execution package. If it changes the brief, the plan, or the scope, the relevant artifact must be updated and the work recompiled before resumption.</p>
+<p>This sequence avoids two failure modes. The first is allowing the agent to code an assumption and then presenting the diff as a way to “ask for confirmation.” The second is receiving a human answer without updating the artifact that held authority. In that case, the next agent may inherit the old ambiguity.</p>
+<blockquote>
+<p>Answering a question is not enough. The answer must be incorporated into the source that governs the next execution.</p>
+</blockquote>
+<p>If the question reveals that the entire brief is unstable, the task should not resume. The team must return to the problem definition. If it concerns only a local decision already anticipated by the plan, a targeted update may be enough. The resumption point therefore depends on where the uncertainty originated.</p>
+<h2 id="a-scope-violation-is-an-observed-fact-after-writing">A scope violation is an observed fact after writing<a class="headerlink" href="#a-scope-violation-is-an-observed-fact-after-writing" title="Permanent link">&para;</a></h2>
+<p>The second case is more uncomfortable: the agent has already written code, and the workflow then finds that a modified file violates the execution brief.</p>
+<p>The useful check compares two sources: the declared scope of the executed tasks and the paths actually observed in the working tree. The file list reported by the agent can help with diagnosis, but it must not be the only source. An agent can omit a file, misinterpret a rename, or produce an incomplete summary.</p>
+<p>For the customer directory, a conceptual contract could allow writes in the frontend and backend product areas, allow reads from shared routing, and forbid changes to it:</p>
+<div class="highlight"><pre><span></span><code>writes allowed
+  frontend/customers/**
+  backend/customers/**
+
+read-only
+  shared/routing/**
+
+stop if
+  synchronizing with the URL requires a change to shared routing
+</code></pre></div>
+<p>These paths illustrate how responsibilities can be divided between product areas and shared routing.</p>
+<p>If the observed diff contains a file under <code>shared/routing/</code>, the result is not “almost compliant.” The attempt crossed a boundary. Functional validations must not turn that crossing into retroactive authorization: a green test does not grant a product task the right to modify the shared foundation.</p>
+<p>The workflow must then preserve the finding before any repair: affected paths, violated rule, detection phase, known starting state, and validations already run or not run. This chronology matters. It distinguishes a modification produced during the attempt from a change that existed before it started.</p>
+<p>If the working tree was already modified, automatically removing the offending file could destroy someone else's work. The correct response is to suspend the repair and ask a human to determine which changes belong to the attempt and which predate it. Automatic restoration is reasonable only when the system knows exactly which reference state it is restoring and which changes belong to the attempt.</p>
+<h2 id="teaching-variant-pagination-and-the-url">Teaching variant: pagination and the URL<a class="headerlink" href="#teaching-variant-pagination-and-the-url" title="Permanent link">&para;</a></h2>
+<p>The following scenario is a teaching example for tracing a stop caused by a scope violation, the resulting decision, and the conditions for resumption.</p>
+<p>In this variant, the team extends pagination with an additional requirement: the current page must appear in the URL so that a link can be shared. Because this synchronization was a non-goal of the initial brief, the request is first reclassified, the brief is revised, and a new execution package is compiled. Shared routing remains read-only, with an explicit stop condition. During implementation, the agent nevertheless concludes that the router's public interface is insufficient and modifies a shared primitive.</p>
+<p>The post-execution check then observes two categories of changes: the expected product files and one file in shared routing. It classifies the attempt as a scope violation and stops the chain before marking the task complete.</p>
+<p>Here is a compact stop record that the workflow could retain:</p>
+<div class="highlight"><pre><span></span><code><span class="gh"># Stop record — teaching example</span>
+
+Request: synchronize the directory page with the URL
+Phase: post-write check
+Outcome: stopped at a write boundary
+
+Facts recorded in this example:
+<span class="k">-</span><span class="w"> </span>feature files were modified within the authorized scope;
+<span class="k">-</span><span class="w"> </span>a shared-routing file was also modified;
+<span class="k">-</span><span class="w"> </span>that area was declared read-only;
+<span class="k">-</span><span class="w"> </span>the planned validations were not run after the scope check failed.
+
+Options submitted for decision:
+<span class="k">1.</span> remove URL synchronization and revise the criteria;
+<span class="k">2.</span> find a local adaptation that uses the existing public interface;
+<span class="k">3.</span> open a separate Foundation Evolution effort, then resume the feature.
+
+Human decision:
+<span class="k">-</span><span class="w"> </span>retain the requirement for a shareable URL;
+<span class="k">-</span><span class="w"> </span>revert the unauthorized change;
+<span class="k">-</span><span class="w"> </span>handle the router extension as a separate unit of work;
+<span class="k">-</span><span class="w"> </span>resume pagination after that extension has been integrated.
+</code></pre></div>
+<p>This record is deliberately compact: it does not describe the entire resumption mechanism. It preserves what a team needs to understand the stop and authorize what comes next.</p>
+<p>The decision is not to add <code>shared/routing/**</code> to the authorized paths of the existing task. That would disguise the scope violation by widening the contract after the fact. The shared change becomes a <strong>Foundation Evolution</strong> effort with its own intent, impact analysis, consumers, validations, and review.</p>
+<p>The pagination feature remains stopped until this dependency is available. After the shared extension is integrated, the pagination plan is reassessed: a new starting revision, a new public interface to reuse, an unchanged product scope, and updated validations. The task can then resume without erasing the first attempt.</p>
+<h2 id="reverting-retrying-and-splitting-the-work-are-not-synonyms">Reverting, retrying, and splitting the work are not synonyms<a class="headerlink" href="#reverting-retrying-and-splitting-the-work-are-not-synonyms" title="Permanent link">&para;</a></h2>
+<p>Once the stop has been classified, the verb used for resumption must be precise.</p>
+<p><strong>Reverting an unauthorized change</strong> means returning only the affected paths to a known reference state, then rerunning the scope check. This action does not validate the rest of the diff. It removes a fact that is incompatible with the contract.</p>
+<p><strong>Retrying a task</strong> means keeping the same objective and authority but producing a new attempt after a bounded correction. The earlier attempt remains visible: cause, actions taken, files touched, and validation results.</p>
+<p><strong>Replanning</strong> means that the input has changed. A human decision, a new contract, or an integrated dependency changes the execution brief. Rerunning exactly the same package would be inconsistent; a new one must be compiled.</p>
+<p><strong>Splitting or reclassifying</strong> means that the discovered change no longer belongs to the original unit of work. A Foundation Evolution effort must remain separate from the product task. Depending on its scope, a migration or security decision may also require a separate unit or reclassification with the corresponding authority.</p>
+<p>This distinction protects traceability. If every action is called “resumption,” a team can no longer tell whether the agent fixed a mistake, received a new decision, or was granted a broader scope.</p>
+<h2 id="repairable-failure-a-bounded-loop-not-a-blank-check">Repairable failure: a bounded loop, not a blank check<a class="headerlink" href="#repairable-failure-a-bounded-loop-not-a-blank-check" title="Permanent link">&para;</a></h2>
+<p>The third case is a mechanical or validation failure. For example, a targeted test reveals that the “next page” button remains enabled on the last page. The objective, API contract, and scope do not change. The cause is localized in an authorized area, and the same test can verify the correction.</p>
+<p>A repair attempt is reasonable when four conditions are met:</p>
+<ol>
+<li>the failure is classified and the diagnosis is sufficiently precise;</li>
+<li>the correction requires no new dependency, product decision, or path expansion;</li>
+<li>the commands to rerun are known;</li>
+<li>the number of attempts is limited.</li>
+</ol>
+<p>After the correction, rerunning only the failing command is not enough if other checks may have been affected. At a minimum, the workflow must repeat the scope check and then the validations related to the corrected files. If the repair changed the backend contract, the tests for the UI that consumes it become relevant again, even if they were green before.</p>
+<p>Each attempt should retain a compact history: initial reason, diagnosis, actions, paths touched, validations rerun, result, and next action. If the repair stops making progress or reaches the authorized limit, the loop stops. The system then hands the attempts to a human instead of continuing to consume time while allowing the diff to grow.</p>
+<p>Some failures only appear mechanically repairable. A test fails because the expected behavior is undefined: that is a missing decision. A build fails because resolving it would require a new dependency: that requires authorization. A validation reveals a compatibility break: that may require an architecture or migration decision. The output of a tool therefore does not determine the category by itself; the change required to resolve it matters more.</p>
+<h2 id="resuming-means-reconstructing-the-tasks-authority">Resuming means reconstructing the task's authority<a class="headerlink" href="#resuming-means-reconstructing-the-tasks-authority" title="Permanent link">&para;</a></h2>
+<p>Reliable resumption does not mean sending “continue where you left off” in the same chat. It explicitly reconstructs the authorized state.</p>
+<p>Before restarting the agent runner, the workflow should verify:</p>
+<ul>
+<li>that blocking interventions have been resolved;</li>
+<li>that the human answer has been recorded and linked to the affected tasks;</li>
+<li>that preceding dependencies have been completed;</li>
+<li>that unauthorized changes have been isolated or removed;</li>
+<li>that the brief, plan, and criteria remain coherent;</li>
+<li>that the new package contains the decision and the correct starting Git state;</li>
+<li>that the validations to rerun are explicit.</li>
+</ul>
+<p>The new attempt then receives the useful context from the previous one, not its entire conversation. It knows what failed, what was decided, what must not be repeated, and which evidence is expected. Completed tasks can remain complete if their results are still valid; the stopped task becomes executable again only when its preconditions are satisfied.</p>
+<p>In the URL teaching variant, resumption includes the architecture decision, the router's new public interface, and the unchanged prohibition on modifying the shared foundation. It does not grant the agent broader access. On the contrary, it makes a narrower product implementation possible.</p>
+<blockquote>
+<p>A good resumption does not discard the previous stop record. It turns that stop into a verifiable input for the next attempt.</p>
+</blockquote>
+<h2 id="what-the-scope-check-does-not-guarantee">What the scope check does not guarantee<a class="headerlink" href="#what-the-scope-check-does-not-guarantee" title="Permanent link">&para;</a></h2>
+<p>The check described here runs after writing in the normal flow. It can detect that an observed path is outside the scope and prevent the result from being accepted. A separate, explicitly authorized mechanism can then restore a known state or request a human decision. <strong>This is not a sandbox.</strong></p>
+<p>It does not prove that the process was technically unable to write elsewhere, access the network, read a secret, or run a dangerous command. Those guarantees belong to other mechanisms: system permissions, process isolation, secret management, network policy, and the execution environment.</p>
+<p>Nor does it detect a semantic error in an authorized path. The agent can remain perfectly within the declared directories and still introduce a business defect. Finally, the scope of the Git check must be stated: tracked files, untracked files, the index, pre-existing changes, and renames are not always observed in the same way.</p>
+<p>The guardrail provides a narrower benefit: it compares a write policy with a set of observed modifications, then exposes the discrepancy before review. That is already useful, provided it is not credited with a security guarantee it does not provide.</p>
+<h2 id="the-minimal-stop-record">The minimal stop record<a class="headerlink" href="#the-minimal-stop-record" title="Permanent link">&para;</a></h2>
+<p>A team can apply this method without a full orchestrator. For every interrupted task, retain a short record:</p>
+<div class="highlight"><pre><span></span><code><span class="gh"># Stop and resumption</span>
+
+Category: missing decision / scope violation / repairable failure
+Detection phase:
+Affected attempt:
+
+<span class="gu">Observed facts:</span>
+<span class="gu">-</span>
+
+<span class="gu">What remains agent-declared:</span>
+<span class="gu">-</span>
+
+Impact on the expected outcome:
+Authority required:
+
+Options:
+1.
+2.
+
+Decision and source:
+Actions before resumption:
+Artifacts to update:
+Checks to rerun:
+Residual risk:
+</code></pre></div>
+<p>The record enforces three useful separations: facts from declarations, options from decisions, and correction from validation. Most importantly, it prevents resumption from depending on the memory of the person who watched the execution.</p>
+<h2 id="conclusion">Conclusion<a class="headerlink" href="#conclusion" title="Permanent link">&para;</a></h2>
+<p>Knowing when to stop is a positive capability in an agentic workflow. A missing decision must be escalated to the right authority. A scope violation must remain visible, even if the modification is later removed. A repairable failure can trigger a new attempt, but only within a bounded loop followed by renewed checks.</p>
+<p>In all three cases, resumption must neither erase history nor silently expand the contract. It links a finding, decision, or repair to a new execution brief.</p>
+<p>One question remains: what is the evidence produced by this workflow actually worth? A successful scope check and commands that completed successfully do not yet tell us which revision they apply to or what they actually covered. To study this without confusing the main scenario with the URL variant, the next article returns to the initial pagination execution: <a href="../local-proof-agent-workflow/"><strong>“The Tests Pass”: What Does the Workflow Prove?</strong></a>.</p>
+<div class="article-footer-contact">
+  <p>To discuss this article or leave me a public message:</p>
+  <a class="article-contact-link" href="https://github.com/velkouby/ai-based-development/issues/new?template=contact.yml">Message on GitHub</a>
+</div>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.sections", "navigation.indexes", "navigation.top", "search.suggest", "search.highlight", "content.code.copy"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>

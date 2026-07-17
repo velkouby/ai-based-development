@@ -1,0 +1,852 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="An agent should not receive a super-prompt, but an execution package compiled from the brief, the plan, repository rules, human decisions, and the starting Git state. Here is how to build one without losing the provenance or authority of each piece of information.">
+      
+      
+        <meta name="author" content="Vincent El Kouby-Benichou, Baracoda">
+      
+      
+        <link rel="canonical" href="https://velkouby.github.io/ai-based-development/articles/agent-execution-package/">
+      
+      
+      
+      
+        
+          <link rel="alternate" href="./" hreflang="en">
+        
+          <link rel="alternate" href="../../fr/articles/agent-execution-package/" hreflang="fr">
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>What the Agent Actually Receives: Anatomy of an Execution Brief - AI-Native Software Engineering Notes</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/article.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#what-the-agent-actually-receives-anatomy-of-an-execution-brief" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="AI-Native Software Engineering Notes" class="md-header__button md-logo" aria-label="AI-Native Software Engineering Notes" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            AI-Native Software Engineering Notes
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              What the Agent Actually Receives: Anatomy of an Execution Brief
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+      <div class="md-header__option">
+  <div class="md-select">
+    
+    <button class="md-header__button md-icon" aria-label="Select language">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m12.87 15.07-2.54-2.51.03-.03A17.5 17.5 0 0 0 14.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2zm-2.62 7 1.62-4.33L19.12 17z"/></svg>
+    </button>
+    <div class="md-select__inner">
+      <ul class="md-select__list">
+        
+          <li class="md-select__item">
+            <a href="./" hreflang="en" class="md-select__link">
+              English
+            </a>
+          </li>
+        
+          <li class="md-select__item">
+            <a href="../../fr/articles/agent-execution-package/" hreflang="fr" class="md-select__link">
+              Français
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</div>
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/velkouby/ai-based-development" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    velkouby/ai-based-development
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="AI-Native Software Engineering Notes" class="md-nav__button md-logo" aria-label="AI-Native Software Engineering Notes" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    AI-Native Software Engineering Notes
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/velkouby/ai-based-development" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    velkouby/ai-based-development
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Articles
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Articles
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ai-agent-based-coding-best-practices/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    From Vibe Coding to Verifiable Agentic Development
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#why-this-is-not-a-super-prompt" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why this is not a super-prompt
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#four-sources-four-forms-of-authority" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Four sources, four forms of authority
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#compiling-the-execution-brief" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Compiling the execution brief
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#a-teaching-execution-package-for-pagination" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A teaching execution package for pagination
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#provenance-must-be-inspectable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Provenance must be inspectable
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-starting-git-state-is-an-input-not-final-evidence" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The starting Git state is an input, not final evidence
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#a-structured-package-can-still-contain-too-much-context" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A structured package can still contain too much context
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-the-execution-brief-actually-changes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What the execution brief actually changes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#audit-your-own-execution-package" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Audit your own execution package
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#conclusion" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Conclusion
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 class="article-title" id="what-the-agent-actually-receives-anatomy-of-an-execution-brief">What the Agent Actually Receives: Anatomy of an Execution Brief<a class="headerlink" href="#what-the-agent-actually-receives-anatomy-of-an-execution-brief" title="Permanent link">&para;</a></h1>
+<p class="article-lead">An agent does not need a super-prompt that summarizes the entire project. It needs a bounded execution brief: a compilation of the expected outcome, executable tasks, repository rules, human decisions, validations, and local state at the moment the work begins.</p>
+<p class="article-meta">
+  <span>By <span class="article-author">Vincent El Kouby-Benichou</span>, <a class="article-company-link" href="https://baracoda.com">Baracoda</a></span>
+  <a class="article-contact-link" href="https://www.linkedin.com/in/vincentelkoubybenichou/">LinkedIn</a>
+</p>
+
+<p>In <a href="../agentic-feature-end-to-end/">the previous article</a>, we followed a Structured Feature from its brief to local review. Between planning and implementation was a short but decisive step in the timeline: building the package sent to the agent runner.</p>
+<p>The question appears simple: <strong>what does the agent actually receive when it is time to code?</strong> The answer should be neither "the entire repository," nor "the entire conversation," nor "a highly detailed prompt." Those approaches blend intent, rules, and observed facts into prose whose origins become difficult to reconstruct.</p>
+<p>A framework that implements this principle must assemble several sources before handing a task block to the agent: the brief, the plan, selected tasks, the repository contract, recorded decisions, context references, validations, and a view of the starting Git state. The example below shows what this execution brief should contain to preserve provenance, the authority of each piece of information, and the starting state.</p>
+<blockquote>
+<p>The execution package is not prose designed to persuade the agent to work well. It is the execution brief that tells the agent what to accomplish, where its constraints come from, and where its authority ends.</p>
+</blockquote>
+<h2 id="why-this-is-not-a-super-prompt">Why this is not a super-prompt<a class="headerlink" href="#why-this-is-not-a-super-prompt" title="Permanent link">&para;</a></h2>
+<p>A prompt gives instructions to a model. An execution package describes a unit of work for a system: an ordered task block, its shared context, and its task-specific constraints.</p>
+<p>A super-prompt may contain an objective, rules, and excerpts from documentation. But once everything is merged into prose, the roles become blurred: a list of files may be mistaken for write authorization, a planning suggestion for a repository rule, or an old decision for a current fact.</p>
+<p>An execution package preserves these distinctions. It can be transported to the runner in a structured form, then partially rendered as text for the model. The transport format is not the point. What matters is that, before and after the runner session, the workflow can:</p>
+<ul>
+<li>identify the source of every important constraint;</li>
+<li>select the tasks that are actually executable;</li>
+<li>distinguish writable paths from read-only references;</li>
+<li>identify a human decision that has already been made;</li>
+<li>record the local state from which execution begins;</li>
+<li>compare the result with the declared boundaries;</li>
+<li>preserve the expected validations independently of what the agent claims to have run.</li>
+</ul>
+<p>This structure does not create system-level permissions. Writing "read-only" in a package does not remove the process's write access. The package describes the authority granted; a sandbox can enforce it before the fact, or a diff check can detect a violation afterward. The workflow must always state which mechanism is in place.</p>
+<h2 id="four-sources-four-forms-of-authority">Four sources, four forms of authority<a class="headerlink" href="#four-sources-four-forms-of-authority" title="Permanent link">&para;</a></h2>
+<p>The execution package for customer-directory pagination is compiled from four families of sources.</p>
+<table>
+<thead>
+<tr>
+<th>Source</th>
+<th>What it contributes</th>
+<th>Primary authority</th>
+<th>What it cannot decide</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Human</td>
+<td>Objective, non-goals, acceptance criteria, answers, and decisions</td>
+<td>Product intent and reserved decisions</td>
+<td>The facts actually present in the code or Git</td>
+</tr>
+<tr>
+<td>Repository</td>
+<td>Architecture, ownership, stable boundaries, and standard commands</td>
+<td>Technical rules and policies that apply to the project</td>
+<td>The product outcome expected from this package, unless it is already contractual</td>
+</tr>
+<tr>
+<td>Planning</td>
+<td>Decomposition, dependencies, relevant context, and per-task validations</td>
+<td>Operational ordering derived from the intent and rules</td>
+<td>Broaden the brief or bypass a repository policy</td>
+</tr>
+<tr>
+<td>Runtime</td>
+<td>Selected tasks, current attempt, observed Git state, and tracking location</td>
+<td>Facts about the current execution</td>
+<td>Invent intent or approve business risk</td>
+</tr>
+</tbody>
+</table>
+<p>This is not a single hierarchy in which one source always overrides the others. Authority depends on the subject.</p>
+<p>Humans have authority over the outcome to achieve. The repository has authority over ownership of code areas. The plan orders the work without being allowed to rewrite either of those contracts. The runtime has authority over what it observes now, but a Git fact does not say whether a change is desirable.</p>
+<p>This separation makes conflicts manageable. If the plan places a protected directory among the writable paths, the workflow must not present that inconsistency as valid authorization. If the brief requests behavior that depends on an unresolved product decision, the plan must not turn that gap into an implicit technical choice. In both cases, compiling the execution brief should fail or produce an explicit stop.</p>
+<blockquote>
+<p>Provenance says where information came from. Authority says what decisions the information is authoritative for. Both must survive compilation.</p>
+</blockquote>
+<h2 id="compiling-the-execution-brief">Compiling the execution brief<a class="headerlink" href="#compiling-the-execution-brief" title="Permanent link">&para;</a></h2>
+<p>The compilation can be represented without depending on any particular tool:</p>
+<div class="highlight"><pre><span></span><code>brief and human decisions ─┐
+                           │
+repository contract ───────┼─&gt; selection and resolution ─&gt; execution package ─&gt; agent runner
+                           │
+plan, tasks, dependencies ─┤
+                           │
+observed Git state ─────────┘
+</code></pre></div>
+<p>The word "compilation" is not decorative. Like a compiler, this step transforms several inputs with different roles into a narrower executable representation. It can also reject an inconsistent input.</p>
+<p>For a Structured Feature, the workflow must perform at least five operations.</p>
+<p>First, it selects a block of tasks that can run in sequence. The first task is ready at the start of the session; later tasks become executable as the preceding tasks in the block finish. An open decision or a dependency outside the block continues to prevent execution.</p>
+<p>Second, it preserves the boundaries defined for each task and constructs the package's allowed write envelope. Grouping three tasks does not grant the agent general authorization across the repository: the observed diff must remain within the controlled union of those boundaries.</p>
+<p>Third, it attaches decisions that have already been made. If the first page number and initial page size have been decided, the agent should neither ask those questions again nor choose different values.</p>
+<p>Fourth, it selects context shared by the package, followed by references specific to each task. The brief, stable rules, and shared decisions are loaded only once.</p>
+<p>Finally, it records an observation of the starting state, with its known coverage, so that a pre-existing modification is not attributed to the runner.</p>
+<h2 id="a-teaching-execution-package-for-pagination">A teaching execution package for pagination<a class="headerlink" href="#a-teaching-execution-package-for-pagination" title="Permanent link">&para;</a></h2>
+<p>Here is a teaching execution brief for the same feature used in the previous articles. The paths and values are illustrative. The representation favors readability; its transport format may vary across tools.</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Teaching example.</span>
+<span class="nt">package</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">objective</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">&gt;-</span>
+<span class="w">    </span><span class="no">Add server-side pagination to the customer directory and allow users</span>
+<span class="w">    </span><span class="no">to move between pages from the interface.</span>
+<span class="w">  </span><span class="nt">non_goals</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;Add</span><span class="nv"> </span><span class="s">persistent</span><span class="nv"> </span><span class="s">filters&quot;</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;Modify</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">router</span><span class="nv"> </span><span class="s">or</span><span class="nv"> </span><span class="s">shared</span><span class="nv"> </span><span class="s">interface</span><span class="nv"> </span><span class="s">primitives&quot;</span>
+<span class="w">  </span><span class="nt">acceptance_criteria</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;The</span><span class="nv"> </span><span class="s">API</span><span class="nv"> </span><span class="s">returns</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">items,</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">current</span><span class="nv"> </span><span class="s">page,</span><span class="nv"> </span><span class="s">and</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">total</span><span class="nv"> </span><span class="s">result</span><span class="nv"> </span><span class="s">count.&quot;</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;The</span><span class="nv"> </span><span class="s">interface</span><span class="nv"> </span><span class="s">preserves</span><span class="nv"> </span><span class="s">its</span><span class="nv"> </span><span class="s">loading,</span><span class="nv"> </span><span class="s">empty,</span><span class="nv"> </span><span class="s">and</span><span class="nv"> </span><span class="s">error</span><span class="nv"> </span><span class="s">states.&quot;</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;A</span><span class="nv"> </span><span class="s">pagination</span><span class="nv"> </span><span class="s">action</span><span class="nv"> </span><span class="s">loads</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">requested</span><span class="nv"> </span><span class="s">page.&quot;</span>
+
+<span class="w">  </span><span class="nt">tasks</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">T-01</span>
+<span class="w">      </span><span class="nt">outcome</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Extend</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">response</span><span class="nv"> </span><span class="s">and</span><span class="nv"> </span><span class="s">cover</span><span class="nv"> </span><span class="s">pagination</span><span class="nv"> </span><span class="s">edge</span><span class="nv"> </span><span class="s">cases.&quot;</span>
+<span class="w">      </span><span class="nt">depends_on</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span>
+<span class="w">      </span><span class="nt">writable</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;backend/customers/**&quot;</span><span class="p p-Indicator">]</span>
+<span class="w">      </span><span class="nt">read_only_references</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;frontend/customers/**&quot;</span><span class="p p-Indicator">]</span>
+<span class="w">      </span><span class="nt">validations</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;Targeted</span><span class="nv"> </span><span class="s">pagination</span><span class="nv"> </span><span class="s">contract</span><span class="nv"> </span><span class="s">tests&quot;</span><span class="p p-Indicator">]</span>
+
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">T-02</span>
+<span class="w">      </span><span class="nt">outcome</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Consume</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">contract</span><span class="nv"> </span><span class="s">and</span><span class="nv"> </span><span class="s">render</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">page</span><span class="nv"> </span><span class="s">controls.&quot;</span>
+<span class="w">      </span><span class="nt">depends_on</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">T-01</span><span class="p p-Indicator">]</span>
+<span class="w">      </span><span class="nt">writable</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;frontend/customers/**&quot;</span><span class="p p-Indicator">]</span>
+<span class="w">      </span><span class="nt">read_only_references</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;backend/customers/contracts.*&quot;</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;shared/ui/**&quot;</span>
+<span class="w">      </span><span class="nt">validations</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;Customer-directory</span><span class="nv"> </span><span class="s">behavior</span><span class="nv"> </span><span class="s">tests&quot;</span><span class="p p-Indicator">]</span>
+
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">T-03</span>
+<span class="w">      </span><span class="nt">outcome</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Review</span><span class="nv"> </span><span class="s">consistency</span><span class="nv"> </span><span class="s">between</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">contract</span><span class="nv"> </span><span class="s">and</span><span class="nv"> </span><span class="s">its</span><span class="nv"> </span><span class="s">integration.&quot;</span>
+<span class="w">      </span><span class="nt">depends_on</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">T-01</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">T-02</span><span class="p p-Indicator">]</span>
+<span class="w">      </span><span class="nt">writable</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span>
+<span class="w">      </span><span class="nt">read_only_references</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;backend/customers/**&quot;</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;frontend/customers/**&quot;</span>
+<span class="w">      </span><span class="nt">validations</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;Pagination</span><span class="nv"> </span><span class="s">integration</span><span class="nv"> </span><span class="s">tests&quot;</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;Project</span><span class="nv"> </span><span class="s">build&quot;</span>
+
+<span class="w">  </span><span class="nt">human_decisions</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;The</span><span class="nv"> </span><span class="s">first</span><span class="nv"> </span><span class="s">page</span><span class="nv"> </span><span class="s">is</span><span class="nv"> </span><span class="s">numbered</span><span class="nv"> </span><span class="s">1.&quot;</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;The</span><span class="nv"> </span><span class="s">default</span><span class="nv"> </span><span class="s">page</span><span class="nv"> </span><span class="s">size</span><span class="nv"> </span><span class="s">is</span><span class="nv"> </span><span class="s">25</span><span class="nv"> </span><span class="s">items.&quot;</span>
+
+<span class="w">  </span><span class="nt">forbidden_for_entire_package</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;shared/routing/**&quot;</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;tooling/**&quot;</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;orchestration/**&quot;</span>
+
+<span class="w">  </span><span class="nt">stop_if</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;The</span><span class="nv"> </span><span class="s">contract</span><span class="nv"> </span><span class="s">must</span><span class="nv"> </span><span class="s">become</span><span class="nv"> </span><span class="s">incompatible</span><span class="nv"> </span><span class="s">with</span><span class="nv"> </span><span class="s">an</span><span class="nv"> </span><span class="s">existing</span><span class="nv"> </span><span class="s">consumer.&quot;</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;A</span><span class="nv"> </span><span class="s">new</span><span class="nv"> </span><span class="s">dependency</span><span class="nv"> </span><span class="s">is</span><span class="nv"> </span><span class="s">required.&quot;</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;The</span><span class="nv"> </span><span class="s">solution</span><span class="nv"> </span><span class="s">requires</span><span class="nv"> </span><span class="s">a</span><span class="nv"> </span><span class="s">change</span><span class="nv"> </span><span class="s">to</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">shared</span><span class="nv"> </span><span class="s">foundation.&quot;</span>
+
+<span class="w">  </span><span class="nt">git_start</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">repository_detected</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">    </span><span class="nt">expected_branch</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;&lt;working</span><span class="nv"> </span><span class="s">branch&gt;&quot;</span>
+<span class="w">    </span><span class="nt">observed_local_state</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;&lt;status</span><span class="nv"> </span><span class="s">recorded</span><span class="nv"> </span><span class="s">before</span><span class="nv"> </span><span class="s">execution&gt;&quot;</span>
+<span class="w">    </span><span class="nt">base_revision</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;not</span><span class="nv"> </span><span class="s">immutably</span><span class="nv"> </span><span class="s">linked</span><span class="nv"> </span><span class="s">in</span><span class="nv"> </span><span class="s">this</span><span class="nv"> </span><span class="s">excerpt&quot;</span>
+<span class="w">    </span><span class="nt">index_coverage</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;to</span><span class="nv"> </span><span class="s">be</span><span class="nv"> </span><span class="s">confirmed&quot;</span>
+</code></pre></div>
+<p>In a real system, the package or its associated manifest should link the objective and criteria to the human-authored brief, the task block to the plan, each boundary to the repository contract, decisions to the preserved answers, and the Git state to a runtime observation.</p>
+<p>All three tasks appear in the same package, but they do not become a flat list. T-02 depends on T-01; T-03 depends on both earlier tasks. The runner receives this ordering, executes the block in a single session, and returns a separate result for each task. If T-01 reveals an incompatibility or a missing decision, the package must stop before reporting T-02 and T-03 as complete.</p>
+<p>This grouping avoids loading the same brief, contract, and decisions three times. It also allows the agent to preserve consistency between the shape of the backend response, its use in the frontend, and the broader validations. For a larger feature, the plan can naturally produce several coherent packages instead of one oversized batch.</p>
+<p>Per-task boundaries remain useful for preparing the execution brief and interpreting the runner's report. However, if the workflow takes only one Git snapshot before and one after the session, the independent observation applies at the package level: it shows which paths changed within the overall allowed envelope. Attributing one particular file to T-01 or T-02 remains a runner declaration unless intermediate checkpoints are added.</p>
+<p>Context references are not writable paths either. They explain where to find a contract or pattern. The write boundary remains separate. This distinction prevents a file recommended for reading from being interpreted as an invitation to modify it.</p>
+<p>Finally, validations belong to the execution brief, not to the agent's final report. Their presence means, "these checks are expected." It does not mean that they were run. The workflow must separately record the commands that were actually executed, their results, and any missing validations.</p>
+<h2 id="provenance-must-be-inspectable">Provenance must be inspectable<a class="headerlink" href="#provenance-must-be-inspectable" title="Permanent link">&para;</a></h2>
+<p>Provenance can be made useful without imposing a complex schema. For each decisive piece of information, four attributes are often enough:</p>
+<table>
+<thead>
+<tr>
+<th>Information</th>
+<th>Review question</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Source</td>
+<td>Which document, decision, or observation supplied this value?</td>
+</tr>
+<tr>
+<td>Authority</td>
+<td>Does this value express intent, a rule, a plan, or a fact?</td>
+</tr>
+<tr>
+<td>Freshness</td>
+<td>Which version, decision, or attempt does it apply to?</td>
+</tr>
+<tr>
+<td>Transformation</td>
+<td>Was it copied, summarized, derived, or added by the runtime?</td>
+</tr>
+</tbody>
+</table>
+<p>Consider the page size. If it comes from a human answer recorded after the brief was written, the package must carry the most recent decision and retain a link to its origin. Copying it only into the plan creates two sources that can diverge.</p>
+<p>Now consider the writable paths. They may be derived from the repository's general contract, then narrowed by the plan. The effective result is the intersection of the authorizations, not the most permissive list. The plan can reduce write authority; it should not be able to make a protected area writable.</p>
+<p>This logic also makes the execution brief auditable before the run. A reviewer can inspect not only the expected outcome, but also the decisions the compiler made while assembling the context.</p>
+<h2 id="the-starting-git-state-is-an-input-not-final-evidence">The starting Git state is an input, not final evidence<a class="headerlink" href="#the-starting-git-state-is-an-input-not-final-evidence" title="Permanent link">&para;</a></h2>
+<p>The initial Git state deserves an explicit place in the package because post-execution checks depend on a comparison. At a minimum, the workflow should know whether it is in a repository, which branch it is on, which revision serves as the starting point, and whether the working tree already contains changes to tracked files—staged or unstaged—as well as untracked files.</p>
+<p>An initial view of local state and previously modified paths is enough to reduce some confusion during local execution. It is not enough to claim unambiguously that a change belongs to one attempt or revision.</p>
+<p>Several limitations must remain visible:</p>
+<ul>
+<li>a local status does not, by itself, bind the package to an immutable base commit;</li>
+<li>a dirty working tree complicates attribution of changes to the runner;</li>
+<li>the index and working tree must be observed separately;</li>
+<li>untracked files must be explicitly included in the observation scope;</li>
+<li>the expected branch does not prove that the complete execution happened on that branch;</li>
+<li>a starting snapshot does not replace the Git state recorded at the end.</li>
+</ul>
+<p>The accurate claim is therefore not, "the package proves that the repository was clean." It is, "the package records this view of the initial state, with this coverage." Linking the evidence to a pull request requires more: base and head commits, index state, environment information, and validations executed on the relevant revision. We will return to this in the article about evidence.</p>
+<h2 id="a-structured-package-can-still-contain-too-much-context">A structured package can still contain too much context<a class="headerlink" href="#a-structured-package-can-still-contain-too-much-context" title="Permanent link">&para;</a></h2>
+<p>Structure reduces amnesia and ambiguity of provenance. It does not guarantee that the selection is relevant.</p>
+<p>Putting the full brief, the plan, every task, every instruction, and a broad view of the repository into the package may seem prudent. Yet it can dilute the executable task block, carry obsolete decisions, and multiply apparent contradictions.</p>
+<p>Before including an element, the workflow can apply four questions:</p>
+<ol>
+<li>Is it necessary to execute one of the package's tasks or decide to stop?</li>
+<li>Is its source sufficiently authoritative and current?</li>
+<li>Is there a smaller representation that preserves the useful meaning?</li>
+<li>Should it be included, or merely referenced with a reason to consult it?</li>
+</ol>
+<p>Minimal context is not the shortest context. Removing a stop condition would be poor compression; copying an entire document when one precise reference is enough adds noise. The package must support action and make reserved decisions recognizable, not replace the repository inside the context window.</p>
+<h2 id="what-the-execution-brief-actually-changes">What the execution brief actually changes<a class="headerlink" href="#what-the-execution-brief-actually-changes" title="Permanent link">&para;</a></h2>
+<p>A well-constructed execution package improves three concrete things.</p>
+<p>First, it makes the run reconstructible: intent, decisions, scope, and expected validations remain accessible without rereading the conversation.</p>
+<p>Second, it makes deviations classifiable. A modification to a read-only area can be compared with an explicit boundary; a missing validation appears as absent instead of disappearing into an optimistic summary.</p>
+<p>Finally, it separates responsibilities more clearly. The agent proposes code and a structured report. The workflow preserves state, checks scope, and runs the planned validations. Humans decide questions beyond the authority of the tasks in the package and judge the residual risk.</p>
+<p>But the package does not repair an unstable brief. It cannot make an overbroad context selection relevant. It does not turn a path policy into a sandbox. It does not guarantee that the selected tests cover the behavior. And by itself, it does not prove that the final diff corresponds to a merge-ready revision.</p>
+<blockquote>
+<p>A precise execution brief does not make the agent infallible. It makes the agent's instructions, boundaries, and deviations inspectable.</p>
+</blockquote>
+<h2 id="audit-your-own-execution-package">Audit your own execution package<a class="headerlink" href="#audit-your-own-execution-package" title="Permanent link">&para;</a></h2>
+<p>Before adding more automation, a team can take a real package or reconstruct one from a recent task and check the following points:</p>
+<ul>
+<li>☐ The objective and non-goals come from an identifiable human source.</li>
+<li>☐ Every acceptance criterion describes an observable outcome.</li>
+<li>☐ Executable tasks are distinguished from tasks shown only for context.</li>
+<li>☐ Dependencies prevent premature execution.</li>
+<li>☐ Writable, read-only, and forbidden paths have distinct meanings.</li>
+<li>☐ A context reference is never confused with write authorization.</li>
+<li>☐ Human decisions already made are preserved with their origin.</li>
+<li>☐ Stop conditions identify the required decision and role.</li>
+<li>☐ Expected validations exist independently of the agent's report.</li>
+<li>☐ The initial Git state clearly states what was and was not observed.</li>
+<li>☐ A conflict among the brief, plan, and repository rules either blocks compilation or remains explicitly visible.</li>
+<li>☐ Every context block can justify its presence in the current package.</li>
+</ul>
+<p>If one of these elements exists only in chat, the package is incomplete. If it exists but its origin cannot be recovered, the package lacks provenance. If it is present but cannot be checked, it remains an instruction and must be presented as such.</p>
+<h2 id="conclusion">Conclusion<a class="headerlink" href="#conclusion" title="Permanent link">&para;</a></h2>
+<p>What the agent receives before coding affects its ability to stay within the authority it has been granted more than its ability to generate code.</p>
+<p>The brief provides intent. The repository provides rules. The plan provides decomposition and dependencies. Human decisions close questions that have already been settled. The runtime selects a coherent block of tasks that can execute in sequence, adds local state, and hands the runner a bounded execution brief.</p>
+<p>The quality of this assembly is not measured by its length. It is measured by whether, for every important piece of information, we can answer: where did it come from, what is it authoritative for, is it still current, and how will the result be checked against that expectation?</p>
+<p>The remaining question is what happens when execution cannot comply with this brief: a decision is missing, a boundary is crossed, or a validation fails. That is the subject of the next article: <a href="../agent-task-stop-and-resume/"><strong>when the task must stop, and how to resume it without losing its history</strong></a>.</p>
+<div class="article-footer-contact">
+  <p>To discuss this article or leave me a public message:</p>
+  <a class="article-contact-link" href="https://github.com/velkouby/ai-based-development/issues/new?template=contact.yml">Message on GitHub</a>
+</div>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.sections", "navigation.indexes", "navigation.top", "search.suggest", "search.highlight", "content.code.copy"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>
