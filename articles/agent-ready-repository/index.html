@@ -440,10 +440,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#a-reduced-contract-for-a-real-task" class="md-nav__link">
+  <a href="#an-execution-contract-for-a-concrete-task" class="md-nav__link">
     <span class="md-ellipsis">
       
-        A reduced contract for a real task
+        An execution contract for a concrete task
       
     </span>
   </a>
@@ -550,7 +550,7 @@
 <blockquote>
 <p>An agent-ready repository does more than give the agent context. It gives the agent operating boundaries that the workflow can compare against the changes actually produced.</p>
 </blockquote>
-<p>I experiment with these principles in an internal framework that prepares the agent's context and controls parts of its execution. The examples below are intentionally simplified: they expose an observable contract, not the framework's implementation.</p>
+<p>These principles can be implemented in a framework that prepares the agent's context and controls parts of its execution. The examples below show one way to make that contract observable.</p>
 <h2 id="the-repository-should-answer-before-the-agent-has-to">The repository should answer before the agent has to<a class="headerlink" href="#the-repository-should-answer-before-the-agent-has-to" title="Permanent link">&para;</a></h2>
 <p>Exploring the code is part of the job. The agent should look for existing components, read local conventions, and understand the area it is about to change. But that exploration should not turn every task into an investigation of the project's fundamental rules.</p>
 <p>Before acting, the agent should be able to answer seven questions quickly:</p>
@@ -646,9 +646,9 @@
 <p>If the requirement can be satisfied in the product layer, it should not be solved by modifying the shared foundation.</p>
 </blockquote>
 <p>This separation also protects control artifacts. The agent can explain what it believes it did, but it should not be the sole author of the files intended to attest that boundaries were respected or validations passed. Otherwise, it becomes both the executor and the record keeper for its own execution.</p>
-<h2 id="a-reduced-contract-for-a-real-task">A reduced contract for a real task<a class="headerlink" href="#a-reduced-contract-for-a-real-task" title="Permanent link">&para;</a></h2>
+<h2 id="an-execution-contract-for-a-concrete-task">An execution contract for a concrete task<a class="headerlink" href="#an-execution-contract-for-a-concrete-task" title="Permanent link">&para;</a></h2>
 <p>The repository contract contains stable rules: ownership areas, protected paths, standard commands, and the validation policy. For each task, the plan or workflow derives a more narrowly scoped execution brief.</p>
-<p>Here is a teaching example for adding server-side pagination to a customer directory. This document is deliberately reduced: it is neither the schema of an existing tool nor a configuration ready to copy and paste.</p>
+<p>Here is a teaching example for adding server-side pagination to a customer directory. It shows the categories of information a framework can assemble before execution.</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># Conceptual example, independent of any tool.</span>
 <span class="nt">objective</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">&gt;-</span>
 <span class="w">  </span><span class="no">Add server-side pagination to the customer directory without modifying</span>

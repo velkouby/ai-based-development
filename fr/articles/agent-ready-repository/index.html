@@ -440,10 +440,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#un-contrat-reduit-pour-une-tache-reelle" class="md-nav__link">
+  <a href="#un-contrat-dexecution-pour-une-tache-concrete" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Un contrat réduit pour une tâche réelle
+        Un contrat d'exécution pour une tâche concrète
       
     </span>
   </a>
@@ -550,7 +550,7 @@
 <blockquote>
 <p>Un repository agent-ready ne donne pas seulement du contexte à l'agent. Il lui donne un cadre d'action que le workflow peut confronter aux modifications réellement produites.</p>
 </blockquote>
-<p>Ces principes sont expérimentés dans un framework interne qui prépare le contexte de l'agent et contrôle une partie de son exécution. Les exemples qui suivent sont volontairement simplifiés : ils exposent un contrat observable, pas l'implémentation du framework.</p>
+<p>Ces principes peuvent être matérialisés dans un framework qui prépare le contexte de l'agent et contrôle une partie de son exécution. Les exemples qui suivent montrent une manière possible de rendre ce contrat observable.</p>
 <h2 id="le-repository-doit-repondre-avant-lagent">Le repository doit répondre avant l'agent<a class="headerlink" href="#le-repository-doit-repondre-avant-lagent" title="Permanent link">&para;</a></h2>
 <p>Explorer le code fait partie du travail. L'agent doit chercher les composants existants, lire les conventions locales et comprendre la surface concernée. Mais cette exploration ne devrait pas devenir, à chaque tâche, une enquête sur les règles fondamentales du projet.</p>
 <p>Avant d'agir, l'agent doit pouvoir obtenir rapidement des réponses à sept questions :</p>
@@ -646,9 +646,9 @@
 <p>Si le besoin peut être satisfait dans la couche produit, il ne doit pas être résolu en modifiant le socle.</p>
 </blockquote>
 <p>Cette séparation protège également les artefacts de contrôle. L'agent peut expliquer ce qu'il pense avoir fait, mais il ne devrait pas être le seul auteur des fichiers censés attester que les frontières ont été respectées ou que les validations ont réussi. Sinon, il devient à la fois exécutant et greffier de sa propre exécution.</p>
-<h2 id="un-contrat-reduit-pour-une-tache-reelle">Un contrat réduit pour une tâche réelle<a class="headerlink" href="#un-contrat-reduit-pour-une-tache-reelle" title="Permanent link">&para;</a></h2>
+<h2 id="un-contrat-dexecution-pour-une-tache-concrete">Un contrat d'exécution pour une tâche concrète<a class="headerlink" href="#un-contrat-dexecution-pour-une-tache-concrete" title="Permanent link">&para;</a></h2>
 <p>Le contrat du repository contient les règles stables : zones de responsabilité, chemins protégés, commandes de référence et politique de validation. Pour chaque tâche, le plan ou le workflow en dérive un ordre de mission plus étroit.</p>
-<p>Voici un exemple pédagogique pour ajouter une pagination serveur à un annuaire clients. Ce document est volontairement réduit : ce n'est ni le schéma d'un outil existant, ni une configuration prête à copier telle quelle.</p>
+<p>Voici un exemple pédagogique pour ajouter une pagination serveur à un annuaire clients. Il montre les catégories d'information qu'un framework peut réunir avant l'exécution.</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># Exemple conceptuel, indépendant de tout outil.</span>
 <span class="nt">objectif</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">&gt;-</span>
 <span class="w">  </span><span class="no">Ajouter une pagination serveur à l&#39;annuaire clients sans modifier</span>

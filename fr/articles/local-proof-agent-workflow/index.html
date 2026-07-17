@@ -440,10 +440,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#ce-que-limplementation-de-reference-etablit-deja" class="md-nav__link">
+  <a href="#ce-quun-framework-peut-etablir-localement" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Ce que l'implémentation de référence établit déjà
+        Ce qu'un framework peut établir localement
       
     </span>
   </a>
@@ -565,10 +565,10 @@
   <a class="article-contact-link" href="https://www.linkedin.com/in/vincentelkoubybenichou/">LinkedIn</a>
 </p>
 
-<p>Dans <a href="../agent-task-stop-and-resume/">l'article précédent</a>, une branche simulée autour de la synchronisation URL servait à étudier l'arrêt et la reprise. Pour analyser la preuve sans mélanger ce scénario pédagogique avec l'exécution principale, revenons ici à la pagination initiale décrite dans la <a href="../agentic-feature-end-to-end/">trace de bout en bout</a>, sans l'extension URL. Supposons que ses tâches soient terminées, que les fichiers observés restent dans le périmètre autorisé et que toutes les commandes lancées retournent <code>0</code>.</p>
+<p>Dans <a href="../agent-task-stop-and-resume/">l'article précédent</a>, une variante pédagogique autour de la synchronisation URL servait à étudier l'arrêt et la reprise. Pour analyser la preuve sans mélanger ce scénario avec l'exécution principale, revenons ici à la pagination initiale décrite dans la <a href="../agentic-feature-end-to-end/">trace de bout en bout</a>, sans l'extension URL. Supposons que ses tâches soient terminées, que les fichiers observés restent dans le périmètre autorisé et que toutes les commandes lancées retournent <code>0</code>.</p>
 <p>Peut-on écrire « la pagination de l'annuaire clients est validée » ?</p>
 <p>Pas encore. On peut affirmer quelque chose de plus précis : dans un contexte local donné, certaines commandes se sont terminées sans erreur sur l'état de travail observé. Cette phrase paraît moins spectaculaire. Elle est surtout beaucoup plus utile à la personne qui doit relire le changement.</p>
-<p>Le framework interne qui sert de laboratoire à cette série conserve déjà une partie de ces faits : tentatives, fichiers détectés, contrôles de périmètre, commandes exécutées, codes de retour et synthèse de revue. J'ai vérifié ces capacités dans son implémentation et dans ses tests. Cela ne transforme pas pour autant son artefact local en attestation complète d'une pull request.</p>
+<p>Un framework appliquant ces principes peut conserver une partie de ces faits : tentatives, fichiers détectés, contrôles de périmètre, commandes exécutées, codes de retour et synthèse de revue. Cela ne transforme pas pour autant l'artefact local qu'il produit en attestation complète d'une pull request.</p>
 <blockquote>
 <p>La couleur d'un contrôle résume un résultat. La preuve doit permettre d'en reconstruire la portée.</p>
 </blockquote>
@@ -641,7 +641,7 @@
 <p>Une validation omise ne doit jamais apparaître comme un contrôle réussi. Elle doit apparaître comme une information absente, un choix explicite ou un risque résiduel.</p>
 </blockquote>
 <h2 id="ouvrir-la-preuve-locale">Ouvrir la preuve locale<a class="headerlink" href="#ouvrir-la-preuve-locale" title="Permanent link">&para;</a></h2>
-<p>Pour le fil rouge de la pagination, imaginons l'artefact public suivant. Il est <strong>simplifié</strong> dans sa structure et <strong>simulé</strong> dans son contenu : ses noms de champs sont pédagogiques et ne reproduisent pas le format du framework interne. Il représente le type d'informations que le workflow sait actuellement conserver, pas un dump natif d'une exécution publiée.</p>
+<p>Pour le fil rouge de la pagination, imaginons l'artefact local suivant. Ses noms de champs et ses valeurs sont pédagogiques : ils illustrent une manière possible, pour un framework, de conserver les faits utiles à la revue.</p>
 <div class="highlight"><pre><span></span><code><span class="nt">tentative</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">identifiant</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">run-002</span>
 <span class="w">  </span><span class="nt">creee_a</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2026-07-17T09:42:18Z</span>
@@ -694,20 +694,20 @@
 <li>sur quel commit cette tentative peut-elle être rejouée ?</li>
 </ul>
 <p>Une preuve utile ne fait pas disparaître ces questions. Elle les rend visibles assez tôt pour que la revue puisse les traiter.</p>
-<h2 id="ce-que-limplementation-de-reference-etablit-deja">Ce que l'implémentation de référence établit déjà<a class="headerlink" href="#ce-que-limplementation-de-reference-etablit-deja" title="Permanent link">&para;</a></h2>
-<p>Dans le framework interne, plusieurs capacités sont <strong>vérifiées</strong> par le code et les tests conservés dans le repository privé :</p>
+<h2 id="ce-quun-framework-peut-etablir-localement">Ce qu'un framework peut établir localement<a class="headerlink" href="#ce-quun-framework-peut-etablir-localement" title="Permanent link">&para;</a></h2>
+<p>Pour rendre la preuve locale inspectable, une implémentation peut :</p>
 <ul>
-<li>une tentative possède un identifiant, un horaire et un lien vers son résultat détaillé ;</li>
-<li>l'état Git est inspecté avant et après le passage du runner ;</li>
-<li>le workflow calcule les fichiers dont le contenu a changé pendant l'exécution afin de ne pas confondre automatiquement tout le working tree avec le travail de l'agent ;</li>
-<li>les chemins observés sont confrontés aux frontières déclarées ;</li>
-<li>les validations configurées ne sont lancées qu'après certains contrôles structurels ;</li>
-<li>chaque commande conserve son code de retour, ses horaires et une portion de ses sorties standard et d'erreur ;</li>
-<li>les tentatives précédentes restent disponibles lorsqu'une correction puis une nouvelle validation sont nécessaires ;</li>
-<li>une synthèse rassemble les fichiers, contrôles, risques et questions restantes pour préparer la revue.</li>
+<li>attribuer à chaque tentative un identifiant, un horaire et un lien vers son résultat détaillé ;</li>
+<li>inspecter l'état Git avant et après le passage du runner ;</li>
+<li>calculer les fichiers dont le contenu a changé pendant l'exécution afin de ne pas confondre automatiquement tout le working tree avec le travail de l'agent ;</li>
+<li>confronter les chemins observés aux frontières déclarées ;</li>
+<li>ne lancer les validations configurées qu'après certains contrôles structurels ;</li>
+<li>conserver, pour chaque commande, son code de retour, ses horaires et une portion de ses sorties standard et d'erreur ;</li>
+<li>garder les tentatives précédentes lorsqu'une correction puis une nouvelle validation sont nécessaires ;</li>
+<li>rassembler les fichiers, contrôles, risques et questions restantes dans une synthèse qui prépare la revue.</li>
 </ul>
-<p>Cette liste défend une affirmation précise : le workflow rend une partie significative de l'exécution locale inspectable.</p>
-<p>Elle ne défend pas les affirmations suivantes :</p>
+<p>Avec ces capacités, le workflow peut défendre une affirmation précise : une partie significative de l'exécution locale est inspectable.</p>
+<p>Ce dispositif ne permet pas pour autant d'affirmer que :</p>
 <ul>
 <li>la capture Git couvre nécessairement tous les états possibles de l'index et du working tree ;</li>
 <li>l'état initial était propre ou accepté explicitement ;</li>
@@ -747,7 +747,7 @@
 </tr>
 <tr>
 <td>Tests du composant</td>
-<td>Les actions « précédent » et « suivant » ainsi que les états codés réagissent-ils aux scénarios simulés ?</td>
+<td>Les actions « précédent » et « suivant » ainsi que les états codés réagissent-ils aux scénarios de test ?</td>
 <td>Navigation complète, réseau réel, accessibilité exhaustive</td>
 </tr>
 <tr>
@@ -828,7 +828,7 @@
 <p>Git fournit alors une identité de contenu et un diff stable entre deux révisions. La CI peut exécuter les contrôles sur la tête de la pull request, dans un environnement décrit par le pipeline. Aucun des deux ne décide que la couverture est suffisante. Ils rendent le lien entre une révision et des résultats beaucoup plus solide.</p>
 <p>Il reste aussi un problème de temporalité. Si un correctif est ajouté après un passage vert, la validation précédente ne s'applique pas automatiquement au nouveau commit. Une interface de revue devrait rendre ce décalage visible plutôt que conserver un badge vert détaché de sa révision.</p>
 <h2 id="le-manifeste-cible">Le manifeste cible<a class="headerlink" href="#le-manifeste-cible" title="Permanent link">&para;</a></h2>
-<p>L'exemple suivant est une <strong>cible de conception</strong>. Il ne décrit pas le schéma actuel du framework interne et ne prétend pas être déjà produit intégralement. Son intérêt est de montrer les informations nécessaires pour passer d'un résultat local inspectable à une provenance liée à la révision.</p>
+<p>L'exemple suivant est une <strong>cible de conception</strong> : un manifeste possible pour passer d'un résultat local inspectable à une provenance liée à la révision. Il reste une proposition de structure ; chaque champ devrait être alimenté par une observation réelle et vérifiable pour soutenir la conclusion associée.</p>
 <div class="highlight"><pre><span></span><code><span class="nt">preuve</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">execution</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">identifiant</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">stable-run-id</span>
@@ -916,7 +916,7 @@
 <h2 id="conclusion">Conclusion<a class="headerlink" href="#conclusion" title="Permanent link">&para;</a></h2>
 <p>« Les tests passent » n'est ni inutile ni suffisant. C'est le début d'une démonstration : une ou plusieurs commandes se sont terminées sans erreur dans un contexte donné.</p>
 <p>La preuve locale rend ce contexte inspectable. Git rattache le changement à des révisions. La CI rejoue ou complète les contrôles sur une tête identifiée. La matrice critères-validations montre la couverture attendue. La revue humaine décide enfin si les faits et les lacunes sont compatibles avec le risque.</p>
-<p>Le framework interne couvre déjà une part substantielle de la première étape. Le manifeste cible montre le chemin restant sans faire passer une intention de conception pour une capacité acquise.</p>
+<p>Un framework appliquant ces principes peut déjà rendre cette première étape substantiellement plus utile. Le manifeste cible montre comment la relier ensuite à une révision, sans faire passer une intention de conception pour une garantie effectivement obtenue.</p>
 <p>Une question demeure alors : combien de décisions peut-on raisonnablement stabiliser dans un brief avant que ses zones floues ne deviennent plus coûteuses que la rédaction d'une spécification ? Ce sera le sujet du prochain article : <strong>Quand le brief ne suffit plus : introduire une spec sans bureaucratie</strong>.</p>
 <div class="article-footer-contact">
   <p>Pour discuter de cet article ou me laisser un message public :</p>

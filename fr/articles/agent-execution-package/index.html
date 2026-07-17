@@ -440,10 +440,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#un-paquet-simplifie-pour-la-pagination" class="md-nav__link">
+  <a href="#un-paquet-pedagogique-pour-la-pagination" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Un paquet simplifié pour la pagination
+        Un paquet pédagogique pour la pagination
       
     </span>
   </a>
@@ -545,14 +545,14 @@
 
 <p>Dans <a href="../agentic-feature-end-to-end/">l'article précédent</a>, nous avons suivi une fonctionnalité structurée du brief à la revue locale. Entre le plan et l'implémentation apparaissait une étape courte dans la chronologie, mais déterminante pour l'exécution : la construction du paquet transmis au runner agent.</p>
 <p>La question est simple en apparence : <strong>que reçoit réellement l'agent au moment de coder ?</strong> La réponse ne devrait être ni « tout le repository », ni « toute la conversation », ni « un prompt très détaillé ». Ces solutions mélangent l'intention, les règles et les faits observés dans un texte dont l'origine devient difficile à reconstruire.</p>
-<p>Dans le framework interne qui sert de laboratoire à cette série, le workflow assemble déjà plusieurs sources avant de confier une tâche à l'agent : brief, plan, tâches éligibles, contrat du repository, décisions enregistrées, références de contexte, validations et aperçu de l'état Git initial. Cette capacité est <strong>vérifiée</strong> dans l'implémentation. L'exemple publié ici est <strong>simplifié</strong> dans sa structure et <strong>simulé</strong> dans son contenu. Il ne reproduit ni le schéma, ni les noms de champs, ni les mécanismes internes.</p>
+<p>Un framework qui met ce principe en œuvre doit assembler plusieurs sources avant de confier un bloc de tâches à l'agent : brief, plan, tâches sélectionnées, contrat du repository, décisions enregistrées, références de contexte, validations et aperçu de l'état Git initial. L'exemple ci-dessous montre ce que cet ordre de mission devrait contenir pour préserver la provenance, l'autorité de chaque information et l'état de départ.</p>
 <blockquote>
 <p>Le paquet d'exécution n'est pas le texte qui convainc l'agent de bien travailler. C'est l'ordre de mission qui lui indique ce qu'il doit accomplir, d'où viennent ses contraintes et où s'arrête son autorité.</p>
 </blockquote>
 <h2 id="pourquoi-ce-nest-pas-un-super-prompt">Pourquoi ce n'est pas un super-prompt<a class="headerlink" href="#pourquoi-ce-nest-pas-un-super-prompt" title="Permanent link">&para;</a></h2>
-<p>Un prompt formule des instructions à un modèle. Un paquet d'exécution décrit une unité de travail pour un système.</p>
+<p>Un prompt formule des instructions à un modèle. Un paquet d'exécution décrit une unité de travail pour un système : un bloc ordonné de tâches, leur contexte partagé et leurs contraintes propres.</p>
 <p>Un super-prompt peut contenir un objectif, des règles et des extraits de documentation. Mais une fois tout fusionné en prose, leur rôle se brouille : une liste de fichiers peut être prise pour une autorisation, une suggestion du plan pour une règle du repository, ou une ancienne décision pour un fait actuel.</p>
-<p>Un paquet d'exécution conserve ces distinctions. Il peut être transporté au runner sous une forme structurée, puis rendu partiellement en texte pour le modèle. Le format de transport n'est pas le sujet. Ce qui compte est que le workflow puisse, avant et après l'appel au modèle :</p>
+<p>Un paquet d'exécution conserve ces distinctions. Il peut être transporté au runner sous une forme structurée, puis rendu partiellement en texte pour le modèle. Le format de transport n'est pas le sujet. Ce qui compte est que le workflow puisse, avant et après la session du runner :</p>
 <ul>
 <li>identifier la source de chaque contrainte importante ;</li>
 <li>sélectionner les tâches réellement exécutables ;</li>
@@ -585,7 +585,7 @@
 <td>Repository</td>
 <td>Architecture, responsabilités, frontières stables, commandes de référence</td>
 <td>Règles techniques et politiques applicables au projet</td>
-<td>Le résultat produit attendu pour cette tâche, sauf s'il est déjà contractuel</td>
+<td>Le résultat produit attendu pour ce paquet, sauf s'il est déjà contractuel</td>
 </tr>
 <tr>
 <td>Planification</td>
@@ -595,7 +595,7 @@
 </tr>
 <tr>
 <td>Runtime</td>
-<td>Tâches éligibles, tentative courante, état Git observé, emplacement du suivi</td>
+<td>Tâches sélectionnées, tentative courante, état Git observé, emplacement du suivi</td>
 <td>Faits de l'exécution présente</td>
 <td>Inventer une intention ou approuver un risque métier</td>
 </tr>
@@ -619,15 +619,15 @@ plan, tâches et dépendances ─┤
 </code></pre></div>
 <p>Le mot « compilation » n'est pas décoratif. Comme un compilateur, cette étape transforme plusieurs entrées ayant des rôles différents en une représentation exécutable plus étroite. Elle peut aussi refuser une entrée incohérente.</p>
 <p>Pour une fonctionnalité structurée, le workflow doit au minimum effectuer cinq opérations.</p>
-<p>Premièrement, il résout les tâches éligibles. Une dépendance non satisfaite interdit l'exécution immédiate ; les autres tâches peuvent rester visibles pour comprendre la séquence sans ouvrir de droits supplémentaires.</p>
-<p>Deuxièmement, il réduit les frontières du repository au périmètre de la tâche. Une zone généralement modifiable peut rester hors périmètre, tandis qu'une référence en lecture seule peut être indispensable.</p>
+<p>Premièrement, il sélectionne un bloc de tâches exécutables en séquence. La première est prête au début de la session ; les suivantes deviennent exécutables lorsque les tâches précédentes du bloc sont terminées. Une décision ouverte ou une dépendance extérieure au bloc continue, elle, de bloquer l'exécution.</p>
+<p>Deuxièmement, il conserve les frontières prévues pour chaque tâche et construit l'enveloppe autorisée du paquet. Regrouper trois tâches ne donne pas à l'agent une autorisation générale sur le repository : le diff observé doit rester dans l'union contrôlée de ces frontières.</p>
 <p>Troisièmement, il rattache les décisions déjà prises. Si la première page et la taille initiale ont été arbitrées, l'agent ne doit ni reposer la question, ni choisir d'autres valeurs.</p>
-<p>Quatrièmement, il sélectionne un contexte opérationnel plus petit que le repository et justifiable par la tâche.</p>
+<p>Quatrièmement, il sélectionne un contexte commun au paquet, puis les références particulières à chaque tâche. Le brief, les règles stables et les décisions partagées ne sont chargés qu'une fois.</p>
 <p>Enfin, il enregistre une observation de l'état de départ, avec sa couverture connue, pour ne pas attribuer au runner une modification préexistante.</p>
-<h2 id="un-paquet-simplifie-pour-la-pagination">Un paquet simplifié pour la pagination<a class="headerlink" href="#un-paquet-simplifie-pour-la-pagination" title="Permanent link">&para;</a></h2>
-<p>Voici un ordre de mission pédagogique pour la même fonctionnalité que dans les articles précédents. Les chemins et les valeurs sont illustratifs. Le document est volontairement incomplet et ne correspond pas au format d'un outil existant.</p>
-<div class="highlight"><pre><span></span><code><span class="c1"># Exemple simplifié et simulé.</span>
-<span class="nt">mission</span><span class="p">:</span>
+<h2 id="un-paquet-pedagogique-pour-la-pagination">Un paquet pédagogique pour la pagination<a class="headerlink" href="#un-paquet-pedagogique-pour-la-pagination" title="Permanent link">&para;</a></h2>
+<p>Voici un ordre de mission pédagogique pour la même fonctionnalité que dans les articles précédents. Les chemins et les valeurs sont illustratifs. La représentation privilégie la lisibilité ; son format de transport peut varier selon les outils.</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Exemple pédagogique.</span>
+<span class="nt">paquet</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">objectif</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">&gt;-</span>
 <span class="w">    </span><span class="no">Ajouter une pagination serveur à l&#39;annuaire clients et permettre</span>
 <span class="w">    </span><span class="no">de changer de page depuis l&#39;interface.</span>
@@ -639,60 +639,63 @@ plan, tâches et dépendances ─┤
 <span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;L&#39;interface</span><span class="nv"> </span><span class="s">conserve</span><span class="nv"> </span><span class="s">les</span><span class="nv"> </span><span class="s">états</span><span class="nv"> </span><span class="s">loading,</span><span class="nv"> </span><span class="s">empty</span><span class="nv"> </span><span class="s">et</span><span class="nv"> </span><span class="s">error.&quot;</span>
 <span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;Une</span><span class="nv"> </span><span class="s">action</span><span class="nv"> </span><span class="s">de</span><span class="nv"> </span><span class="s">pagination</span><span class="nv"> </span><span class="s">charge</span><span class="nv"> </span><span class="s">la</span><span class="nv"> </span><span class="s">page</span><span class="nv"> </span><span class="s">demandée.&quot;</span>
 
-<span class="nt">taches</span><span class="p">:</span>
-<span class="w">  </span><span class="nt">executables</span><span class="p">:</span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;contrat-api&quot;</span>
+<span class="w">  </span><span class="nt">taches</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">T-01</span>
 <span class="w">      </span><span class="nt">resultat</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Étendre</span><span class="nv"> </span><span class="s">la</span><span class="nv"> </span><span class="s">réponse</span><span class="nv"> </span><span class="s">et</span><span class="nv"> </span><span class="s">couvrir</span><span class="nv"> </span><span class="s">les</span><span class="nv"> </span><span class="s">limites</span><span class="nv"> </span><span class="s">de</span><span class="nv"> </span><span class="s">pagination.&quot;</span>
 <span class="w">      </span><span class="nt">depend_de</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span>
-<span class="w">  </span><span class="nt">en_attente</span><span class="p">:</span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;interface-annuaire&quot;</span>
-<span class="w">      </span><span class="nt">resultat</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Consommer</span><span class="nv"> </span><span class="s">le</span><span class="nv"> </span><span class="s">contrat</span><span class="nv"> </span><span class="s">et</span><span class="nv"> </span><span class="s">rendre</span><span class="nv"> </span><span class="s">les</span><span class="nv"> </span><span class="s">contrôles</span><span class="nv"> </span><span class="s">de</span><span class="nv"> </span><span class="s">page.&quot;</span>
-<span class="w">      </span><span class="nt">depend_de</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;contrat-api&quot;</span><span class="p p-Indicator">]</span>
-<span class="w">  </span><span class="nt">etapes_ulterieures</span><span class="p">:</span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;Mettre</span><span class="nv"> </span><span class="s">à</span><span class="nv"> </span><span class="s">jour</span><span class="nv"> </span><span class="s">la</span><span class="nv"> </span><span class="s">synthèse</span><span class="nv"> </span><span class="s">de</span><span class="nv"> </span><span class="s">revue</span><span class="nv"> </span><span class="s">après</span><span class="nv"> </span><span class="s">les</span><span class="nv"> </span><span class="s">validations.&quot;</span>
+<span class="w">      </span><span class="nt">ecriture_autorisee</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;backend/customers/**&quot;</span><span class="p p-Indicator">]</span>
+<span class="w">      </span><span class="nt">references_lecture_seule</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;frontend/customers/**&quot;</span><span class="p p-Indicator">]</span>
+<span class="w">      </span><span class="nt">validations</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;Tests</span><span class="nv"> </span><span class="s">ciblés</span><span class="nv"> </span><span class="s">du</span><span class="nv"> </span><span class="s">contrat</span><span class="nv"> </span><span class="s">de</span><span class="nv"> </span><span class="s">pagination&quot;</span><span class="p p-Indicator">]</span>
 
-<span class="nt">frontieres</span><span class="p">:</span>
-<span class="w">  </span><span class="nt">modifiables</span><span class="p">:</span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;backend/customers/**&quot;</span>
-<span class="w">  </span><span class="nt">lecture_seule</span><span class="p">:</span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;frontend/customers/**&quot;</span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;shared/ui/**&quot;</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">T-02</span>
+<span class="w">      </span><span class="nt">resultat</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Consommer</span><span class="nv"> </span><span class="s">le</span><span class="nv"> </span><span class="s">contrat</span><span class="nv"> </span><span class="s">et</span><span class="nv"> </span><span class="s">rendre</span><span class="nv"> </span><span class="s">les</span><span class="nv"> </span><span class="s">contrôles</span><span class="nv"> </span><span class="s">de</span><span class="nv"> </span><span class="s">page.&quot;</span>
+<span class="w">      </span><span class="nt">depend_de</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">T-01</span><span class="p p-Indicator">]</span>
+<span class="w">      </span><span class="nt">ecriture_autorisee</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;frontend/customers/**&quot;</span><span class="p p-Indicator">]</span>
+<span class="w">      </span><span class="nt">references_lecture_seule</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;backend/customers/contracts.*&quot;</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;shared/ui/**&quot;</span>
+<span class="w">      </span><span class="nt">validations</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;Tests</span><span class="nv"> </span><span class="s">de</span><span class="nv"> </span><span class="s">comportement</span><span class="nv"> </span><span class="s">de</span><span class="nv"> </span><span class="s">l&#39;annuaire&quot;</span><span class="p p-Indicator">]</span>
+
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">T-03</span>
+<span class="w">      </span><span class="nt">resultat</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Relire</span><span class="nv"> </span><span class="s">la</span><span class="nv"> </span><span class="s">cohérence</span><span class="nv"> </span><span class="s">du</span><span class="nv"> </span><span class="s">contrat</span><span class="nv"> </span><span class="s">et</span><span class="nv"> </span><span class="s">de</span><span class="nv"> </span><span class="s">son</span><span class="nv"> </span><span class="s">intégration.&quot;</span>
+<span class="w">      </span><span class="nt">depend_de</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">T-01</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">T-02</span><span class="p p-Indicator">]</span>
+<span class="w">      </span><span class="nt">ecriture_autorisee</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span>
+<span class="w">      </span><span class="nt">references_lecture_seule</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;backend/customers/**&quot;</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;frontend/customers/**&quot;</span>
+<span class="w">      </span><span class="nt">validations</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;Tests</span><span class="nv"> </span><span class="s">d&#39;intégration</span><span class="nv"> </span><span class="s">de</span><span class="nv"> </span><span class="s">la</span><span class="nv"> </span><span class="s">pagination&quot;</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;Compilation</span><span class="nv"> </span><span class="s">du</span><span class="nv"> </span><span class="s">projet&quot;</span>
+
+<span class="w">  </span><span class="nt">decisions_humaines</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;La</span><span class="nv"> </span><span class="s">première</span><span class="nv"> </span><span class="s">page</span><span class="nv"> </span><span class="s">est</span><span class="nv"> </span><span class="s">numérotée</span><span class="nv"> </span><span class="s">1.&quot;</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;La</span><span class="nv"> </span><span class="s">taille</span><span class="nv"> </span><span class="s">par</span><span class="nv"> </span><span class="s">défaut</span><span class="nv"> </span><span class="s">est</span><span class="nv"> </span><span class="s">de</span><span class="nv"> </span><span class="s">25</span><span class="nv"> </span><span class="s">éléments.&quot;</span>
+
+<span class="w">  </span><span class="nt">interdits_pour_tout_le_paquet</span><span class="p">:</span>
 <span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;shared/routing/**&quot;</span>
-<span class="w">  </span><span class="nt">interdits</span><span class="p">:</span>
 <span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;tooling/**&quot;</span>
 <span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;orchestration/**&quot;</span>
 
-<span class="nt">references</span><span class="p">:</span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">chemin</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;backend/customers/contracts.*&quot;</span>
-<span class="w">    </span><span class="nt">raison</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Contrat</span><span class="nv"> </span><span class="s">existant</span><span class="nv"> </span><span class="s">à</span><span class="nv"> </span><span class="s">faire</span><span class="nv"> </span><span class="s">évoluer</span><span class="nv"> </span><span class="s">sans</span><span class="nv"> </span><span class="s">rupture</span><span class="nv"> </span><span class="s">implicite.&quot;</span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">chemin</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;frontend/customers/list.*&quot;</span>
-<span class="w">    </span><span class="nt">raison</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;États</span><span class="nv"> </span><span class="s">d&#39;interface</span><span class="nv"> </span><span class="s">déjà</span><span class="nv"> </span><span class="s">en</span><span class="nv"> </span><span class="s">place.&quot;</span>
+<span class="w">  </span><span class="nt">arreter_si</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;Le</span><span class="nv"> </span><span class="s">contrat</span><span class="nv"> </span><span class="s">doit</span><span class="nv"> </span><span class="s">devenir</span><span class="nv"> </span><span class="s">incompatible</span><span class="nv"> </span><span class="s">avec</span><span class="nv"> </span><span class="s">un</span><span class="nv"> </span><span class="s">consommateur</span><span class="nv"> </span><span class="s">existant.&quot;</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;Une</span><span class="nv"> </span><span class="s">nouvelle</span><span class="nv"> </span><span class="s">dépendance</span><span class="nv"> </span><span class="s">est</span><span class="nv"> </span><span class="s">nécessaire.&quot;</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;La</span><span class="nv"> </span><span class="s">solution</span><span class="nv"> </span><span class="s">exige</span><span class="nv"> </span><span class="s">une</span><span class="nv"> </span><span class="s">modification</span><span class="nv"> </span><span class="s">du</span><span class="nv"> </span><span class="s">socle</span><span class="nv"> </span><span class="s">partagé.&quot;</span>
 
-<span class="nt">decisions_humaines</span><span class="p">:</span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;La</span><span class="nv"> </span><span class="s">première</span><span class="nv"> </span><span class="s">page</span><span class="nv"> </span><span class="s">est</span><span class="nv"> </span><span class="s">numérotée</span><span class="nv"> </span><span class="s">1.&quot;</span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;La</span><span class="nv"> </span><span class="s">taille</span><span class="nv"> </span><span class="s">par</span><span class="nv"> </span><span class="s">défaut</span><span class="nv"> </span><span class="s">est</span><span class="nv"> </span><span class="s">de</span><span class="nv"> </span><span class="s">25</span><span class="nv"> </span><span class="s">éléments.&quot;</span>
-
-<span class="nt">arreter_si</span><span class="p">:</span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;Le</span><span class="nv"> </span><span class="s">contrat</span><span class="nv"> </span><span class="s">doit</span><span class="nv"> </span><span class="s">devenir</span><span class="nv"> </span><span class="s">incompatible</span><span class="nv"> </span><span class="s">avec</span><span class="nv"> </span><span class="s">un</span><span class="nv"> </span><span class="s">consommateur</span><span class="nv"> </span><span class="s">existant.&quot;</span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;Une</span><span class="nv"> </span><span class="s">nouvelle</span><span class="nv"> </span><span class="s">dépendance</span><span class="nv"> </span><span class="s">est</span><span class="nv"> </span><span class="s">nécessaire.&quot;</span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;La</span><span class="nv"> </span><span class="s">solution</span><span class="nv"> </span><span class="s">exige</span><span class="nv"> </span><span class="s">une</span><span class="nv"> </span><span class="s">modification</span><span class="nv"> </span><span class="s">du</span><span class="nv"> </span><span class="s">socle</span><span class="nv"> </span><span class="s">partagé.&quot;</span>
-
-<span class="nt">validations</span><span class="p">:</span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;Tests</span><span class="nv"> </span><span class="s">ciblés</span><span class="nv"> </span><span class="s">du</span><span class="nv"> </span><span class="s">contrat</span><span class="nv"> </span><span class="s">de</span><span class="nv"> </span><span class="s">pagination&quot;</span>
-
-<span class="nt">git_depart</span><span class="p">:</span>
-<span class="w">  </span><span class="nt">depot_detecte</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
-<span class="w">  </span><span class="nt">branche_attendue</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;&lt;branche</span><span class="nv"> </span><span class="s">de</span><span class="nv"> </span><span class="s">travail&gt;&quot;</span>
-<span class="w">  </span><span class="nt">etat_local_observe</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;&lt;statut</span><span class="nv"> </span><span class="s">relevé</span><span class="nv"> </span><span class="s">avant</span><span class="nv"> </span><span class="s">l&#39;exécution&gt;&quot;</span>
-<span class="w">  </span><span class="nt">revision_de_base</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;non</span><span class="nv"> </span><span class="s">liée</span><span class="nv"> </span><span class="s">de</span><span class="nv"> </span><span class="s">façon</span><span class="nv"> </span><span class="s">immuable</span><span class="nv"> </span><span class="s">dans</span><span class="nv"> </span><span class="s">cet</span><span class="nv"> </span><span class="s">extrait&quot;</span>
-<span class="w">  </span><span class="nt">couverture_index</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;à</span><span class="nv"> </span><span class="s">confirmer&quot;</span>
+<span class="w">  </span><span class="nt">git_depart</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">depot_detecte</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">    </span><span class="nt">branche_attendue</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;&lt;branche</span><span class="nv"> </span><span class="s">de</span><span class="nv"> </span><span class="s">travail&gt;&quot;</span>
+<span class="w">    </span><span class="nt">etat_local_observe</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;&lt;statut</span><span class="nv"> </span><span class="s">relevé</span><span class="nv"> </span><span class="s">avant</span><span class="nv"> </span><span class="s">l&#39;exécution&gt;&quot;</span>
+<span class="w">    </span><span class="nt">revision_de_base</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;non</span><span class="nv"> </span><span class="s">liée</span><span class="nv"> </span><span class="s">de</span><span class="nv"> </span><span class="s">façon</span><span class="nv"> </span><span class="s">immuable</span><span class="nv"> </span><span class="s">dans</span><span class="nv"> </span><span class="s">cet</span><span class="nv"> </span><span class="s">extrait&quot;</span>
+<span class="w">    </span><span class="nt">couverture_index</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;à</span><span class="nv"> </span><span class="s">confirmer&quot;</span>
 </code></pre></div>
-<p>Dans un système réel, le paquet ou son manifeste associé devrait relier <code>objectif</code> et <code>criteres_acceptation</code> au brief humain, <code>frontieres</code> au contrat et au plan validé, <code>taches</code> à la planification, <code>decisions_humaines</code> aux réponses conservées, et <code>git_depart</code> à une observation du runtime.</p>
-<p>Il faut également distinguer les tâches exécutables des tâches simplement visibles. Ici, seule la tâche du contrat API est immédiatement exécutable. La tâche d'interface reste visible parce qu'elle consommera ce contrat, mais elle n'ouvre encore aucun droit d'écriture sur le frontend. Une fois la première tâche terminée et contrôlée, le workflow pourra compiler un nouveau paquet avec les frontières et validations de l'interface. La synthèse de revue reste une étape ultérieure : afficher une tâche ne signifie pas autoriser son exécution.</p>
+<p>Dans un système réel, le paquet ou son manifeste associé devrait relier l'objectif et les critères au brief humain, le bloc de tâches à la planification, chaque frontière au contrat du repository, les décisions aux réponses conservées et l'état Git à une observation du runtime.</p>
+<p>Les trois tâches sont présentes dans le même paquet, mais elles ne deviennent pas une liste plate. T-02 dépend de T-01 ; T-03 dépend des deux premières. Le runner reçoit cet ordre, exécute le bloc dans une même session et restitue un résultat distinct pour chaque tâche. Si T-01 révèle une incompatibilité ou une décision manquante, le paquet doit s'arrêter avant de présenter T-02 et T-03 comme terminées.</p>
+<p>Ce regroupement évite trois chargements successifs du même brief, du même contrat et des mêmes décisions. Il permet aussi à l'agent de conserver la cohérence entre la forme de la réponse backend, son utilisation dans le frontend et les validations d'ensemble. Pour une fonctionnalité plus large, le plan peut naturellement produire plusieurs paquets cohérents plutôt qu'un seul lot démesuré.</p>
+<p>Les frontières par tâche restent utiles pour préparer l'ordre de mission et interpréter le compte rendu du runner. En revanche, si le workflow ne prend qu'une capture Git avant et après la session, le fait indépendant porte sur le paquet : il montre quels chemins ont changé dans l'enveloppe autorisée globale. L'attribution d'un fichier précis à T-01 ou T-02 reste une déclaration du runner, sauf si des checkpoints intermédiaires sont ajoutés.</p>
 <p>Les références de contexte ne sont pas non plus des chemins modifiables. Elles expliquent où chercher un contrat ou un pattern. La frontière d'écriture reste portée séparément. Cette distinction évite qu'un fichier recommandé à la lecture soit interprété comme une invitation à le modifier.</p>
 <p>Enfin, les validations appartiennent à l'ordre de mission, pas au compte rendu final de l'agent. Leur présence signifie « ces contrôles sont attendus ». Elle ne signifie pas qu'ils ont été lancés. Le workflow devra enregistrer séparément les commandes réellement exécutées, leur résultat et les validations absentes.</p>
 <h2 id="la-provenance-doit-etre-inspectable">La provenance doit être inspectable<a class="headerlink" href="#la-provenance-doit-etre-inspectable" title="Permanent link">&para;</a></h2>
-<p>On peut rendre la provenance utile sans publier un schéma complexe. Pour chaque élément décisif, quatre informations suffisent souvent :</p>
+<p>On peut rendre la provenance utile sans imposer un schéma complexe. Pour chaque élément décisif, quatre informations suffisent souvent :</p>
 <table>
 <thead>
 <tr>
@@ -724,7 +727,7 @@ plan, tâches et dépendances ─┤
 <p>Cette logique rend également l'ordre de mission auditable avant le run. Une personne peut relire non seulement le résultat attendu, mais aussi les décisions que le compilateur a prises en assemblant le contexte.</p>
 <h2 id="letat-git-de-depart-est-une-entree-pas-une-preuve-finale">L'état Git de départ est une entrée, pas une preuve finale<a class="headerlink" href="#letat-git-de-depart-est-une-entree-pas-une-preuve-finale" title="Permanent link">&para;</a></h2>
 <p>L'état Git initial mérite une place explicite dans le paquet, car le contrôle après exécution repose sur une comparaison. Au minimum, le workflow devrait savoir s'il se trouve dans un repository, sur quelle branche il travaille, quelle révision sert de point de départ et si la copie de travail contient déjà des modifications de fichiers suivis — indexées ou non — ainsi que des fichiers non suivis.</p>
-<p>Dans l'implémentation de référence, le paquet conserve un aperçu initial de l'état local et des chemins déjà modifiés. C'est suffisant pour réduire certaines confusions pendant une exécution locale. Ce n'est pas suffisant pour déclarer qu'un changement appartient sans ambiguïté à une tentative ou à une révision.</p>
+<p>Un aperçu initial de l'état local et des chemins déjà modifiés suffit à réduire certaines confusions pendant une exécution locale. Il ne suffit pas à déclarer qu'un changement appartient sans ambiguïté à une tentative ou à une révision.</p>
 <p>Plusieurs limites doivent rester visibles :</p>
 <ul>
 <li>un statut local ne lie pas à lui seul le paquet à un commit de base immuable ;</li>
@@ -737,10 +740,10 @@ plan, tâches et dépendances ─┤
 <p>La formulation correcte n'est donc pas « le paquet prouve que le repository était propre ». C'est : « le paquet enregistre tel aperçu de l'état initial, avec telle couverture ». Pour relier la preuve à une PR, il faudra aller plus loin : commits de base et de tête, état de l'index, environnement, puis validations exécutées sur la révision concernée. Nous y reviendrons dans l'article consacré à la preuve.</p>
 <h2 id="un-paquet-structure-peut-encore-contenir-trop-de-contexte">Un paquet structuré peut encore contenir trop de contexte<a class="headerlink" href="#un-paquet-structure-peut-encore-contenir-trop-de-contexte" title="Permanent link">&para;</a></h2>
 <p>La structure réduit l'amnésie et l'ambiguïté de provenance. Elle ne garantit pas la pertinence de la sélection.</p>
-<p>Placer dans le paquet le brief complet, le plan, toutes les tâches, toutes les instructions et une large vue du repository semble prudent. Cela peut pourtant diluer la tâche exécutable, transporter des décisions obsolètes et multiplier les contradictions apparentes.</p>
+<p>Placer dans le paquet le brief complet, le plan, toutes les tâches, toutes les instructions et une large vue du repository semble prudent. Cela peut pourtant diluer le bloc exécutable, transporter des décisions obsolètes et multiplier les contradictions apparentes.</p>
 <p>Avant d'inclure un élément, le workflow peut appliquer quatre questions :</p>
 <ol>
-<li>Est-il nécessaire pour exécuter la tâche ou décider de s'arrêter ?</li>
+<li>Est-il nécessaire pour exécuter l'une des tâches du paquet ou décider de s'arrêter ?</li>
 <li>Sa source est-elle suffisamment autoritaire et actuelle ?</li>
 <li>Existe-t-il une représentation plus petite qui conserve le sens utile ?</li>
 <li>Doit-il être inclus, ou seulement référencé avec une raison de le consulter ?</li>
@@ -750,7 +753,7 @@ plan, tâches et dépendances ─┤
 <p>Un paquet d'exécution bien construit améliore trois choses concrètes.</p>
 <p>Il rend d'abord le run reconstructible : intention, décisions, périmètre et validations attendues restent accessibles sans relire la conversation.</p>
 <p>Il rend ensuite les écarts qualifiables. Une zone en lecture seule touchée peut être comparée à une frontière explicite ; une validation manquante apparaît comme absente au lieu d'être absorbée dans un résumé optimiste.</p>
-<p>Enfin, il sépare mieux les responsabilités. L'agent propose du code et un compte rendu structuré. Le workflow conserve l'état, contrôle le périmètre et lance les validations prévues. L'humain arbitre les décisions qui dépassent l'autorité de la tâche et juge le risque résiduel.</p>
+<p>Enfin, il sépare mieux les responsabilités. L'agent propose du code et un compte rendu structuré. Le workflow conserve l'état, contrôle le périmètre et lance les validations prévues. L'humain arbitre les décisions qui dépassent l'autorité des tâches du paquet et juge le risque résiduel.</p>
 <p>Mais le paquet ne répare pas un brief instable. Il ne rend pas pertinente une sélection de contexte excessive. Il ne transforme pas une politique de chemins en sandbox. Il ne garantit pas que les tests choisis couvrent le comportement. Et il ne prouve pas, à lui seul, que le diff final correspond à une révision prête au merge.</p>
 <blockquote>
 <p>Un ordre de mission précis ne rend pas l'agent infaillible. Il rend ses instructions, ses limites et ses écarts inspectables.</p>
@@ -769,12 +772,12 @@ plan, tâches et dépendances ─┤
 <li>☐ Les validations attendues existent indépendamment du rapport de l'agent.</li>
 <li>☐ L'état Git initial indique clairement ce qui a été observé et ce qui ne l'a pas été.</li>
 <li>☐ Un conflit entre brief, plan et règles du repository bloque la compilation ou reste explicitement visible.</li>
-<li>☐ Chaque bloc de contexte peut justifier sa présence dans la tâche courante.</li>
+<li>☐ Chaque bloc de contexte peut justifier sa présence dans le paquet courant.</li>
 </ul>
 <p>Si l'un de ces éléments n'existe que dans le chat, le paquet est incomplet. S'il existe mais que son origine est impossible à retrouver, le paquet manque de provenance. S'il est présent sans contrôle possible, il reste une instruction et doit être présenté comme tel.</p>
 <h2 id="conclusion">Conclusion<a class="headerlink" href="#conclusion" title="Permanent link">&para;</a></h2>
 <p>Ce que l'agent reçoit avant de coder détermine moins sa capacité à générer du code que sa capacité à travailler dans l'autorité qui lui a été accordée.</p>
-<p>Le brief apporte l'intention. Le repository apporte les règles. Le plan apporte le découpage et les dépendances. Les décisions humaines ferment les questions déjà arbitrées. Le runtime sélectionne les tâches éligibles, ajoute l'état local et confie au runner un ordre de mission borné.</p>
+<p>Le brief apporte l'intention. Le repository apporte les règles. Le plan apporte le découpage et les dépendances. Les décisions humaines ferment les questions déjà arbitrées. Le runtime sélectionne un bloc cohérent de tâches exécutables en séquence, ajoute l'état local et confie au runner un ordre de mission borné.</p>
 <p>La qualité de cet assemblage ne se mesure pas à sa longueur. Elle se mesure à la possibilité de répondre, pour chaque information importante : d'où vient-elle, pour quoi fait-elle autorité, est-elle encore actuelle et comment le résultat sera-t-il confronté à cette attente ?</p>
 <p>Il reste alors à traiter le moment où l'exécution ne peut pas respecter cet ordre de mission : décision absente, frontière franchie ou validation en échec. C'est le sujet de l'article suivant : <a href="../agent-task-stop-and-resume/"><strong>quand la tâche doit s'arrêter, et comment la reprendre sans perdre son histoire</strong></a>.</p>
 <div class="article-footer-contact">
