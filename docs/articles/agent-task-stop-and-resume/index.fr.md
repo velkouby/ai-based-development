@@ -25,7 +25,7 @@ Mais « la tâche est bloquée » reste une information insuffisante. Une questi
 
 > Un arrêt utile ne dit pas seulement que le travail n'est pas terminé. Il établit ce qui s'est passé, ce qui manque, qui doit décider et ce qui devra être revérifié.
 
-Dans le framework interne qui sert de laboratoire à cette série, l'état persistant, les frontières d'écriture, l'historique des tentatives, les décisions humaines et les reprises contrôlées sont des capacités **vérifiées** dans le code et les tests. Les artefacts montrés ici sont **simplifiés**, et la branche consacrée à l'URL est **simulée**. Ils décrivent un protocole reproductible, pas le format ni les commandes du framework.
+Les mécanismes présentés ici — état persistant, frontières d'écriture, historique des tentatives, décisions humaines et reprises contrôlées — forment un protocole qu'un framework appliquant ces principes peut matérialiser. Les artefacts qui suivent montrent comment rendre ce protocole actionnable.
 
 ## Trois arrêts, trois autorités différentes
 
@@ -84,7 +84,7 @@ arrêter si
   la synchronisation avec l'URL exige de modifier le routage partagé
 ```
 
-Ces chemins sont illustratifs. Ils expriment une répartition de responsabilités, pas l'arborescence d'un framework ou d'un template particulier.
+Ces chemins illustrent la répartition des responsabilités entre les zones produit et le routage partagé.
 
 Si le diff observé contient un fichier sous `shared/routing/`, le résultat n'est pas « presque conforme ». La tentative a franchi une frontière. Les validations fonctionnelles ne doivent pas transformer ce franchissement en autorisation rétroactive : un test vert ne donne pas à la tâche produit le droit de modifier le socle.
 
@@ -92,24 +92,24 @@ Le workflow doit alors conserver le constat avant toute réparation : chemins co
 
 Si la copie de travail était déjà modifiée, retirer automatiquement le fichier fautif peut détruire le travail de quelqu'un d'autre. La bonne réaction est alors de suspendre la réparation et de demander une attribution humaine. La restauration automatique n'est raisonnable que lorsque le système sait précisément quel état de référence il rétablit et quelles modifications appartiennent à la tentative.
 
-## Branche simulée : la pagination et l'URL
+## Variante pédagogique : la pagination et l'URL
 
-Le scénario suivant est **simulé** pour illustrer le chemin d'arrêt. Il ne s'agit pas du compte rendu d'un incident réel ni d'un export du framework interne.
+Le scénario suivant sert d'exemple pédagogique pour suivre un arrêt de périmètre, la décision qui en découle et les conditions de reprise.
 
 Dans cette variante, l'équipe étend la pagination avec une exigence supplémentaire : la page courante doit apparaître dans l'URL afin qu'un lien puisse être partagé. Comme cette synchronisation était un non-objectif du brief initial, la demande est d'abord requalifiée, le brief est révisé et un nouveau paquet d'exécution est compilé. Le routage partagé y reste en lecture seule, avec une condition d'arrêt explicite. Pendant l'implémentation, l'agent conclut néanmoins que l'interface publique du routeur est insuffisante et modifie une primitive partagée.
 
 Le contrôle post-exécution observe alors deux catégories de changements : les fichiers produit attendus et un fichier du routage commun. Il classe la tentative comme sortie de périmètre et arrête la chaîne avant de considérer la tâche terminée.
 
-Voici le dossier public réduit que l'on pourrait conserver :
+Voici un dossier d'arrêt compact que l'on pourrait conserver :
 
 ```markdown
-# Dossier d'arrêt — exemple simulé
+# Dossier d'arrêt — exemple pédagogique
 
 Demande : synchroniser la page de l'annuaire avec l'URL
 Phase : contrôle post-écriture
 Résultat : arrêt sur frontière d'écriture
 
-Éléments consignés dans le scénario simulé :
+Éléments consignés dans cet exemple :
 - des fichiers de la fonctionnalité ont été modifiés dans le périmètre autorisé ;
 - un fichier du routage partagé a aussi été modifié ;
 - cette zone était déclarée en lecture seule ;
@@ -127,7 +127,7 @@ Décision humaine :
 - reprendre la pagination après intégration de cette extension.
 ```
 
-Ce dossier ne contient ni code d'état propriétaire, ni session brute, ni stratégie automatique complète. Il conserve ce dont une équipe a besoin pour comprendre l'arrêt et autoriser la suite.
+Ce dossier reste volontairement compact : il ne décrit pas toute la mécanique de reprise. Il conserve ce dont une équipe a besoin pour comprendre l'arrêt et autoriser la suite.
 
 La décision choisie ne consiste pas à ajouter `shared/routing/**` aux chemins autorisés de la tâche existante. Ce serait maquiller la sortie de périmètre en élargissant le contrat après coup. Le changement partagé devient une **évolution du socle** avec sa propre intention, son analyse d'impact, ses consommateurs, ses validations et sa revue.
 
@@ -180,7 +180,7 @@ Avant de relancer le runner agent, le workflow devrait vérifier :
 
 La nouvelle tentative reçoit alors le contexte utile de la précédente, pas toute sa conversation. Elle sait ce qui a échoué, ce qui a été décidé, ce qui ne doit pas être reproduit et quelles preuves sont attendues. Les tâches déjà terminées peuvent rester terminées si leurs résultats sont encore valables ; la tâche arrêtée redevient exécutable seulement lorsque ses préconditions sont satisfaites.
 
-Dans la branche simulée de l'URL, la reprise inclut la décision d'architecture, la nouvelle interface publique du routeur et l'interdiction maintenue de modifier le socle. Elle ne donne pas à l'agent un accès plus large. Au contraire, elle rend possible une implémentation produit plus étroite.
+Dans la variante pédagogique de l'URL, la reprise inclut la décision d'architecture, la nouvelle interface publique du routeur et l'interdiction maintenue de modifier le socle. Elle ne donne pas à l'agent un accès plus large. Au contraire, elle rend possible une implémentation produit plus étroite.
 
 > Une bonne reprise ne supprime pas l'arrêt précédent. Elle en fait une entrée vérifiable de la tentative suivante.
 
@@ -233,7 +233,7 @@ Savoir s'arrêter est une capacité positive d'un workflow agentique. Une décis
 
 Dans les trois cas, la reprise ne doit ni effacer l'histoire, ni élargir silencieusement le contrat. Elle relie un constat, une décision ou une réparation à un nouvel ordre de mission.
 
-Il reste cependant une question : que vaut la preuve produite par ce workflow ? Un contrôle de chemins réussi et des commandes au vert ne disent pas encore à quelle révision ils se rapportent ni ce qu'ils ont réellement couvert. Pour l'étudier sans confondre le scénario principal avec la branche URL simulée, l'article suivant revient à l'exécution initiale de la pagination : [**« Les tests passent » : que prouve le workflow ?**](../local-proof-agent-workflow/index.md).
+Il reste cependant une question : que vaut la preuve produite par ce workflow ? Un contrôle de chemins réussi et des commandes au vert ne disent pas encore à quelle révision ils se rapportent ni ce qu'ils ont réellement couvert. Pour l'étudier sans confondre le scénario principal avec la variante consacrée à l'URL, l'article suivant revient à l'exécution initiale de la pagination : [**« Les tests passent » : que prouve le workflow ?**](../local-proof-agent-workflow/index.md).
 
 <div class="article-footer-contact">
   <p>Pour discuter de cet article ou me laisser un message public :</p>

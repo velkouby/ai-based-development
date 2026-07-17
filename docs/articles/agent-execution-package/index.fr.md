@@ -21,17 +21,17 @@ Dans [l'article précédent](../agentic-feature-end-to-end/index.md), nous avons
 
 La question est simple en apparence : **que reçoit réellement l'agent au moment de coder ?** La réponse ne devrait être ni « tout le repository », ni « toute la conversation », ni « un prompt très détaillé ». Ces solutions mélangent l'intention, les règles et les faits observés dans un texte dont l'origine devient difficile à reconstruire.
 
-Dans le framework interne qui sert de laboratoire à cette série, le workflow assemble déjà plusieurs sources avant de confier une tâche à l'agent : brief, plan, tâches éligibles, contrat du repository, décisions enregistrées, références de contexte, validations et aperçu de l'état Git initial. Cette capacité est **vérifiée** dans l'implémentation. L'exemple publié ici est **simplifié** dans sa structure et **simulé** dans son contenu. Il ne reproduit ni le schéma, ni les noms de champs, ni les mécanismes internes.
+Un framework qui met ce principe en œuvre doit assembler plusieurs sources avant de confier un bloc de tâches à l'agent : brief, plan, tâches sélectionnées, contrat du repository, décisions enregistrées, références de contexte, validations et aperçu de l'état Git initial. L'exemple ci-dessous montre ce que cet ordre de mission devrait contenir pour préserver la provenance, l'autorité de chaque information et l'état de départ.
 
 > Le paquet d'exécution n'est pas le texte qui convainc l'agent de bien travailler. C'est l'ordre de mission qui lui indique ce qu'il doit accomplir, d'où viennent ses contraintes et où s'arrête son autorité.
 
 ## Pourquoi ce n'est pas un super-prompt
 
-Un prompt formule des instructions à un modèle. Un paquet d'exécution décrit une unité de travail pour un système.
+Un prompt formule des instructions à un modèle. Un paquet d'exécution décrit une unité de travail pour un système : un bloc ordonné de tâches, leur contexte partagé et leurs contraintes propres.
 
 Un super-prompt peut contenir un objectif, des règles et des extraits de documentation. Mais une fois tout fusionné en prose, leur rôle se brouille : une liste de fichiers peut être prise pour une autorisation, une suggestion du plan pour une règle du repository, ou une ancienne décision pour un fait actuel.
 
-Un paquet d'exécution conserve ces distinctions. Il peut être transporté au runner sous une forme structurée, puis rendu partiellement en texte pour le modèle. Le format de transport n'est pas le sujet. Ce qui compte est que le workflow puisse, avant et après l'appel au modèle :
+Un paquet d'exécution conserve ces distinctions. Il peut être transporté au runner sous une forme structurée, puis rendu partiellement en texte pour le modèle. Le format de transport n'est pas le sujet. Ce qui compte est que le workflow puisse, avant et après la session du runner :
 
 - identifier la source de chaque contrainte importante ;
 - sélectionner les tâches réellement exécutables ;
@@ -50,9 +50,9 @@ Le paquet de la pagination de l'annuaire clients est compilé depuis quatre fami
 | Source | Ce qu'elle apporte | Autorité principale | Ce qu'elle ne peut pas décider |
 | --- | --- | --- | --- |
 | Humain | Objectif, non-objectifs, critères d'acceptation, réponses et arbitrages | Intention produit et décisions réservées | Les faits réellement présents dans le code ou dans Git |
-| Repository | Architecture, responsabilités, frontières stables, commandes de référence | Règles techniques et politiques applicables au projet | Le résultat produit attendu pour cette tâche, sauf s'il est déjà contractuel |
+| Repository | Architecture, responsabilités, frontières stables, commandes de référence | Règles techniques et politiques applicables au projet | Le résultat produit attendu pour ce paquet, sauf s'il est déjà contractuel |
 | Planification | Découpage, dépendances, contexte utile, validations par tâche | Ordre opérationnel dérivé de l'intention et des règles | Élargir le brief ou contourner une politique du repository |
-| Runtime | Tâches éligibles, tentative courante, état Git observé, emplacement du suivi | Faits de l'exécution présente | Inventer une intention ou approuver un risque métier |
+| Runtime | Tâches sélectionnées, tentative courante, état Git observé, emplacement du suivi | Faits de l'exécution présente | Inventer une intention ou approuver un risque métier |
 
 Il ne s'agit pas d'une hiérarchie unique où une source gagnerait toujours contre les autres. L'autorité dépend du sujet.
 
@@ -80,23 +80,23 @@ Le mot « compilation » n'est pas décoratif. Comme un compilateur, cette étap
 
 Pour une fonctionnalité structurée, le workflow doit au minimum effectuer cinq opérations.
 
-Premièrement, il résout les tâches éligibles. Une dépendance non satisfaite interdit l'exécution immédiate ; les autres tâches peuvent rester visibles pour comprendre la séquence sans ouvrir de droits supplémentaires.
+Premièrement, il sélectionne un bloc de tâches exécutables en séquence. La première est prête au début de la session ; les suivantes deviennent exécutables lorsque les tâches précédentes du bloc sont terminées. Une décision ouverte ou une dépendance extérieure au bloc continue, elle, de bloquer l'exécution.
 
-Deuxièmement, il réduit les frontières du repository au périmètre de la tâche. Une zone généralement modifiable peut rester hors périmètre, tandis qu'une référence en lecture seule peut être indispensable.
+Deuxièmement, il conserve les frontières prévues pour chaque tâche et construit l'enveloppe autorisée du paquet. Regrouper trois tâches ne donne pas à l'agent une autorisation générale sur le repository : le diff observé doit rester dans l'union contrôlée de ces frontières.
 
 Troisièmement, il rattache les décisions déjà prises. Si la première page et la taille initiale ont été arbitrées, l'agent ne doit ni reposer la question, ni choisir d'autres valeurs.
 
-Quatrièmement, il sélectionne un contexte opérationnel plus petit que le repository et justifiable par la tâche.
+Quatrièmement, il sélectionne un contexte commun au paquet, puis les références particulières à chaque tâche. Le brief, les règles stables et les décisions partagées ne sont chargés qu'une fois.
 
 Enfin, il enregistre une observation de l'état de départ, avec sa couverture connue, pour ne pas attribuer au runner une modification préexistante.
 
-## Un paquet simplifié pour la pagination
+## Un paquet pédagogique pour la pagination
 
-Voici un ordre de mission pédagogique pour la même fonctionnalité que dans les articles précédents. Les chemins et les valeurs sont illustratifs. Le document est volontairement incomplet et ne correspond pas au format d'un outil existant.
+Voici un ordre de mission pédagogique pour la même fonctionnalité que dans les articles précédents. Les chemins et les valeurs sont illustratifs. La représentation privilégie la lisibilité ; son format de transport peut varier selon les outils.
 
 ```yaml
-# Exemple simplifié et simulé.
-mission:
+# Exemple pédagogique.
+paquet:
   objectif: >-
     Ajouter une pagination serveur à l'annuaire clients et permettre
     de changer de page depuis l'interface.
@@ -108,58 +108,63 @@ mission:
     - "L'interface conserve les états loading, empty et error."
     - "Une action de pagination charge la page demandée."
 
-taches:
-  executables:
-    - id: "contrat-api"
+  taches:
+    - id: T-01
       resultat: "Étendre la réponse et couvrir les limites de pagination."
       depend_de: []
-  en_attente:
-    - id: "interface-annuaire"
-      resultat: "Consommer le contrat et rendre les contrôles de page."
-      depend_de: ["contrat-api"]
-  etapes_ulterieures:
-    - "Mettre à jour la synthèse de revue après les validations."
+      ecriture_autorisee: ["backend/customers/**"]
+      references_lecture_seule: ["frontend/customers/**"]
+      validations: ["Tests ciblés du contrat de pagination"]
 
-frontieres:
-  modifiables:
-    - "backend/customers/**"
-  lecture_seule:
-    - "frontend/customers/**"
-    - "shared/ui/**"
+    - id: T-02
+      resultat: "Consommer le contrat et rendre les contrôles de page."
+      depend_de: [T-01]
+      ecriture_autorisee: ["frontend/customers/**"]
+      references_lecture_seule:
+        - "backend/customers/contracts.*"
+        - "shared/ui/**"
+      validations: ["Tests de comportement de l'annuaire"]
+
+    - id: T-03
+      resultat: "Relire la cohérence du contrat et de son intégration."
+      depend_de: [T-01, T-02]
+      ecriture_autorisee: []
+      references_lecture_seule:
+        - "backend/customers/**"
+        - "frontend/customers/**"
+      validations:
+        - "Tests d'intégration de la pagination"
+        - "Compilation du projet"
+
+  decisions_humaines:
+    - "La première page est numérotée 1."
+    - "La taille par défaut est de 25 éléments."
+
+  interdits_pour_tout_le_paquet:
     - "shared/routing/**"
-  interdits:
     - "tooling/**"
     - "orchestration/**"
 
-references:
-  - chemin: "backend/customers/contracts.*"
-    raison: "Contrat existant à faire évoluer sans rupture implicite."
-  - chemin: "frontend/customers/list.*"
-    raison: "États d'interface déjà en place."
+  arreter_si:
+    - "Le contrat doit devenir incompatible avec un consommateur existant."
+    - "Une nouvelle dépendance est nécessaire."
+    - "La solution exige une modification du socle partagé."
 
-decisions_humaines:
-  - "La première page est numérotée 1."
-  - "La taille par défaut est de 25 éléments."
-
-arreter_si:
-  - "Le contrat doit devenir incompatible avec un consommateur existant."
-  - "Une nouvelle dépendance est nécessaire."
-  - "La solution exige une modification du socle partagé."
-
-validations:
-  - "Tests ciblés du contrat de pagination"
-
-git_depart:
-  depot_detecte: true
-  branche_attendue: "<branche de travail>"
-  etat_local_observe: "<statut relevé avant l'exécution>"
-  revision_de_base: "non liée de façon immuable dans cet extrait"
-  couverture_index: "à confirmer"
+  git_depart:
+    depot_detecte: true
+    branche_attendue: "<branche de travail>"
+    etat_local_observe: "<statut relevé avant l'exécution>"
+    revision_de_base: "non liée de façon immuable dans cet extrait"
+    couverture_index: "à confirmer"
 ```
 
-Dans un système réel, le paquet ou son manifeste associé devrait relier `objectif` et `criteres_acceptation` au brief humain, `frontieres` au contrat et au plan validé, `taches` à la planification, `decisions_humaines` aux réponses conservées, et `git_depart` à une observation du runtime.
+Dans un système réel, le paquet ou son manifeste associé devrait relier l'objectif et les critères au brief humain, le bloc de tâches à la planification, chaque frontière au contrat du repository, les décisions aux réponses conservées et l'état Git à une observation du runtime.
 
-Il faut également distinguer les tâches exécutables des tâches simplement visibles. Ici, seule la tâche du contrat API est immédiatement exécutable. La tâche d'interface reste visible parce qu'elle consommera ce contrat, mais elle n'ouvre encore aucun droit d'écriture sur le frontend. Une fois la première tâche terminée et contrôlée, le workflow pourra compiler un nouveau paquet avec les frontières et validations de l'interface. La synthèse de revue reste une étape ultérieure : afficher une tâche ne signifie pas autoriser son exécution.
+Les trois tâches sont présentes dans le même paquet, mais elles ne deviennent pas une liste plate. T-02 dépend de T-01 ; T-03 dépend des deux premières. Le runner reçoit cet ordre, exécute le bloc dans une même session et restitue un résultat distinct pour chaque tâche. Si T-01 révèle une incompatibilité ou une décision manquante, le paquet doit s'arrêter avant de présenter T-02 et T-03 comme terminées.
+
+Ce regroupement évite trois chargements successifs du même brief, du même contrat et des mêmes décisions. Il permet aussi à l'agent de conserver la cohérence entre la forme de la réponse backend, son utilisation dans le frontend et les validations d'ensemble. Pour une fonctionnalité plus large, le plan peut naturellement produire plusieurs paquets cohérents plutôt qu'un seul lot démesuré.
+
+Les frontières par tâche restent utiles pour préparer l'ordre de mission et interpréter le compte rendu du runner. En revanche, si le workflow ne prend qu'une capture Git avant et après la session, le fait indépendant porte sur le paquet : il montre quels chemins ont changé dans l'enveloppe autorisée globale. L'attribution d'un fichier précis à T-01 ou T-02 reste une déclaration du runner, sauf si des checkpoints intermédiaires sont ajoutés.
 
 Les références de contexte ne sont pas non plus des chemins modifiables. Elles expliquent où chercher un contrat ou un pattern. La frontière d'écriture reste portée séparément. Cette distinction évite qu'un fichier recommandé à la lecture soit interprété comme une invitation à le modifier.
 
@@ -167,7 +172,7 @@ Enfin, les validations appartiennent à l'ordre de mission, pas au compte rendu 
 
 ## La provenance doit être inspectable
 
-On peut rendre la provenance utile sans publier un schéma complexe. Pour chaque élément décisif, quatre informations suffisent souvent :
+On peut rendre la provenance utile sans imposer un schéma complexe. Pour chaque élément décisif, quatre informations suffisent souvent :
 
 | Information | Question de revue |
 | --- | --- |
@@ -186,7 +191,7 @@ Cette logique rend également l'ordre de mission auditable avant le run. Une per
 
 L'état Git initial mérite une place explicite dans le paquet, car le contrôle après exécution repose sur une comparaison. Au minimum, le workflow devrait savoir s'il se trouve dans un repository, sur quelle branche il travaille, quelle révision sert de point de départ et si la copie de travail contient déjà des modifications de fichiers suivis — indexées ou non — ainsi que des fichiers non suivis.
 
-Dans l'implémentation de référence, le paquet conserve un aperçu initial de l'état local et des chemins déjà modifiés. C'est suffisant pour réduire certaines confusions pendant une exécution locale. Ce n'est pas suffisant pour déclarer qu'un changement appartient sans ambiguïté à une tentative ou à une révision.
+Un aperçu initial de l'état local et des chemins déjà modifiés suffit à réduire certaines confusions pendant une exécution locale. Il ne suffit pas à déclarer qu'un changement appartient sans ambiguïté à une tentative ou à une révision.
 
 Plusieurs limites doivent rester visibles :
 
@@ -203,11 +208,11 @@ La formulation correcte n'est donc pas « le paquet prouve que le repository ét
 
 La structure réduit l'amnésie et l'ambiguïté de provenance. Elle ne garantit pas la pertinence de la sélection.
 
-Placer dans le paquet le brief complet, le plan, toutes les tâches, toutes les instructions et une large vue du repository semble prudent. Cela peut pourtant diluer la tâche exécutable, transporter des décisions obsolètes et multiplier les contradictions apparentes.
+Placer dans le paquet le brief complet, le plan, toutes les tâches, toutes les instructions et une large vue du repository semble prudent. Cela peut pourtant diluer le bloc exécutable, transporter des décisions obsolètes et multiplier les contradictions apparentes.
 
 Avant d'inclure un élément, le workflow peut appliquer quatre questions :
 
-1. Est-il nécessaire pour exécuter la tâche ou décider de s'arrêter ?
+1. Est-il nécessaire pour exécuter l'une des tâches du paquet ou décider de s'arrêter ?
 2. Sa source est-elle suffisamment autoritaire et actuelle ?
 3. Existe-t-il une représentation plus petite qui conserve le sens utile ?
 4. Doit-il être inclus, ou seulement référencé avec une raison de le consulter ?
@@ -222,7 +227,7 @@ Il rend d'abord le run reconstructible : intention, décisions, périmètre et v
 
 Il rend ensuite les écarts qualifiables. Une zone en lecture seule touchée peut être comparée à une frontière explicite ; une validation manquante apparaît comme absente au lieu d'être absorbée dans un résumé optimiste.
 
-Enfin, il sépare mieux les responsabilités. L'agent propose du code et un compte rendu structuré. Le workflow conserve l'état, contrôle le périmètre et lance les validations prévues. L'humain arbitre les décisions qui dépassent l'autorité de la tâche et juge le risque résiduel.
+Enfin, il sépare mieux les responsabilités. L'agent propose du code et un compte rendu structuré. Le workflow conserve l'état, contrôle le périmètre et lance les validations prévues. L'humain arbitre les décisions qui dépassent l'autorité des tâches du paquet et juge le risque résiduel.
 
 Mais le paquet ne répare pas un brief instable. Il ne rend pas pertinente une sélection de contexte excessive. Il ne transforme pas une politique de chemins en sandbox. Il ne garantit pas que les tests choisis couvrent le comportement. Et il ne prouve pas, à lui seul, que le diff final correspond à une révision prête au merge.
 
@@ -243,7 +248,7 @@ Avant d'automatiser davantage, une équipe peut prendre un paquet réel ou recon
 - ☐ Les validations attendues existent indépendamment du rapport de l'agent.
 - ☐ L'état Git initial indique clairement ce qui a été observé et ce qui ne l'a pas été.
 - ☐ Un conflit entre brief, plan et règles du repository bloque la compilation ou reste explicitement visible.
-- ☐ Chaque bloc de contexte peut justifier sa présence dans la tâche courante.
+- ☐ Chaque bloc de contexte peut justifier sa présence dans le paquet courant.
 
 Si l'un de ces éléments n'existe que dans le chat, le paquet est incomplet. S'il existe mais que son origine est impossible à retrouver, le paquet manque de provenance. S'il est présent sans contrôle possible, il reste une instruction et doit être présenté comme tel.
 
@@ -251,7 +256,7 @@ Si l'un de ces éléments n'existe que dans le chat, le paquet est incomplet. S'
 
 Ce que l'agent reçoit avant de coder détermine moins sa capacité à générer du code que sa capacité à travailler dans l'autorité qui lui a été accordée.
 
-Le brief apporte l'intention. Le repository apporte les règles. Le plan apporte le découpage et les dépendances. Les décisions humaines ferment les questions déjà arbitrées. Le runtime sélectionne les tâches éligibles, ajoute l'état local et confie au runner un ordre de mission borné.
+Le brief apporte l'intention. Le repository apporte les règles. Le plan apporte le découpage et les dépendances. Les décisions humaines ferment les questions déjà arbitrées. Le runtime sélectionne un bloc cohérent de tâches exécutables en séquence, ajoute l'état local et confie au runner un ordre de mission borné.
 
 La qualité de cet assemblage ne se mesure pas à sa longueur. Elle se mesure à la possibilité de répondre, pour chaque information importante : d'où vient-elle, pour quoi fait-elle autorité, est-elle encore actuelle et comment le résultat sera-t-il confronté à cette attente ?
 

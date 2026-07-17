@@ -27,7 +27,7 @@ Un développeur expérimenté connaît souvent ces frontières sans les lire. Il
 
 > Un repository agent-ready ne donne pas seulement du contexte à l'agent. Il lui donne un cadre d'action que le workflow peut confronter aux modifications réellement produites.
 
-Ces principes sont expérimentés dans un framework interne qui prépare le contexte de l'agent et contrôle une partie de son exécution. Les exemples qui suivent sont volontairement simplifiés : ils exposent un contrat observable, pas l'implémentation du framework.
+Ces principes peuvent être matérialisés dans un framework qui prépare le contexte de l'agent et contrôle une partie de son exécution. Les exemples qui suivent montrent une manière possible de rendre ce contrat observable.
 
 ## Le repository doit répondre avant l'agent
 
@@ -91,11 +91,11 @@ La règle pratique est simple :
 
 Cette séparation protège également les artefacts de contrôle. L'agent peut expliquer ce qu'il pense avoir fait, mais il ne devrait pas être le seul auteur des fichiers censés attester que les frontières ont été respectées ou que les validations ont réussi. Sinon, il devient à la fois exécutant et greffier de sa propre exécution.
 
-## Un contrat réduit pour une tâche réelle
+## Un contrat d'exécution pour une tâche concrète
 
 Le contrat du repository contient les règles stables : zones de responsabilité, chemins protégés, commandes de référence et politique de validation. Pour chaque tâche, le plan ou le workflow en dérive un ordre de mission plus étroit.
 
-Voici un exemple pédagogique pour ajouter une pagination serveur à un annuaire clients. Ce document est volontairement réduit : ce n'est ni le schéma d'un outil existant, ni une configuration prête à copier telle quelle.
+Voici un exemple pédagogique pour ajouter une pagination serveur à un annuaire clients. Il montre les catégories d'information qu'un framework peut réunir avant l'exécution.
 
 ```yaml
 # Exemple conceptuel, indépendant de tout outil.

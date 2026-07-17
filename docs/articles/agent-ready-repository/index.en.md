@@ -27,7 +27,7 @@ An experienced developer often knows these boundaries without having to read the
 
 > An agent-ready repository does more than give the agent context. It gives the agent operating boundaries that the workflow can compare against the changes actually produced.
 
-I experiment with these principles in an internal framework that prepares the agent's context and controls parts of its execution. The examples below are intentionally simplified: they expose an observable contract, not the framework's implementation.
+These principles can be implemented in a framework that prepares the agent's context and controls parts of its execution. The examples below show one way to make that contract observable.
 
 ## The repository should answer before the agent has to
 
@@ -91,11 +91,11 @@ The practical rule is simple:
 
 This separation also protects control artifacts. The agent can explain what it believes it did, but it should not be the sole author of the files intended to attest that boundaries were respected or validations passed. Otherwise, it becomes both the executor and the record keeper for its own execution.
 
-## A reduced contract for a real task
+## An execution contract for a concrete task
 
 The repository contract contains stable rules: ownership areas, protected paths, standard commands, and the validation policy. For each task, the plan or workflow derives a more narrowly scoped execution brief.
 
-Here is a teaching example for adding server-side pagination to a customer directory. This document is deliberately reduced: it is neither the schema of an existing tool nor a configuration ready to copy and paste.
+Here is a teaching example for adding server-side pagination to a customer directory. It shows the categories of information a framework can assemble before execution.
 
 ```yaml
 # Conceptual example, independent of any tool.
