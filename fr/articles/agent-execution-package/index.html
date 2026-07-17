@@ -1,0 +1,849 @@
+
+<!doctype html>
+<html lang="fr" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Un agent ne devrait pas recevoir un super-prompt, mais un paquet d'exécution compilé depuis le brief, le plan, les règles du repository, les décisions humaines et l'état Git de départ. Voici comment le construire sans perdre la provenance ni l'autorité de chaque information.">
+      
+      
+        <meta name="author" content="Vincent El Kouby-Benichou, Baracoda">
+      
+      
+        <link rel="canonical" href="https://velkouby.github.io/ai-based-development/fr/articles/agent-execution-package/">
+      
+      
+      
+      
+        
+          <link rel="alternate" href="/ai-based-development/" hreflang="en">
+        
+          <link rel="alternate" href="./" hreflang="fr">
+        
+      
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>Ce que l'agent reçoit vraiment : anatomie d'un ordre de mission - AI-Native Software Engineering Notes</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.484c7ddc.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/article.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#ce-que-lagent-recoit-vraiment-anatomie-dun-ordre-de-mission" class="md-skip">
+          Aller au contenu
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="En-tête">
+    <a href="../../" title="AI-Native Software Engineering Notes" class="md-header__button md-logo" aria-label="AI-Native Software Engineering Notes" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            AI-Native Software Engineering Notes
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Ce que l'agent reçoit vraiment : anatomie d'un ordre de mission
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+      <div class="md-header__option">
+  <div class="md-select">
+    
+    <button class="md-header__button md-icon" aria-label="Sélectionner la langue">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m12.87 15.07-2.54-2.51.03-.03A17.5 17.5 0 0 0 14.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2zm-2.62 7 1.62-4.33L19.12 17z"/></svg>
+    </button>
+    <div class="md-select__inner">
+      <ul class="md-select__list">
+        
+          <li class="md-select__item">
+            <a href="/ai-based-development/" hreflang="en" class="md-select__link">
+              English
+            </a>
+          </li>
+        
+          <li class="md-select__item">
+            <a href="./" hreflang="fr" class="md-select__link">
+              Français
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</div>
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Rechercher" placeholder="Rechercher" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Recherche">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Effacer" aria-label="Effacer" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initialisation de la recherche
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/velkouby/ai-based-development" title="Aller au dépôt" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    velkouby/ai-based-development
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../" title="AI-Native Software Engineering Notes" class="md-nav__button md-logo" aria-label="AI-Native Software Engineering Notes" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    AI-Native Software Engineering Notes
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/velkouby/ai-based-development" title="Aller au dépôt" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    velkouby/ai-based-development
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Accueil
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Articles
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Articles
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ai-agent-based-coding-best-practices/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Du Vibe Coding au développement agentique vérifiable
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table des matières">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table des matières
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#pourquoi-ce-nest-pas-un-super-prompt" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pourquoi ce n'est pas un super-prompt
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#quatre-sources-quatre-formes-dautorite" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Quatre sources, quatre formes d'autorité
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#compiler-lordre-de-mission" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Compiler l'ordre de mission
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#un-paquet-simplifie-pour-la-pagination" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Un paquet simplifié pour la pagination
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#la-provenance-doit-etre-inspectable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        La provenance doit être inspectable
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#letat-git-de-depart-est-une-entree-pas-une-preuve-finale" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        L'état Git de départ est une entrée, pas une preuve finale
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#un-paquet-structure-peut-encore-contenir-trop-de-contexte" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Un paquet structuré peut encore contenir trop de contexte
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ce-que-lordre-de-mission-change-reellement" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ce que l'ordre de mission change réellement
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#auditer-son-propre-paquet-dexecution" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Auditer son propre paquet d'exécution
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#conclusion" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Conclusion
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 class="article-title" id="ce-que-lagent-recoit-vraiment-anatomie-dun-ordre-de-mission">Ce que l'agent reçoit vraiment : anatomie d'un ordre de mission<a class="headerlink" href="#ce-que-lagent-recoit-vraiment-anatomie-dun-ordre-de-mission" title="Permanent link">&para;</a></h1>
+<p class="article-lead">Un agent n'a pas besoin d'un super-prompt qui résume tout le projet. Il a besoin d'un ordre de mission borné : une compilation du résultat attendu, des tâches exécutables, des règles du repository, des décisions humaines, des validations et de l'état local au moment où le travail commence.</p>
+<p class="article-meta">
+  <span>Par <span class="article-author">Vincent El Kouby-Benichou</span>, <a class="article-company-link" href="https://baracoda.com">Baracoda</a></span>
+  <a class="article-contact-link" href="https://www.linkedin.com/in/vincentelkoubybenichou/">LinkedIn</a>
+</p>
+
+<p>Dans <a href="../agentic-feature-end-to-end/">l'article précédent</a>, nous avons suivi une fonctionnalité structurée du brief à la revue locale. Entre le plan et l'implémentation apparaissait une étape courte dans la chronologie, mais déterminante pour l'exécution : la construction du paquet transmis au runner agent.</p>
+<p>La question est simple en apparence : <strong>que reçoit réellement l'agent au moment de coder ?</strong> La réponse ne devrait être ni « tout le repository », ni « toute la conversation », ni « un prompt très détaillé ». Ces solutions mélangent l'intention, les règles et les faits observés dans un texte dont l'origine devient difficile à reconstruire.</p>
+<p>Dans le framework interne qui sert de laboratoire à cette série, le workflow assemble déjà plusieurs sources avant de confier une tâche à l'agent : brief, plan, tâches éligibles, contrat du repository, décisions enregistrées, références de contexte, validations et aperçu de l'état Git initial. Cette capacité est <strong>vérifiée</strong> dans l'implémentation. L'exemple publié ici est <strong>simplifié</strong> dans sa structure et <strong>simulé</strong> dans son contenu. Il ne reproduit ni le schéma, ni les noms de champs, ni les mécanismes internes.</p>
+<blockquote>
+<p>Le paquet d'exécution n'est pas le texte qui convainc l'agent de bien travailler. C'est l'ordre de mission qui lui indique ce qu'il doit accomplir, d'où viennent ses contraintes et où s'arrête son autorité.</p>
+</blockquote>
+<h2 id="pourquoi-ce-nest-pas-un-super-prompt">Pourquoi ce n'est pas un super-prompt<a class="headerlink" href="#pourquoi-ce-nest-pas-un-super-prompt" title="Permanent link">&para;</a></h2>
+<p>Un prompt formule des instructions à un modèle. Un paquet d'exécution décrit une unité de travail pour un système.</p>
+<p>Un super-prompt peut contenir un objectif, des règles et des extraits de documentation. Mais une fois tout fusionné en prose, leur rôle se brouille : une liste de fichiers peut être prise pour une autorisation, une suggestion du plan pour une règle du repository, ou une ancienne décision pour un fait actuel.</p>
+<p>Un paquet d'exécution conserve ces distinctions. Il peut être transporté au runner sous une forme structurée, puis rendu partiellement en texte pour le modèle. Le format de transport n'est pas le sujet. Ce qui compte est que le workflow puisse, avant et après l'appel au modèle :</p>
+<ul>
+<li>identifier la source de chaque contrainte importante ;</li>
+<li>sélectionner les tâches réellement exécutables ;</li>
+<li>distinguer les chemins modifiables des références en lecture seule ;</li>
+<li>repérer une décision humaine déjà prise ;</li>
+<li>enregistrer l'état local à partir duquel l'exécution commence ;</li>
+<li>comparer le résultat aux limites annoncées ;</li>
+<li>conserver les validations attendues indépendamment de ce que l'agent déclare avoir lancé.</li>
+</ul>
+<p>Cette structure ne crée toutefois aucune permission système. Écrire « lecture seule » dans un paquet ne retire pas les droits d'écriture du processus. Le paquet décrit l'autorité accordée ; un sandbox peut la faire respecter en amont, ou un contrôle de diff peut détecter une violation en aval. Il faut toujours dire lequel des deux est en place.</p>
+<h2 id="quatre-sources-quatre-formes-dautorite">Quatre sources, quatre formes d'autorité<a class="headerlink" href="#quatre-sources-quatre-formes-dautorite" title="Permanent link">&para;</a></h2>
+<p>Le paquet de la pagination de l'annuaire clients est compilé depuis quatre familles de sources.</p>
+<table>
+<thead>
+<tr>
+<th>Source</th>
+<th>Ce qu'elle apporte</th>
+<th>Autorité principale</th>
+<th>Ce qu'elle ne peut pas décider</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Humain</td>
+<td>Objectif, non-objectifs, critères d'acceptation, réponses et arbitrages</td>
+<td>Intention produit et décisions réservées</td>
+<td>Les faits réellement présents dans le code ou dans Git</td>
+</tr>
+<tr>
+<td>Repository</td>
+<td>Architecture, responsabilités, frontières stables, commandes de référence</td>
+<td>Règles techniques et politiques applicables au projet</td>
+<td>Le résultat produit attendu pour cette tâche, sauf s'il est déjà contractuel</td>
+</tr>
+<tr>
+<td>Planification</td>
+<td>Découpage, dépendances, contexte utile, validations par tâche</td>
+<td>Ordre opérationnel dérivé de l'intention et des règles</td>
+<td>Élargir le brief ou contourner une politique du repository</td>
+</tr>
+<tr>
+<td>Runtime</td>
+<td>Tâches éligibles, tentative courante, état Git observé, emplacement du suivi</td>
+<td>Faits de l'exécution présente</td>
+<td>Inventer une intention ou approuver un risque métier</td>
+</tr>
+</tbody>
+</table>
+<p>Il ne s'agit pas d'une hiérarchie unique où une source gagnerait toujours contre les autres. L'autorité dépend du sujet.</p>
+<p>L'humain fait autorité sur le résultat à obtenir. Le repository fait autorité sur la propriété des zones de code. Le plan ordonne le travail sans pouvoir réécrire ces deux contrats. Le runtime fait autorité sur ce qu'il observe maintenant, mais un fait Git ne dit pas si un changement est souhaitable.</p>
+<p>Cette séparation permet de traiter les conflits proprement. Si le plan place un dossier protégé dans les chemins modifiables, le workflow ne doit pas présenter cette incohérence comme une autorisation valide. Si le brief demande un comportement qui exige une décision produit encore ouverte, le plan ne doit pas transformer cette lacune en choix technique implicite. Dans les deux cas, compiler l'ordre de mission devrait échouer ou produire un arrêt explicite.</p>
+<blockquote>
+<p>La provenance dit d'où vient l'information. L'autorité dit pour quelle décision elle fait foi. Les deux doivent survivre à la compilation.</p>
+</blockquote>
+<h2 id="compiler-lordre-de-mission">Compiler l'ordre de mission<a class="headerlink" href="#compiler-lordre-de-mission" title="Permanent link">&para;</a></h2>
+<p>La compilation peut être représentée sans dépendre d'un outil particulier :</p>
+<div class="highlight"><pre><span></span><code>brief et décisions humaines ─┐
+                             │
+contrat du repository ───────┼─&gt; sélection et résolution ─&gt; paquet d&#39;exécution ─&gt; runner agent
+                             │
+plan, tâches et dépendances ─┤
+                             │
+état Git observé ────────────┘
+</code></pre></div>
+<p>Le mot « compilation » n'est pas décoratif. Comme un compilateur, cette étape transforme plusieurs entrées ayant des rôles différents en une représentation exécutable plus étroite. Elle peut aussi refuser une entrée incohérente.</p>
+<p>Pour une fonctionnalité structurée, le workflow doit au minimum effectuer cinq opérations.</p>
+<p>Premièrement, il résout les tâches éligibles. Une dépendance non satisfaite interdit l'exécution immédiate ; les autres tâches peuvent rester visibles pour comprendre la séquence sans ouvrir de droits supplémentaires.</p>
+<p>Deuxièmement, il réduit les frontières du repository au périmètre de la tâche. Une zone généralement modifiable peut rester hors périmètre, tandis qu'une référence en lecture seule peut être indispensable.</p>
+<p>Troisièmement, il rattache les décisions déjà prises. Si la première page et la taille initiale ont été arbitrées, l'agent ne doit ni reposer la question, ni choisir d'autres valeurs.</p>
+<p>Quatrièmement, il sélectionne un contexte opérationnel plus petit que le repository et justifiable par la tâche.</p>
+<p>Enfin, il enregistre une observation de l'état de départ, avec sa couverture connue, pour ne pas attribuer au runner une modification préexistante.</p>
+<h2 id="un-paquet-simplifie-pour-la-pagination">Un paquet simplifié pour la pagination<a class="headerlink" href="#un-paquet-simplifie-pour-la-pagination" title="Permanent link">&para;</a></h2>
+<p>Voici un ordre de mission pédagogique pour la même fonctionnalité que dans les articles précédents. Les chemins et les valeurs sont illustratifs. Le document est volontairement incomplet et ne correspond pas au format d'un outil existant.</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Exemple simplifié et simulé.</span>
+<span class="nt">mission</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">objectif</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">&gt;-</span>
+<span class="w">    </span><span class="no">Ajouter une pagination serveur à l&#39;annuaire clients et permettre</span>
+<span class="w">    </span><span class="no">de changer de page depuis l&#39;interface.</span>
+<span class="w">  </span><span class="nt">non_objectifs</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;Ajouter</span><span class="nv"> </span><span class="s">des</span><span class="nv"> </span><span class="s">filtres</span><span class="nv"> </span><span class="s">persistants&quot;</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;Modifier</span><span class="nv"> </span><span class="s">le</span><span class="nv"> </span><span class="s">routeur</span><span class="nv"> </span><span class="s">ou</span><span class="nv"> </span><span class="s">les</span><span class="nv"> </span><span class="s">primitives</span><span class="nv"> </span><span class="s">d&#39;interface</span><span class="nv"> </span><span class="s">partagées&quot;</span>
+<span class="w">  </span><span class="nt">criteres_acceptation</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;L&#39;API</span><span class="nv"> </span><span class="s">renvoie</span><span class="nv"> </span><span class="s">les</span><span class="nv"> </span><span class="s">éléments,</span><span class="nv"> </span><span class="s">la</span><span class="nv"> </span><span class="s">page</span><span class="nv"> </span><span class="s">courante</span><span class="nv"> </span><span class="s">et</span><span class="nv"> </span><span class="s">le</span><span class="nv"> </span><span class="s">nombre</span><span class="nv"> </span><span class="s">total</span><span class="nv"> </span><span class="s">de</span><span class="nv"> </span><span class="s">résultats.&quot;</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;L&#39;interface</span><span class="nv"> </span><span class="s">conserve</span><span class="nv"> </span><span class="s">les</span><span class="nv"> </span><span class="s">états</span><span class="nv"> </span><span class="s">loading,</span><span class="nv"> </span><span class="s">empty</span><span class="nv"> </span><span class="s">et</span><span class="nv"> </span><span class="s">error.&quot;</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;Une</span><span class="nv"> </span><span class="s">action</span><span class="nv"> </span><span class="s">de</span><span class="nv"> </span><span class="s">pagination</span><span class="nv"> </span><span class="s">charge</span><span class="nv"> </span><span class="s">la</span><span class="nv"> </span><span class="s">page</span><span class="nv"> </span><span class="s">demandée.&quot;</span>
+
+<span class="nt">taches</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">executables</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;contrat-api&quot;</span>
+<span class="w">      </span><span class="nt">resultat</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Étendre</span><span class="nv"> </span><span class="s">la</span><span class="nv"> </span><span class="s">réponse</span><span class="nv"> </span><span class="s">et</span><span class="nv"> </span><span class="s">couvrir</span><span class="nv"> </span><span class="s">les</span><span class="nv"> </span><span class="s">limites</span><span class="nv"> </span><span class="s">de</span><span class="nv"> </span><span class="s">pagination.&quot;</span>
+<span class="w">      </span><span class="nt">depend_de</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span>
+<span class="w">  </span><span class="nt">en_attente</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;interface-annuaire&quot;</span>
+<span class="w">      </span><span class="nt">resultat</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Consommer</span><span class="nv"> </span><span class="s">le</span><span class="nv"> </span><span class="s">contrat</span><span class="nv"> </span><span class="s">et</span><span class="nv"> </span><span class="s">rendre</span><span class="nv"> </span><span class="s">les</span><span class="nv"> </span><span class="s">contrôles</span><span class="nv"> </span><span class="s">de</span><span class="nv"> </span><span class="s">page.&quot;</span>
+<span class="w">      </span><span class="nt">depend_de</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;contrat-api&quot;</span><span class="p p-Indicator">]</span>
+<span class="w">  </span><span class="nt">etapes_ulterieures</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;Mettre</span><span class="nv"> </span><span class="s">à</span><span class="nv"> </span><span class="s">jour</span><span class="nv"> </span><span class="s">la</span><span class="nv"> </span><span class="s">synthèse</span><span class="nv"> </span><span class="s">de</span><span class="nv"> </span><span class="s">revue</span><span class="nv"> </span><span class="s">après</span><span class="nv"> </span><span class="s">les</span><span class="nv"> </span><span class="s">validations.&quot;</span>
+
+<span class="nt">frontieres</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">modifiables</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;backend/customers/**&quot;</span>
+<span class="w">  </span><span class="nt">lecture_seule</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;frontend/customers/**&quot;</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;shared/ui/**&quot;</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;shared/routing/**&quot;</span>
+<span class="w">  </span><span class="nt">interdits</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;tooling/**&quot;</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;orchestration/**&quot;</span>
+
+<span class="nt">references</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">chemin</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;backend/customers/contracts.*&quot;</span>
+<span class="w">    </span><span class="nt">raison</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Contrat</span><span class="nv"> </span><span class="s">existant</span><span class="nv"> </span><span class="s">à</span><span class="nv"> </span><span class="s">faire</span><span class="nv"> </span><span class="s">évoluer</span><span class="nv"> </span><span class="s">sans</span><span class="nv"> </span><span class="s">rupture</span><span class="nv"> </span><span class="s">implicite.&quot;</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">chemin</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;frontend/customers/list.*&quot;</span>
+<span class="w">    </span><span class="nt">raison</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;États</span><span class="nv"> </span><span class="s">d&#39;interface</span><span class="nv"> </span><span class="s">déjà</span><span class="nv"> </span><span class="s">en</span><span class="nv"> </span><span class="s">place.&quot;</span>
+
+<span class="nt">decisions_humaines</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;La</span><span class="nv"> </span><span class="s">première</span><span class="nv"> </span><span class="s">page</span><span class="nv"> </span><span class="s">est</span><span class="nv"> </span><span class="s">numérotée</span><span class="nv"> </span><span class="s">1.&quot;</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;La</span><span class="nv"> </span><span class="s">taille</span><span class="nv"> </span><span class="s">par</span><span class="nv"> </span><span class="s">défaut</span><span class="nv"> </span><span class="s">est</span><span class="nv"> </span><span class="s">de</span><span class="nv"> </span><span class="s">25</span><span class="nv"> </span><span class="s">éléments.&quot;</span>
+
+<span class="nt">arreter_si</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;Le</span><span class="nv"> </span><span class="s">contrat</span><span class="nv"> </span><span class="s">doit</span><span class="nv"> </span><span class="s">devenir</span><span class="nv"> </span><span class="s">incompatible</span><span class="nv"> </span><span class="s">avec</span><span class="nv"> </span><span class="s">un</span><span class="nv"> </span><span class="s">consommateur</span><span class="nv"> </span><span class="s">existant.&quot;</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;Une</span><span class="nv"> </span><span class="s">nouvelle</span><span class="nv"> </span><span class="s">dépendance</span><span class="nv"> </span><span class="s">est</span><span class="nv"> </span><span class="s">nécessaire.&quot;</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;La</span><span class="nv"> </span><span class="s">solution</span><span class="nv"> </span><span class="s">exige</span><span class="nv"> </span><span class="s">une</span><span class="nv"> </span><span class="s">modification</span><span class="nv"> </span><span class="s">du</span><span class="nv"> </span><span class="s">socle</span><span class="nv"> </span><span class="s">partagé.&quot;</span>
+
+<span class="nt">validations</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;Tests</span><span class="nv"> </span><span class="s">ciblés</span><span class="nv"> </span><span class="s">du</span><span class="nv"> </span><span class="s">contrat</span><span class="nv"> </span><span class="s">de</span><span class="nv"> </span><span class="s">pagination&quot;</span>
+
+<span class="nt">git_depart</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">depot_detecte</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">  </span><span class="nt">branche_attendue</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;&lt;branche</span><span class="nv"> </span><span class="s">de</span><span class="nv"> </span><span class="s">travail&gt;&quot;</span>
+<span class="w">  </span><span class="nt">etat_local_observe</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;&lt;statut</span><span class="nv"> </span><span class="s">relevé</span><span class="nv"> </span><span class="s">avant</span><span class="nv"> </span><span class="s">l&#39;exécution&gt;&quot;</span>
+<span class="w">  </span><span class="nt">revision_de_base</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;non</span><span class="nv"> </span><span class="s">liée</span><span class="nv"> </span><span class="s">de</span><span class="nv"> </span><span class="s">façon</span><span class="nv"> </span><span class="s">immuable</span><span class="nv"> </span><span class="s">dans</span><span class="nv"> </span><span class="s">cet</span><span class="nv"> </span><span class="s">extrait&quot;</span>
+<span class="w">  </span><span class="nt">couverture_index</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;à</span><span class="nv"> </span><span class="s">confirmer&quot;</span>
+</code></pre></div>
+<p>Dans un système réel, le paquet ou son manifeste associé devrait relier <code>objectif</code> et <code>criteres_acceptation</code> au brief humain, <code>frontieres</code> au contrat et au plan validé, <code>taches</code> à la planification, <code>decisions_humaines</code> aux réponses conservées, et <code>git_depart</code> à une observation du runtime.</p>
+<p>Il faut également distinguer les tâches exécutables des tâches simplement visibles. Ici, seule la tâche du contrat API est immédiatement exécutable. La tâche d'interface reste visible parce qu'elle consommera ce contrat, mais elle n'ouvre encore aucun droit d'écriture sur le frontend. Une fois la première tâche terminée et contrôlée, le workflow pourra compiler un nouveau paquet avec les frontières et validations de l'interface. La synthèse de revue reste une étape ultérieure : afficher une tâche ne signifie pas autoriser son exécution.</p>
+<p>Les références de contexte ne sont pas non plus des chemins modifiables. Elles expliquent où chercher un contrat ou un pattern. La frontière d'écriture reste portée séparément. Cette distinction évite qu'un fichier recommandé à la lecture soit interprété comme une invitation à le modifier.</p>
+<p>Enfin, les validations appartiennent à l'ordre de mission, pas au compte rendu final de l'agent. Leur présence signifie « ces contrôles sont attendus ». Elle ne signifie pas qu'ils ont été lancés. Le workflow devra enregistrer séparément les commandes réellement exécutées, leur résultat et les validations absentes.</p>
+<h2 id="la-provenance-doit-etre-inspectable">La provenance doit être inspectable<a class="headerlink" href="#la-provenance-doit-etre-inspectable" title="Permanent link">&para;</a></h2>
+<p>On peut rendre la provenance utile sans publier un schéma complexe. Pour chaque élément décisif, quatre informations suffisent souvent :</p>
+<table>
+<thead>
+<tr>
+<th>Information</th>
+<th>Question de revue</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Source</td>
+<td>Quel document, quelle décision ou quelle observation a fourni cette valeur ?</td>
+</tr>
+<tr>
+<td>Autorité</td>
+<td>Cette valeur exprime-t-elle une intention, une règle, un plan ou un fait ?</td>
+</tr>
+<tr>
+<td>Fraîcheur</td>
+<td>À quelle version, décision ou tentative se rapporte-t-elle ?</td>
+</tr>
+<tr>
+<td>Transformation</td>
+<td>Est-elle copiée, résumée, dérivée ou ajoutée par le runtime ?</td>
+</tr>
+</tbody>
+</table>
+<p>Prenons la taille de page. Si elle vient d'une réponse humaine enregistrée après la rédaction du brief, le paquet doit transporter la décision la plus récente et garder le lien avec son origine. La recopier seulement dans le plan crée deux sources susceptibles de diverger.</p>
+<p>Prenons maintenant les chemins modifiables. Ils peuvent être dérivés du contrat général du repository, puis resserrés par le plan. Le résultat effectif correspond à l'intersection des autorisations, pas à la liste la plus permissive. Le plan peut réduire l'autorité d'écriture ; il ne devrait pas pouvoir rendre modifiable une zone que le contrat protège.</p>
+<p>Cette logique rend également l'ordre de mission auditable avant le run. Une personne peut relire non seulement le résultat attendu, mais aussi les décisions que le compilateur a prises en assemblant le contexte.</p>
+<h2 id="letat-git-de-depart-est-une-entree-pas-une-preuve-finale">L'état Git de départ est une entrée, pas une preuve finale<a class="headerlink" href="#letat-git-de-depart-est-une-entree-pas-une-preuve-finale" title="Permanent link">&para;</a></h2>
+<p>L'état Git initial mérite une place explicite dans le paquet, car le contrôle après exécution repose sur une comparaison. Au minimum, le workflow devrait savoir s'il se trouve dans un repository, sur quelle branche il travaille, quelle révision sert de point de départ et si la copie de travail contient déjà des modifications de fichiers suivis — indexées ou non — ainsi que des fichiers non suivis.</p>
+<p>Dans l'implémentation de référence, le paquet conserve un aperçu initial de l'état local et des chemins déjà modifiés. C'est suffisant pour réduire certaines confusions pendant une exécution locale. Ce n'est pas suffisant pour déclarer qu'un changement appartient sans ambiguïté à une tentative ou à une révision.</p>
+<p>Plusieurs limites doivent rester visibles :</p>
+<ul>
+<li>un statut local ne lie pas à lui seul le paquet à un commit de base immuable ;</li>
+<li>une copie de travail sale complique l'attribution des changements au runner ;</li>
+<li>l'index et la copie de travail doivent être observés séparément ;</li>
+<li>des fichiers non suivis doivent être inclus explicitement dans le périmètre d'observation ;</li>
+<li>la branche attendue ne prouve pas que l'exécution complète s'y est déroulée ;</li>
+<li>un instantané pris au départ ne remplace pas l'état Git relevé à la fin.</li>
+</ul>
+<p>La formulation correcte n'est donc pas « le paquet prouve que le repository était propre ». C'est : « le paquet enregistre tel aperçu de l'état initial, avec telle couverture ». Pour relier la preuve à une PR, il faudra aller plus loin : commits de base et de tête, état de l'index, environnement, puis validations exécutées sur la révision concernée. Nous y reviendrons dans l'article consacré à la preuve.</p>
+<h2 id="un-paquet-structure-peut-encore-contenir-trop-de-contexte">Un paquet structuré peut encore contenir trop de contexte<a class="headerlink" href="#un-paquet-structure-peut-encore-contenir-trop-de-contexte" title="Permanent link">&para;</a></h2>
+<p>La structure réduit l'amnésie et l'ambiguïté de provenance. Elle ne garantit pas la pertinence de la sélection.</p>
+<p>Placer dans le paquet le brief complet, le plan, toutes les tâches, toutes les instructions et une large vue du repository semble prudent. Cela peut pourtant diluer la tâche exécutable, transporter des décisions obsolètes et multiplier les contradictions apparentes.</p>
+<p>Avant d'inclure un élément, le workflow peut appliquer quatre questions :</p>
+<ol>
+<li>Est-il nécessaire pour exécuter la tâche ou décider de s'arrêter ?</li>
+<li>Sa source est-elle suffisamment autoritaire et actuelle ?</li>
+<li>Existe-t-il une représentation plus petite qui conserve le sens utile ?</li>
+<li>Doit-il être inclus, ou seulement référencé avec une raison de le consulter ?</li>
+</ol>
+<p>Le contexte minimal n'est pas le plus court. Retirer une condition d'arrêt serait une mauvaise compression ; recopier une documentation entière quand une référence précise suffit ajoute du bruit. Le paquet doit permettre d'agir et de reconnaître les décisions réservées, pas remplacer le repository dans la fenêtre de contexte.</p>
+<h2 id="ce-que-lordre-de-mission-change-reellement">Ce que l'ordre de mission change réellement<a class="headerlink" href="#ce-que-lordre-de-mission-change-reellement" title="Permanent link">&para;</a></h2>
+<p>Un paquet d'exécution bien construit améliore trois choses concrètes.</p>
+<p>Il rend d'abord le run reconstructible : intention, décisions, périmètre et validations attendues restent accessibles sans relire la conversation.</p>
+<p>Il rend ensuite les écarts qualifiables. Une zone en lecture seule touchée peut être comparée à une frontière explicite ; une validation manquante apparaît comme absente au lieu d'être absorbée dans un résumé optimiste.</p>
+<p>Enfin, il sépare mieux les responsabilités. L'agent propose du code et un compte rendu structuré. Le workflow conserve l'état, contrôle le périmètre et lance les validations prévues. L'humain arbitre les décisions qui dépassent l'autorité de la tâche et juge le risque résiduel.</p>
+<p>Mais le paquet ne répare pas un brief instable. Il ne rend pas pertinente une sélection de contexte excessive. Il ne transforme pas une politique de chemins en sandbox. Il ne garantit pas que les tests choisis couvrent le comportement. Et il ne prouve pas, à lui seul, que le diff final correspond à une révision prête au merge.</p>
+<blockquote>
+<p>Un ordre de mission précis ne rend pas l'agent infaillible. Il rend ses instructions, ses limites et ses écarts inspectables.</p>
+</blockquote>
+<h2 id="auditer-son-propre-paquet-dexecution">Auditer son propre paquet d'exécution<a class="headerlink" href="#auditer-son-propre-paquet-dexecution" title="Permanent link">&para;</a></h2>
+<p>Avant d'automatiser davantage, une équipe peut prendre un paquet réel ou reconstruire celui d'une tâche récente et vérifier les points suivants :</p>
+<ul>
+<li>☐ L'objectif et les non-objectifs viennent d'une source humaine identifiable.</li>
+<li>☐ Chaque critère d'acceptation décrit un résultat observable.</li>
+<li>☐ Les tâches exécutables sont distinguées des tâches visibles pour contexte.</li>
+<li>☐ Les dépendances empêchent une exécution prématurée.</li>
+<li>☐ Les chemins modifiables, en lecture seule et interdits ont des sens distincts.</li>
+<li>☐ Une référence de contexte n'est jamais confondue avec une autorisation d'écriture.</li>
+<li>☐ Les décisions humaines déjà prises sont conservées avec leur origine.</li>
+<li>☐ Les conditions d'arrêt désignent la décision et le rôle attendus.</li>
+<li>☐ Les validations attendues existent indépendamment du rapport de l'agent.</li>
+<li>☐ L'état Git initial indique clairement ce qui a été observé et ce qui ne l'a pas été.</li>
+<li>☐ Un conflit entre brief, plan et règles du repository bloque la compilation ou reste explicitement visible.</li>
+<li>☐ Chaque bloc de contexte peut justifier sa présence dans la tâche courante.</li>
+</ul>
+<p>Si l'un de ces éléments n'existe que dans le chat, le paquet est incomplet. S'il existe mais que son origine est impossible à retrouver, le paquet manque de provenance. S'il est présent sans contrôle possible, il reste une instruction et doit être présenté comme tel.</p>
+<h2 id="conclusion">Conclusion<a class="headerlink" href="#conclusion" title="Permanent link">&para;</a></h2>
+<p>Ce que l'agent reçoit avant de coder détermine moins sa capacité à générer du code que sa capacité à travailler dans l'autorité qui lui a été accordée.</p>
+<p>Le brief apporte l'intention. Le repository apporte les règles. Le plan apporte le découpage et les dépendances. Les décisions humaines ferment les questions déjà arbitrées. Le runtime sélectionne les tâches éligibles, ajoute l'état local et confie au runner un ordre de mission borné.</p>
+<p>La qualité de cet assemblage ne se mesure pas à sa longueur. Elle se mesure à la possibilité de répondre, pour chaque information importante : d'où vient-elle, pour quoi fait-elle autorité, est-elle encore actuelle et comment le résultat sera-t-il confronté à cette attente ?</p>
+<p>Il reste alors à traiter le moment où l'exécution ne peut pas respecter cet ordre de mission : décision absente, frontière franchie ou validation en échec. C'est le sujet de l'article suivant : <a href="../agent-task-stop-and-resume/"><strong>quand la tâche doit s'arrêter, et comment la reprendre sans perdre son histoire</strong></a>.</p>
+<div class="article-footer-contact">
+  <p>Pour discuter de cet article ou me laisser un message public :</p>
+  <a class="article-contact-link" href="https://github.com/velkouby/ai-based-development/issues/new?template=contact.yml">Message sur GitHub</a>
+</div>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Retour en haut de la page
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.sections", "navigation.indexes", "navigation.top", "search.suggest", "search.highlight", "content.code.copy"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copi\u00e9 dans le presse-papier", "clipboard.copy": "Copier dans le presse-papier", "search.result.more.one": "1 de plus sur cette page", "search.result.more.other": "# de plus sur cette page", "search.result.none": "Aucun document trouv\u00e9", "search.result.one": "1 document trouv\u00e9", "search.result.other": "# documents trouv\u00e9s", "search.result.placeholder": "Taper pour d\u00e9marrer la recherche", "search.result.term.missing": "Non trouv\u00e9", "select.version": "S\u00e9lectionner la version"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

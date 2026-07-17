@@ -1,0 +1,951 @@
+
+<!doctype html>
+<html lang="fr" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Entre une demande en langage naturel et une pull request, un parcours agentique utile produit une chaîne d'artefacts, de contrôles et de preuves locales. Suivons une feature full-stack de bout en bout.">
+      
+      
+        <meta name="author" content="Vincent El Kouby-Benichou, Baracoda">
+      
+      
+        <link rel="canonical" href="https://velkouby.github.io/ai-based-development/fr/articles/agentic-feature-end-to-end/">
+      
+      
+      
+      
+        
+          <link rel="alternate" href="/ai-based-development/" hreflang="en">
+        
+          <link rel="alternate" href="./" hreflang="fr">
+        
+      
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>Du brief à la revue locale : une feature agentique de bout en bout - AI-Native Software Engineering Notes</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.484c7ddc.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/article.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#du-brief-a-la-revue-locale-une-feature-agentique-de-bout-en-bout" class="md-skip">
+          Aller au contenu
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="En-tête">
+    <a href="../../" title="AI-Native Software Engineering Notes" class="md-header__button md-logo" aria-label="AI-Native Software Engineering Notes" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            AI-Native Software Engineering Notes
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Du brief à la revue locale : une feature agentique de bout en bout
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+      <div class="md-header__option">
+  <div class="md-select">
+    
+    <button class="md-header__button md-icon" aria-label="Sélectionner la langue">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m12.87 15.07-2.54-2.51.03-.03A17.5 17.5 0 0 0 14.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2zm-2.62 7 1.62-4.33L19.12 17z"/></svg>
+    </button>
+    <div class="md-select__inner">
+      <ul class="md-select__list">
+        
+          <li class="md-select__item">
+            <a href="/ai-based-development/" hreflang="en" class="md-select__link">
+              English
+            </a>
+          </li>
+        
+          <li class="md-select__item">
+            <a href="./" hreflang="fr" class="md-select__link">
+              Français
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</div>
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Rechercher" placeholder="Rechercher" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Recherche">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Effacer" aria-label="Effacer" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initialisation de la recherche
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/velkouby/ai-based-development" title="Aller au dépôt" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    velkouby/ai-based-development
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../" title="AI-Native Software Engineering Notes" class="md-nav__button md-logo" aria-label="AI-Native Software Engineering Notes" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    AI-Native Software Engineering Notes
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/velkouby/ai-based-development" title="Aller au dépôt" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    velkouby/ai-based-development
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Accueil
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Articles
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Articles
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ai-agent-based-coding-best-practices/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Du Vibe Coding au développement agentique vérifiable
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table des matières">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table des matières
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#etape-1-transformer-la-demande-en-brief" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Étape 1 : transformer la demande en brief
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#etape-2-compiler-un-plan-executable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Étape 2 : compiler un plan exécutable
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#la-trace-de-bout-en-bout" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        La trace de bout en bout
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#etape-3-preparer-ce-que-le-runner-recoit" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Étape 3 : préparer ce que le runner reçoit
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#etape-4-separer-le-resultat-de-lagent-des-faits-du-workflow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Étape 4 : séparer le résultat de l'agent des faits du workflow
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#etapes-5-et-6-controler-avant-de-valider" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Étapes 5 et 6 : contrôler avant de valider
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#etape-7-ecrire-une-preuve-locale" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Étape 7 : écrire une preuve locale
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#etape-8-preparer-la-revue-sans-decider-a-sa-place" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Étape 8 : préparer la revue, sans décider à sa place
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#la-revue-locale-nest-pas-encore-la-pr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        La revue locale n'est pas encore la PR
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#reproduire-le-protocole-avec-ses-propres-outils" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reproduire le protocole avec ses propres outils
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#conclusion" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Conclusion
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 class="article-title" id="du-brief-a-la-revue-locale-une-feature-agentique-de-bout-en-bout">Du brief à la revue locale : une feature agentique de bout en bout<a class="headerlink" href="#du-brief-a-la-revue-locale-une-feature-agentique-de-bout-en-bout" title="Permanent link">&para;</a></h1>
+<p class="article-lead">Entre « ajoute la pagination de l'annuaire clients » et une pull request, il ne devrait pas y avoir une boîte noire appelée « l'agent a codé ». Un parcours agentique utile transforme la demande en tâches bornées, observe l'exécution, lance des contrôles et prépare une revue qui sépare les faits des déclarations.</p>
+<p class="article-meta">
+  <span>Par <span class="article-author">Vincent El Kouby-Benichou</span>, <a class="article-company-link" href="https://baracoda.com">Baracoda</a></span>
+  <a class="article-contact-link" href="https://www.linkedin.com/in/vincentelkoubybenichou/">LinkedIn</a>
+</p>
+
+<p>Dans <a href="../agent-coding-modes/">l'article précédent</a>, la pagination serveur de l'annuaire clients a été classée comme une <strong>fonctionnalité structurée</strong>. Elle touche l'API, l'interface, un contrat de réponse et plusieurs états d'interface. Le parcours retenu est donc orchestré.</p>
+<p>Cette décision ne dit pas encore ce qui se passe entre le brief et la revue. Dans beaucoup de pratiques, cette partie reste enfermée dans une conversation. À la fin, le diff existe, mais la chaîne de décisions qui l'a produit s'est évaporée.</p>
+<p>Un workflow durable doit produire autre chose qu'un historique de chat. Il doit permettre de reconstruire l'exécution sans demander à l'agent de raconter après coup ce qu'il pense avoir fait.</p>
+<blockquote>
+<p>L'agent produit une proposition. Le workflow établit des faits observables. L'humain décide si ces faits suffisent.</p>
+</blockquote>
+<p>La méthode s'appuie sur un framework interne qui implémente et teste la planification, la préparation du contexte, le suivi des tâches, le contrôle des chemins, les validations, les tentatives et la synthèse de revue. L'article n'en publie ni la syntaxe, ni les schémas, ni les commandes.</p>
+<p>Pour éviter de donner à l'exemple une valeur qu'il n'a pas, ses niveaux de vérité sont explicites :</p>
+<table>
+<thead>
+<tr>
+<th>Statut</th>
+<th>Ce qu'il qualifie dans cet article</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Vérifié</strong></td>
+<td>Les capacités du workflow confirmées dans l'implémentation interne et ses tests</td>
+</tr>
+<tr>
+<td><strong>Simplifié</strong></td>
+<td>Les catégories d'artefacts et les champs renommés pour expliquer leur rôle sans documenter le framework</td>
+</tr>
+<tr>
+<td><strong>Simulé</strong></td>
+<td>Le contenu métier, les noms de fichiers, la chronologie et les résultats de la pagination présentés à des fins pédagogiques</td>
+</tr>
+<tr>
+<td><strong>Observé</strong></td>
+<td>Réservé à une exécution de référence archivée ; aucun résultat simulé ci-dessous n'est présenté sous ce statut</td>
+</tr>
+<tr>
+<td><strong>Cible</strong></td>
+<td>Les garanties souhaitables qui ne sont pas encore couvertes de bout en bout, notamment une preuve liée immuablement à une révision</td>
+</tr>
+</tbody>
+</table>
+<p>Les mécanismes sont implémentés, mais la trace publique qui suit est une reconstruction. Cette distinction permet de comprendre ce que le système peut honnêtement défendre.</p>
+<h2 id="etape-1-transformer-la-demande-en-brief">Étape 1 : transformer la demande en brief<a class="headerlink" href="#etape-1-transformer-la-demande-en-brief" title="Permanent link">&para;</a></h2>
+<p>La demande brute tient en une phrase :</p>
+<blockquote>
+<p>Ajouter une pagination serveur à l'annuaire clients.</p>
+</blockquote>
+<p>Elle exprime une intention, pas encore un contrat de travail. Elle ne précise ni la forme de la réponse de l'API, ni la page initiale, ni les états de l'interface, ni ce qui doit rester hors périmètre. Laisser l'agent résoudre seul ces questions reviendrait à transformer des silences en décisions produit et techniques.</p>
+<p>Le brief clarifié, ici <strong>simulé et simplifié</strong>, fixe le résultat sans imposer toute l'implémentation :</p>
+<div class="highlight"><pre><span></span><code><span class="gu">## Objectif</span>
+
+Paginer côté serveur l&#39;annuaire clients et permettre à l&#39;utilisateur
+de naviguer entre les pages depuis l&#39;interface.
+
+<span class="gu">## Inclus</span>
+
+<span class="k">-</span><span class="w"> </span>faire évoluer la réponse de l&#39;API avec la page courante et le nombre total de résultats ;
+<span class="k">-</span><span class="w"> </span>charger la première page à l&#39;ouverture ;
+<span class="k">-</span><span class="w"> </span>conserver les états loading, empty et error ;
+<span class="k">-</span><span class="w"> </span>tester les limites et le changement de page.
+
+<span class="gu">## Non-objectifs</span>
+
+<span class="k">-</span><span class="w"> </span>synchroniser la page dans l&#39;URL ;
+<span class="k">-</span><span class="w"> </span>modifier une primitive partagée ;
+<span class="k">-</span><span class="w"> </span>ajouter une dépendance ;
+<span class="k">-</span><span class="w"> </span>migrer ou restructurer les données existantes.
+
+<span class="gu">## Arrêter si</span>
+
+<span class="k">-</span><span class="w"> </span>le contrat doit devenir incompatible avec un consommateur existant ;
+<span class="k">-</span><span class="w"> </span>une décision produit reste ouverte ;
+<span class="k">-</span><span class="w"> </span>la solution exige une modification du socle partagé.
+</code></pre></div>
+<p>Le brief ne cherche pas à prédire chaque fichier. Il stabilise l'intention, les critères observables et l'autorité de décision. Les non-objectifs sont aussi importants que l'objectif : ils empêchent la solution techniquement la plus directe de redéfinir silencieusement la demande.</p>
+<p>À cette étape, nous savons <strong>ce qui est attendu</strong>. Nous ne savons pas encore <strong>comment le repository permet de le réaliser</strong>, ni quelles tâches peuvent être confiées séparément à l'agent.</p>
+<h2 id="etape-2-compiler-un-plan-executable">Étape 2 : compiler un plan exécutable<a class="headerlink" href="#etape-2-compiler-un-plan-executable" title="Permanent link">&para;</a></h2>
+<p>Un plan agentique n'est pas une liste de verbes vagues comme « faire le backend », « faire le frontend » et « ajouter les tests ». Il doit produire des unités qui puissent être sélectionnées, exécutées, contrôlées et reprises.</p>
+<p>Pour notre exemple, le découpage public peut ressembler à ceci :</p>
+<table>
+<thead>
+<tr>
+<th>Tâche</th>
+<th>Résultat attendu</th>
+<th>Dépend de</th>
+<th>Écriture autorisée</th>
+<th>Validation ciblée</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>T-01</td>
+<td>Paginer la réponse de l'API et tester ses bornes</td>
+<td>—</td>
+<td><code>backend/customers/**</code></td>
+<td>Tests de l'API clients</td>
+</tr>
+<tr>
+<td>T-02</td>
+<td>Adapter le client et l'interface, avec les états existants</td>
+<td>T-01</td>
+<td><code>frontend/customers/**</code></td>
+<td>Tests de l'annuaire</td>
+</tr>
+<tr>
+<td>T-03</td>
+<td>Vérifier l'intégration et la compatibilité attendue</td>
+<td>T-01, T-02</td>
+<td>Aucune écriture produit supplémentaire prévue</td>
+<td>Tests et compilation du projet</td>
+</tr>
+</tbody>
+</table>
+<p>Ces chemins sont <strong>illustratifs</strong>. Ils expriment une répartition des responsabilités et ne reproduisent pas l'arborescence du framework interne.</p>
+<p>Le plan ajoute ce que le brief ne doit pas porter : dépendances, chemins modifiables, références en lecture seule, validations, conditions d'arrêt et exigences de preuve. Dans l'implémentation de référence, il ne peut pas être accepté sans une matrice des frontières d'écriture. Les tâches reçoivent des identifiants stables ; leurs dépendances et leur politique de chemins sont vérifiées. Ces capacités sont <strong>vérifiées</strong>.</p>
+<p>Une question ouverte bloque la suite. Elle devient une intervention à résoudre ; la réponse est persistée puis transmise au prochain paquet d'exécution. Si elle modifie le découpage, le périmètre ou un autre élément structurant, le plan doit être recalculé avant la reprise. La décision ne disparaît donc pas entre la planification et l'exécution.</p>
+<p>À la fin de cette étape, nous connaissons un chemin d'exécution possible. Nous n'avons toujours pas de code, et c'est une bonne chose : une incohérence de périmètre coûte moins cher à corriger dans un plan que dans un diff full-stack.</p>
+<h2 id="la-trace-de-bout-en-bout">La trace de bout en bout<a class="headerlink" href="#la-trace-de-bout-en-bout" title="Permanent link">&para;</a></h2>
+<p>La trace publique <strong>simplifiée</strong> peut maintenant être représentée comme une chaîne. Chaque maillon reçoit une entrée, produit un artefact et ajoute une connaissance limitée.</p>
+<table>
+<thead>
+<tr>
+<th>Maillon</th>
+<th>Entrée</th>
+<th>Sortie persistante</th>
+<th>Ce que l'on peut alors affirmer</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Qualification</td>
+<td>Demande brute</td>
+<td>Fiche de décision</td>
+<td>Le niveau de contrôle choisi est explicite</td>
+</tr>
+<tr>
+<td>Clarification</td>
+<td>Demande et décisions humaines</td>
+<td>Brief</td>
+<td>L'intention, les critères et les non-objectifs sont écrits</td>
+</tr>
+<tr>
+<td>Planification</td>
+<td>Brief et règles du repository</td>
+<td>Plan et tâches bornées</td>
+<td>Le travail est découpé et les frontières sont déclarées</td>
+</tr>
+<tr>
+<td>Préparation</td>
+<td>Brief, plan, contrat, réponses et état local</td>
+<td>Paquet d'exécution</td>
+<td>Le runner reçoit un ordre de mission reconstituable</td>
+</tr>
+<tr>
+<td>Implémentation</td>
+<td>Paquet d'exécution</td>
+<td>Résultat structuré du runner et diff</td>
+<td>L'agent déclare ce qu'il a tenté et le code a changé</td>
+</tr>
+<tr>
+<td>Contrôles</td>
+<td>État initial, état final et politiques</td>
+<td>Résultats de périmètre</td>
+<td>Les chemins observés respectent ou violent les frontières déclarées</td>
+</tr>
+<tr>
+<td>Validations</td>
+<td>Commandes prévues et copie de travail</td>
+<td>Codes de retour et sorties</td>
+<td>Ces commandes ont produit ces résultats localement</td>
+</tr>
+<tr>
+<td>Preuve locale</td>
+<td>Résultats du runner, Git et contrôles</td>
+<td>Artefacts de tentative</td>
+<td>L'exécution devient inspectable et reprenable</td>
+</tr>
+<tr>
+<td>Revue locale</td>
+<td>Brief, plan, tâches et preuves</td>
+<td>Synthèse de revue</td>
+<td>Les faits utiles sont rassemblés avant Git et la CI</td>
+</tr>
+</tbody>
+</table>
+<p>Cette table est le cœur du parcours. Aucune étape ne « prouve la feature » à elle seule. Chacune change seulement la nature de l'information disponible.</p>
+<h2 id="etape-3-preparer-ce-que-le-runner-recoit">Étape 3 : préparer ce que le runner reçoit<a class="headerlink" href="#etape-3-preparer-ce-que-le-runner-recoit" title="Permanent link">&para;</a></h2>
+<p>Lorsque les dépendances d'une tâche sont satisfaites et qu'aucune décision bloquante n'est ouverte, le workflow prépare un paquet d'exécution. Il réunit le brief, le plan, les tâches exécutables, le contrat du repository, les frontières d'écriture, les réponses humaines déjà obtenues, les références de contexte, les validations et un état Git local au départ.</p>
+<p>Cette compilation est <strong>vérifiée</strong> dans le framework interne. Le runner n'a pas à reconstruire l'autorité de la tâche depuis tout l'historique du projet.</p>
+<p>Dans la reconstruction publique, un paquet ne rend exécutable qu'une tâche à la fois. Les étapes de préparation, d'implémentation, de contrôle et de validation se répètent donc pour T-01, puis T-02 et enfin T-03. La tâche suivante ne reçoit son propre paquet qu'une fois ses dépendances satisfaites. La synthèse présentée plus bas agrège ces passages successifs ; elle n'est pas la réponse à un paquet unique.</p>
+<p>Mais il ne faut pas confondre structure et pertinence. Un paquet bien formé peut encore contenir trop de contexte, manquer une référence décisive ou transporter une règle devenue obsolète. Il peut aussi compiler une intention humaine insuffisamment clarifiée. Le workflow vérifie la présence et la cohérence de certaines catégories ; il ne sait pas que leur sélection est optimale.</p>
+<p>Nous ouvrirons ce paquet dans l'article suivant. Pour la vue de bout en bout, il suffit de retenir ceci : le runner ne reçoit pas seulement un prompt. Il reçoit une mission située dans une feature, un plan, un ensemble de tâches, un périmètre et un état de départ.</p>
+<h2 id="etape-4-separer-le-resultat-de-lagent-des-faits-du-workflow">Étape 4 : séparer le résultat de l'agent des faits du workflow<a class="headerlink" href="#etape-4-separer-le-resultat-de-lagent-des-faits-du-workflow" title="Permanent link">&para;</a></h2>
+<p>À chaque passage, le runner renvoie un résultat structuré : statut, résumé, résultat de la tâche, fichiers qu'il dit avoir modifiés, questions, blocages et avertissements. Le format est contrôlé. Une réponse incomplète ou impossible à raccorder à la tâche attendue peut faire échouer l'exécution avant les validations.</p>
+<p>Supposons, dans notre scénario <strong>simulé</strong>, que la synthèse des trois passages contienne les déclarations suivantes :</p>
+<div class="highlight"><pre><span></span><code>T-01 : terminée dans la première tentative
+T-02 : terminée dans la tentative suivante
+T-03 : terminée après les validations d&#39;intégration
+fichiers modifiés : cinq fichiers dans les zones clients
+blocages : aucun
+questions ouvertes : aucune
+</code></pre></div>
+<p>Cette synthèse est utile pour le suivi, mais elle agrège des <strong>déclarations de l'agent</strong>. Le workflow ne doit pas utiliser la liste déclarée comme seule source de vérité. Après chaque passage, il inspecte séparément l'état de la copie de travail et compare les fichiers observés aux politiques de la tâche concernée.</p>
+<p>La nuance est essentielle : « l'agent dit avoir modifié cinq fichiers » et « le workflow a observé cinq chemins modifiés » sont deux phrases différentes. Si les listes divergent, la divergence elle-même doit devenir un fait de revue.</p>
+<h2 id="etapes-5-et-6-controler-avant-de-valider">Étapes 5 et 6 : contrôler avant de valider<a class="headerlink" href="#etapes-5-et-6-controler-avant-de-valider" title="Permanent link">&para;</a></h2>
+<p>Dans l'implémentation examinée, l'ordre des portes est <strong>vérifié</strong> : les validations prévues ne sont lancées que si le runner a terminé, si son suivi d'exécution existe, si tous les résultats attendus sont présents et complets, et si les contrôles de frontières et de politique de chemins réussissent.</p>
+<p>L'ordre importe. Lancer des tests avant d'inspecter le périmètre peut produire un vert trompeur : le code fonctionne peut-être parce que l'agent a modifié une primitive qu'il n'avait pas le droit de toucher.</p>
+<p>La trace <strong>simulée</strong> pourrait alors consigner :</p>
+<table>
+<thead>
+<tr>
+<th>Contrôle</th>
+<th>Résultat</th>
+<th>Interprétation légitime</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Résultats attendus du runner</td>
+<td>Présents pour chacune des trois tâches</td>
+<td>Le contrat de sortie est complet pour les passages agrégés</td>
+</tr>
+<tr>
+<td>Fichiers changés pendant l'exécution</td>
+<td>Cinq chemins produit</td>
+<td>Ces cinq chemins diffèrent entre les captures initiale et finale retenues</td>
+</tr>
+<tr>
+<td>Frontières de tâche</td>
+<td>Respectées</td>
+<td>Aucun chemin observé n'est hors des zones autorisées</td>
+</tr>
+<tr>
+<td>Tests de l'API clients</td>
+<td>Code retour 0</td>
+<td>Cette commande a réussi dans l'environnement local</td>
+</tr>
+<tr>
+<td>Tests de l'annuaire</td>
+<td>Code retour 0</td>
+<td>Cette commande a réussi dans l'environnement local</td>
+</tr>
+<tr>
+<td>Compilation du projet</td>
+<td>Code retour 0</td>
+<td>La compilation demandée s'est terminée avec succès</td>
+</tr>
+<tr>
+<td>Contrôle qualité global</td>
+<td>Non lancé dans ce run</td>
+<td>Aucune conclusion ne peut être tirée sur ce contrôle</td>
+</tr>
+</tbody>
+</table>
+<p>Le dernier résultat mérite d'être écrit aussi visiblement que les résultats verts. Dans l'état actuel de l'implémentation de référence, les validations déclarées pour les tâches peuvent être orchestrées après les contrôles de périmètre, tandis que le profil qualité global reste une étape séparée à lancer explicitement. Présenter cette étape comme implicitement réussie serait faux.</p>
+<p>Le contrôle des chemins intervient après l'écriture et ne constitue pas un sandbox : il qualifie un écart de périmètre, pas la sécurité générale du processus. L'article consacré aux arrêts détaillera cette limite.</p>
+<h2 id="etape-7-ecrire-une-preuve-locale">Étape 7 : écrire une preuve locale<a class="headerlink" href="#etape-7-ecrire-une-preuve-locale" title="Permanent link">&para;</a></h2>
+<p>Après chaque passage, le workflow conserve un artefact de tentative. La revue locale peut ensuite les agréger. Dans la version publique <strong>simplifiée</strong>, cet ensemble peut être lu comme ce manifeste :</p>
+<div class="highlight"><pre><span></span><code><span class="nt">execution</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">identite</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;run-illustratif-01&quot;</span>
+<span class="w">  </span><span class="nt">tentatives</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">tache</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">T-01</span>
+<span class="w">      </span><span class="nt">resultat_agent</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;termine&quot;</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">tache</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">T-02</span>
+<span class="w">      </span><span class="nt">resultat_agent</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;termine&quot;</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">tache</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">T-03</span>
+<span class="w">      </span><span class="nt">resultat_agent</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;termine&quot;</span>
+
+<span class="nt">git_local</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">etat_initial</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;capture&quot;</span>
+<span class="w">  </span><span class="nt">etat_final</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;capture&quot;</span>
+<span class="w">  </span><span class="nt">fichiers_changes_pendant_execution</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span>
+
+<span class="nt">controles</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">frontieres</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;reussies&quot;</span>
+<span class="w">  </span><span class="nt">politique_de_chemins</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;respectee&quot;</span>
+<span class="w">  </span><span class="nt">validations_ciblees</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;3</span><span class="nv"> </span><span class="s">sur</span><span class="nv"> </span><span class="s">3</span><span class="nv"> </span><span class="s">reussies&quot;</span>
+<span class="w">  </span><span class="nt">qualite_globale</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;non_executee&quot;</span>
+
+<span class="nt">limites</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;preuve</span><span class="nv"> </span><span class="s">locale,</span><span class="nv"> </span><span class="s">non</span><span class="nv"> </span><span class="s">liee</span><span class="nv"> </span><span class="s">immuablement</span><span class="nv"> </span><span class="s">a</span><span class="nv"> </span><span class="s">un</span><span class="nv"> </span><span class="s">commit&quot;</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;couverture</span><span class="nv"> </span><span class="s">des</span><span class="nv"> </span><span class="s">tests</span><span class="nv"> </span><span class="s">non</span><span class="nv"> </span><span class="s">evaluee</span><span class="nv"> </span><span class="s">automatiquement&quot;</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;acceptation</span><span class="nv"> </span><span class="s">metier</span><span class="nv"> </span><span class="s">encore</span><span class="nv"> </span><span class="s">humaine&quot;</span>
+</code></pre></div>
+<p>Ce format n'est pas le schéma interne. Les champs sont renommés et le contenu est simulé. En revanche, la conservation des tentatives avec le résultat du runner, le suivi, l'état Git local, les fichiers changés pendant le run, les contrôles de frontières, les résultats de validation, les échecs et des métriques de base est <strong>vérifiée</strong>.</p>
+<p>Cette preuve rend la tentative inspectable. Elle ne la rend pas automatiquement attribuable à une révision précise. Un état initial et un état final aident à distinguer ce qui a bougé pendant l'exécution, mais ne remplacent ni des identifiants de commit pour la base et la tête, ni une capture exhaustive de l'index, ni l'identification complète de l'environnement. Un working tree déjà modifié reste une source d'ambiguïté qui doit être signalée.</p>
+<h2 id="etape-8-preparer-la-revue-sans-decider-a-sa-place">Étape 8 : préparer la revue, sans décider à sa place<a class="headerlink" href="#etape-8-preparer-la-revue-sans-decider-a-sa-place" title="Permanent link">&para;</a></h2>
+<p>La revue locale rassemble le brief, le plan exécuté, les tâches et leur état, les fichiers observés, les tentatives, les validations, les risques et les questions restantes. Cette synthèse est <strong>vérifiée</strong> dans l'implémentation interne, de même que le refus de finaliser si une tâche reste incomplète ou si les contrôles requis échouent.</p>
+<p>La synthèse ne doit toutefois pas aplatir la provenance. Une phrase comme « les tests passent » est trop vague si elle ne nomme pas les commandes, le lieu d'exécution et les validations absentes. De même, un résumé rédigé par un agent peut améliorer la lisibilité, mais il ne doit pas remplacer les résultats structurés dont il dérive.</p>
+<p>À ce stade, une personne peut répondre sans rouvrir le chat :</p>
+<ul>
+<li>quelle intention a été clarifiée ;</li>
+<li>quelles tâches ont été planifiées, rendues exécutables puis exécutées ;</li>
+<li>quelles zones étaient modifiables ;</li>
+<li>quels chemins ont été observés ;</li>
+<li>quelles commandes ont réellement été lancées ;</li>
+<li>quelles limites et questions restent ouvertes.</li>
+</ul>
+<p>Elle doit encore relire le diff, juger la pertinence des choix, confronter le comportement aux critères d'acceptation et décider si le risque résiduel est acceptable. L'automatisation prépare la décision ; elle ne reçoit pas l'autorité de la prendre.</p>
+<h2 id="la-revue-locale-nest-pas-encore-la-pr">La revue locale n'est pas encore la PR<a class="headerlink" href="#la-revue-locale-nest-pas-encore-la-pr" title="Permanent link">&para;</a></h2>
+<p>Le parcours décrit ici s'arrête volontairement avant le commit, la CI et la pull request. La preuve locale concerne une copie de travail et une tentative. La CI concerne une révision envoyée dans un environnement défini. La PR ajoute un espace de discussion, des contrôles de branche et une décision de merge.</p>
+<p>Ces couches doivent être reliées, pas confondues :</p>
+<div class="highlight"><pre><span></span><code>preuve locale
+  -&gt; diff relu
+  -&gt; commit identifié
+  -&gt; validations CI sur cette révision
+  -&gt; pull request
+  -&gt; décision humaine de merge
+</code></pre></div>
+<p>La <strong>cible</strong> la plus solide relierait explicitement l'identité de la tentative, le commit de base, le commit de tête, l'état de l'index, les versions d'outils, les validations locales, les résultats de CI et les critères d'acceptation. Le workflow étudié couvre déjà une part significative de la preuve locale ; il ne faut pas présenter toute cette cible comme acquise.</p>
+<h2 id="reproduire-le-protocole-avec-ses-propres-outils">Reproduire le protocole avec ses propres outils<a class="headerlink" href="#reproduire-le-protocole-avec-ses-propres-outils" title="Permanent link">&para;</a></h2>
+<p>Il n'est pas nécessaire d'adopter un framework particulier pour obtenir l'essentiel de cette chaîne. Une équipe peut commencer avec des fichiers versionnés et quelques scripts stables :</p>
+<ol>
+<li>conserver la demande brute et écrire un brief avec des non-objectifs ;</li>
+<li>découper le travail en tâches avec dépendances, chemins et validations ;</li>
+<li>enregistrer l'état Git avant de confier la tâche à l'agent ;</li>
+<li>exiger un résultat structuré, sans le traiter comme une preuve indépendante ;</li>
+<li>inspecter l'état Git complet : modifications indexées, non indexées et fichiers non suivis ;</li>
+<li>refuser de lancer ou d'accepter les validations si le périmètre est violé ;</li>
+<li>enregistrer chaque commande, son code de retour et ce qui n'a pas été exécuté ;</li>
+<li>produire une synthèse qui conserve les risques et les questions ;</li>
+<li>relier ensuite cette trace au commit et aux résultats de CI.</li>
+</ol>
+<p>Le premier gain est de pouvoir reprendre le travail, expliquer un arrêt et contester une conclusion à partir d'artefacts persistants.</p>
+<h2 id="conclusion">Conclusion<a class="headerlink" href="#conclusion" title="Permanent link">&para;</a></h2>
+<p>Une feature agentique de bout en bout n'est pas une conversation plus longue. C'est une succession de transformations : la demande devient un brief, le brief devient un plan, le plan devient un ordre de mission, le runner produit une proposition, le workflow observe le périmètre et les validations, puis la preuve locale alimente la revue.</p>
+<p>Pour la pagination de l'annuaire clients, ce parcours rend la proposition reconstructible avant Git et la CI. Il ne prouve encore ni la couverture suffisante, ni la justesse métier, ni l'acceptabilité du merge. Ces décisions restent humaines.</p>
+<p>La prochaine étape consiste à ouvrir la boîte noire située juste avant le runner : <a href="../agent-execution-package/"><strong>ce que l'agent reçoit vraiment, et comment construire un ordre de mission utile</strong></a>.</p>
+<div class="article-footer-contact">
+  <p>Pour discuter de cet article ou me laisser un message public :</p>
+  <a class="article-contact-link" href="https://github.com/velkouby/ai-based-development/issues/new?template=contact.yml">Message sur GitHub</a>
+</div>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Retour en haut de la page
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.sections", "navigation.indexes", "navigation.top", "search.suggest", "search.highlight", "content.code.copy"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copi\u00e9 dans le presse-papier", "clipboard.copy": "Copier dans le presse-papier", "search.result.more.one": "1 de plus sur cette page", "search.result.more.other": "# de plus sur cette page", "search.result.none": "Aucun document trouv\u00e9", "search.result.one": "1 document trouv\u00e9", "search.result.other": "# documents trouv\u00e9s", "search.result.placeholder": "Taper pour d\u00e9marrer la recherche", "search.result.term.missing": "Non trouv\u00e9", "select.version": "S\u00e9lectionner la version"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

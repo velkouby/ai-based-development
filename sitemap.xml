@@ -71,11 +71,29 @@
         <xhtml:link rel="alternate" hreflang="en" href="https://velkouby.github.io/ai-based-development/articles/agent-coding-modes/"/>
     </url>
     <url>
+        <loc>https://velkouby.github.io/ai-based-development/fr/articles/agent-execution-package/</loc>
+        <lastmod>2026-07-17</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="fr" href="https://velkouby.github.io/ai-based-development/fr/articles/agent-execution-package/"/>
+    </url>
+    <url>
         <loc>https://velkouby.github.io/ai-based-development/fr/articles/agent-ready-repository/</loc>
         <lastmod>2026-07-17</lastmod>
         <changefreq>daily</changefreq>
         <xhtml:link rel="alternate" hreflang="fr" href="https://velkouby.github.io/ai-based-development/fr/articles/agent-ready-repository/"/>
         <xhtml:link rel="alternate" hreflang="en" href="https://velkouby.github.io/ai-based-development/articles/agent-ready-repository/"/>
+    </url>
+    <url>
+        <loc>https://velkouby.github.io/ai-based-development/fr/articles/agent-task-stop-and-resume/</loc>
+        <lastmod>2026-07-17</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="fr" href="https://velkouby.github.io/ai-based-development/fr/articles/agent-task-stop-and-resume/"/>
+    </url>
+    <url>
+        <loc>https://velkouby.github.io/ai-based-development/fr/articles/agentic-feature-end-to-end/</loc>
+        <lastmod>2026-07-17</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="fr" href="https://velkouby.github.io/ai-based-development/fr/articles/agentic-feature-end-to-end/"/>
     </url>
     <url>
         <loc>https://velkouby.github.io/ai-based-development/fr/articles/ai-agent-based-coding-best-practices/</loc>
@@ -97,5 +115,11 @@
         <changefreq>daily</changefreq>
         <xhtml:link rel="alternate" hreflang="fr" href="https://velkouby.github.io/ai-based-development/fr/articles/drafts/serie-pratique-developpement-agentique/"/>
         <xhtml:link rel="alternate" hreflang="en" href="https://velkouby.github.io/ai-based-development/articles/drafts/serie-pratique-developpement-agentique/"/>
+    </url>
+    <url>
+        <loc>https://velkouby.github.io/ai-based-development/fr/articles/local-proof-agent-workflow/</loc>
+        <lastmod>2026-07-17</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="fr" href="https://velkouby.github.io/ai-based-development/fr/articles/local-proof-agent-workflow/"/>
     </url>
 </urlset>

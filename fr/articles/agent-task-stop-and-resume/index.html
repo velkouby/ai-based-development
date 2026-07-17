@@ -1,0 +1,796 @@
+
+<!doctype html>
+<html lang="fr" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Une décision manquante, une sortie de périmètre et un test en échec ne demandent pas la même réponse. Voici comment arrêter une tâche agentique proprement, conserver les faits utiles et reprendre sans effacer l'histoire.">
+      
+      
+        <meta name="author" content="Vincent El Kouby-Benichou, Baracoda">
+      
+      
+        <link rel="canonical" href="https://velkouby.github.io/ai-based-development/fr/articles/agent-task-stop-and-resume/">
+      
+      
+      
+      
+        
+          <link rel="alternate" href="/ai-based-development/" hreflang="en">
+        
+          <link rel="alternate" href="./" hreflang="fr">
+        
+      
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>Quand la tâche doit s'arrêter : décisions, frontières et reprise - AI-Native Software Engineering Notes</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.484c7ddc.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/article.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#quand-la-tache-doit-sarreter-decisions-frontieres-et-reprise" class="md-skip">
+          Aller au contenu
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="En-tête">
+    <a href="../../" title="AI-Native Software Engineering Notes" class="md-header__button md-logo" aria-label="AI-Native Software Engineering Notes" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            AI-Native Software Engineering Notes
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Quand la tâche doit s'arrêter : décisions, frontières et reprise
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+      <div class="md-header__option">
+  <div class="md-select">
+    
+    <button class="md-header__button md-icon" aria-label="Sélectionner la langue">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m12.87 15.07-2.54-2.51.03-.03A17.5 17.5 0 0 0 14.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2zm-2.62 7 1.62-4.33L19.12 17z"/></svg>
+    </button>
+    <div class="md-select__inner">
+      <ul class="md-select__list">
+        
+          <li class="md-select__item">
+            <a href="/ai-based-development/" hreflang="en" class="md-select__link">
+              English
+            </a>
+          </li>
+        
+          <li class="md-select__item">
+            <a href="./" hreflang="fr" class="md-select__link">
+              Français
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</div>
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Rechercher" placeholder="Rechercher" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Recherche">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Effacer" aria-label="Effacer" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initialisation de la recherche
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/velkouby/ai-based-development" title="Aller au dépôt" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    velkouby/ai-based-development
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../" title="AI-Native Software Engineering Notes" class="md-nav__button md-logo" aria-label="AI-Native Software Engineering Notes" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    AI-Native Software Engineering Notes
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/velkouby/ai-based-development" title="Aller au dépôt" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    velkouby/ai-based-development
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Accueil
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Articles
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Articles
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ai-agent-based-coding-best-practices/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Du Vibe Coding au développement agentique vérifiable
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table des matières">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table des matières
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#trois-arrets-trois-autorites-differentes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Trois arrêts, trois autorités différentes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#une-decision-manquante-doit-bloquer-avant-le-code" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Une décision manquante doit bloquer avant le code
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#une-sortie-de-perimetre-est-un-fait-observe-apres-lecriture" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Une sortie de périmètre est un fait observé après l'écriture
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#branche-simulee-la-pagination-et-lurl" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Branche simulée : la pagination et l'URL
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#annuler-reessayer-et-redecouper-ne-sont-pas-synonymes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Annuler, réessayer et redécouper ne sont pas synonymes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#lechec-reparable-une-boucle-bornee-pas-une-carte-blanche" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        L'échec réparable : une boucle bornée, pas une carte blanche
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#reprendre-signifie-reconstruire-lautorite-de-la-tache" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reprendre signifie reconstruire l'autorité de la tâche
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ce-que-le-controle-de-frontiere-ne-garantit-pas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ce que le contrôle de frontière ne garantit pas
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#le-dossier-darret-minimal" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Le dossier d'arrêt minimal
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#conclusion" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Conclusion
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 class="article-title" id="quand-la-tache-doit-sarreter-decisions-frontieres-et-reprise">Quand la tâche doit s'arrêter : décisions, frontières et reprise<a class="headerlink" href="#quand-la-tache-doit-sarreter-decisions-frontieres-et-reprise" title="Permanent link">&para;</a></h1>
+<p class="article-lead">Une décision manquante, une sortie de périmètre et un test en échec ne demandent pas la même réponse. Un workflow agentique fiable doit savoir pourquoi il s'arrête, qui peut débloquer la situation et à partir de quels faits le travail pourra reprendre.</p>
+<p class="article-meta">
+  <span>Par <span class="article-author">Vincent El Kouby-Benichou</span>, <a class="article-company-link" href="https://baracoda.com">Baracoda</a></span>
+  <a class="article-contact-link" href="https://www.linkedin.com/in/vincentelkoubybenichou/">LinkedIn</a>
+</p>
+
+<p>Dans <a href="../agent-execution-package/">l'article précédent</a>, le brief, le plan, les règles du repository et les décisions déjà prises devenaient un ordre de mission borné. Cet ordre indiquait à l'agent où écrire, quoi consulter, comment valider et dans quels cas ne pas continuer.</p>
+<p>Les conditions d'arrêt ne sont pas une annexe prudente du paquet d'exécution. Elles en sont une partie opérationnelle. Sans elles, l'agent est incité à transformer toute incertitude en choix d'implémentation et tout obstacle en élargissement silencieux du périmètre.</p>
+<p>Mais « la tâche est bloquée » reste une information insuffisante. Une question produit non tranchée avant le code, une modification observée dans une zone protégée et un test unitaire en échec n'ont ni le même responsable, ni la même réparation, ni le même point de reprise.</p>
+<blockquote>
+<p>Un arrêt utile ne dit pas seulement que le travail n'est pas terminé. Il établit ce qui s'est passé, ce qui manque, qui doit décider et ce qui devra être revérifié.</p>
+</blockquote>
+<p>Dans le framework interne qui sert de laboratoire à cette série, l'état persistant, les frontières d'écriture, l'historique des tentatives, les décisions humaines et les reprises contrôlées sont des capacités <strong>vérifiées</strong> dans le code et les tests. Les artefacts montrés ici sont <strong>simplifiés</strong>, et la branche consacrée à l'URL est <strong>simulée</strong>. Ils décrivent un protocole reproductible, pas le format ni les commandes du framework.</p>
+<h2 id="trois-arrets-trois-autorites-differentes">Trois arrêts, trois autorités différentes<a class="headerlink" href="#trois-arrets-trois-autorites-differentes" title="Permanent link">&para;</a></h2>
+<p>Une taxonomie minimale suffit déjà à éviter de nombreuses mauvaises reprises.</p>
+<table>
+<thead>
+<tr>
+<th>Situation</th>
+<th>Fait déclencheur</th>
+<th>Qui peut agir ?</th>
+<th>Reprise légitime</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Décision manquante</strong></td>
+<td>Une question change le résultat attendu ou engage une autorité absente</td>
+<td>Responsable produit, architecture, sécurité ou propriétaire du domaine</td>
+<td>Enregistrer la décision, mettre à jour l'entrée concernée, puis recompiler le travail</td>
+</tr>
+<tr>
+<td><strong>Sortie de périmètre</strong></td>
+<td>Les fichiers observés touchent une zone non autorisée, en lecture seule ou interdite</td>
+<td>Pilote de la tâche et, si nécessaire, propriétaire du socle</td>
+<td>Isoler ou retirer la modification, redécouper ou reclasser, puis repartir d'un périmètre valide</td>
+</tr>
+<tr>
+<td><strong>Échec réparable</strong></td>
+<td>Une validation ou une étape mécanique échoue sans ouvrir de nouvelle décision</td>
+<td>Agent ou développeur, dans une politique de réparation bornée</td>
+<td>Corriger la cause, relancer les contrôles affectés et conserver une nouvelle tentative</td>
+</tr>
+</tbody>
+</table>
+<p>La différence essentielle porte sur l'autorité. Un agent peut corriger une erreur de formatage si la commande et la solution sont déterministes. Il ne peut pas décider seul qu'une incompatibilité d'API est acceptable, qu'une primitive partagée peut changer ou qu'une permission doit être élargie.</p>
+<p>Il faut aussi distinguer <strong>arrêt</strong> et <strong>échec</strong>. Attendre une décision produit est un arrêt normal du workflow, pas une panne. Détecter une sortie de périmètre signifie que le garde-fou a fonctionné, même si la tentative ne peut pas être acceptée. À l'inverse, répéter mécaniquement une validation qui échoue sans diagnostic n'est pas une reprise : c'est une boucle.</p>
+<h2 id="une-decision-manquante-doit-bloquer-avant-le-code">Une décision manquante doit bloquer avant le code<a class="headerlink" href="#une-decision-manquante-doit-bloquer-avant-le-code" title="Permanent link">&para;</a></h2>
+<p>Le meilleur moment pour arrêter une tâche est souvent avant que le runner agent ne soit lancé.</p>
+<p>Supposons que le brief demande de paginer l'annuaire clients, mais ne précise pas le comportement lorsqu'une page supérieure au nouveau maximum est demandée. L'API doit-elle renvoyer une page vide, ramener la requête à la dernière page valide ou retourner une erreur explicite ? Ce choix influence l'expérience utilisateur, le contrat de l'interface et les tests.</p>
+<p>Le planificateur peut proposer des options et signaler leurs conséquences. Il ne doit pas faire passer l'une d'elles pour une simple convention technique. Le workflow devrait alors conserver une intervention contenant au minimum :</p>
+<ul>
+<li>le problème formulé sans jargon inutile ;</li>
+<li>la question précise à trancher ;</li>
+<li>les options connues et leurs effets ;</li>
+<li>le rôle attendu pour décider ;</li>
+<li>les tâches et critères concernés ;</li>
+<li>la réponse, sa source et sa justification éventuelle.</li>
+</ul>
+<p>Tant que cette intervention reste ouverte, aucune tâche dépendante ne devrait être exécutable. Une fois la réponse donnée, elle ne doit pas seulement être injectée dans une nouvelle conversation. Elle devient une décision persistante, reliée à l'intervention qui l'a provoquée, puis transmise dans le prochain paquet d'exécution. Si elle modifie le brief, le plan ou le périmètre, l'artefact concerné doit être mis à jour et le travail recompilé avant la reprise.</p>
+<p>Cette séquence évite deux dérives. La première consiste à laisser l'agent coder une hypothèse, puis à présenter le diff comme une manière de « demander confirmation ». La seconde consiste à recevoir une réponse humaine sans mettre à jour l'artefact qui faisait autorité. Dans ce cas, le prochain agent peut reprendre l'ancienne ambiguïté.</p>
+<blockquote>
+<p>Répondre à une question ne suffit pas. La réponse doit modifier durablement la source qui gouverne l'exécution suivante.</p>
+</blockquote>
+<p>Si la question révèle que le brief entier est instable, il ne faut pas reprendre la tâche. Il faut revenir à la définition du besoin. Si elle ne concerne qu'une décision locale déjà prévue par le plan, une mise à jour ciblée peut suffire. Le point de reprise dépend donc de l'endroit où l'incertitude est née.</p>
+<h2 id="une-sortie-de-perimetre-est-un-fait-observe-apres-lecriture">Une sortie de périmètre est un fait observé après l'écriture<a class="headerlink" href="#une-sortie-de-perimetre-est-un-fait-observe-apres-lecriture" title="Permanent link">&para;</a></h2>
+<p>Le deuxième cas est plus inconfortable : l'agent a déjà écrit, puis le workflow constate qu'un fichier modifié ne respecte pas l'ordre de mission.</p>
+<p>Le contrôle utile compare deux sources : le périmètre déclaré pour les tâches exécutées et les chemins réellement observés dans la copie de travail. La liste de fichiers rapportée par l'agent peut aider au diagnostic, mais elle ne doit pas être la seule source. Un agent peut oublier un fichier, mal interpréter un renommage ou produire un résumé incomplet.</p>
+<p>Pour l'annuaire clients, un contrat conceptuel pourrait autoriser l'écriture dans les zones produit du frontend et du backend, autoriser la lecture du routage commun et interdire sa modification :</p>
+<div class="highlight"><pre><span></span><code>écriture autorisée
+  frontend/customers/**
+  backend/customers/**
+
+lecture seule
+  shared/routing/**
+
+arrêter si
+  la synchronisation avec l&#39;URL exige de modifier le routage partagé
+</code></pre></div>
+<p>Ces chemins sont illustratifs. Ils expriment une répartition de responsabilités, pas l'arborescence d'un framework ou d'un template particulier.</p>
+<p>Si le diff observé contient un fichier sous <code>shared/routing/</code>, le résultat n'est pas « presque conforme ». La tentative a franchi une frontière. Les validations fonctionnelles ne doivent pas transformer ce franchissement en autorisation rétroactive : un test vert ne donne pas à la tâche produit le droit de modifier le socle.</p>
+<p>Le workflow doit alors conserver le constat avant toute réparation : chemins concernés, règle violée, phase de détection, état connu au départ et validations déjà exécutées ou non. Cette chronologie compte. Elle permet de distinguer une modification produite pendant la tentative d'un changement qui existait avant son lancement.</p>
+<p>Si la copie de travail était déjà modifiée, retirer automatiquement le fichier fautif peut détruire le travail de quelqu'un d'autre. La bonne réaction est alors de suspendre la réparation et de demander une attribution humaine. La restauration automatique n'est raisonnable que lorsque le système sait précisément quel état de référence il rétablit et quelles modifications appartiennent à la tentative.</p>
+<h2 id="branche-simulee-la-pagination-et-lurl">Branche simulée : la pagination et l'URL<a class="headerlink" href="#branche-simulee-la-pagination-et-lurl" title="Permanent link">&para;</a></h2>
+<p>Le scénario suivant est <strong>simulé</strong> pour illustrer le chemin d'arrêt. Il ne s'agit pas du compte rendu d'un incident réel ni d'un export du framework interne.</p>
+<p>Dans cette variante, l'équipe étend la pagination avec une exigence supplémentaire : la page courante doit apparaître dans l'URL afin qu'un lien puisse être partagé. Comme cette synchronisation était un non-objectif du brief initial, la demande est d'abord requalifiée, le brief est révisé et un nouveau paquet d'exécution est compilé. Le routage partagé y reste en lecture seule, avec une condition d'arrêt explicite. Pendant l'implémentation, l'agent conclut néanmoins que l'interface publique du routeur est insuffisante et modifie une primitive partagée.</p>
+<p>Le contrôle post-exécution observe alors deux catégories de changements : les fichiers produit attendus et un fichier du routage commun. Il classe la tentative comme sortie de périmètre et arrête la chaîne avant de considérer la tâche terminée.</p>
+<p>Voici le dossier public réduit que l'on pourrait conserver :</p>
+<div class="highlight"><pre><span></span><code><span class="gh"># Dossier d&#39;arrêt — exemple simulé</span>
+
+Demande : synchroniser la page de l&#39;annuaire avec l&#39;URL
+Phase : contrôle post-écriture
+Résultat : arrêt sur frontière d&#39;écriture
+
+Éléments consignés dans le scénario simulé :
+<span class="k">-</span><span class="w"> </span>des fichiers de la fonctionnalité ont été modifiés dans le périmètre autorisé ;
+<span class="k">-</span><span class="w"> </span>un fichier du routage partagé a aussi été modifié ;
+<span class="k">-</span><span class="w"> </span>cette zone était déclarée en lecture seule ;
+<span class="k">-</span><span class="w"> </span>les validations prévues n&#39;ont pas été lancées après l&#39;échec du contrôle de périmètre.
+
+Options soumises à décision :
+<span class="k">1.</span> retirer la synchronisation de l&#39;URL et réviser les critères ;
+<span class="k">2.</span> trouver une adaptation locale utilisant l&#39;interface publique existante ;
+<span class="k">3.</span> ouvrir une évolution séparée du socle, puis reprendre la fonctionnalité.
+
+Décision humaine :
+<span class="k">-</span><span class="w"> </span>maintenir l&#39;exigence de partage par URL ;
+<span class="k">-</span><span class="w"> </span>annuler la modification non autorisée ;
+<span class="k">-</span><span class="w"> </span>traiter l&#39;extension du routeur dans une unité de travail distincte ;
+<span class="k">-</span><span class="w"> </span>reprendre la pagination après intégration de cette extension.
+</code></pre></div>
+<p>Ce dossier ne contient ni code d'état propriétaire, ni session brute, ni stratégie automatique complète. Il conserve ce dont une équipe a besoin pour comprendre l'arrêt et autoriser la suite.</p>
+<p>La décision choisie ne consiste pas à ajouter <code>shared/routing/**</code> aux chemins autorisés de la tâche existante. Ce serait maquiller la sortie de périmètre en élargissant le contrat après coup. Le changement partagé devient une <strong>évolution du socle</strong> avec sa propre intention, son analyse d'impact, ses consommateurs, ses validations et sa revue.</p>
+<p>La fonctionnalité de pagination reste arrêtée tant que cette dépendance n'est pas disponible. Après intégration de l'extension partagée, son plan est réévalué : nouvelle révision de départ, nouvelle interface publique à réutiliser, périmètre produit inchangé et validations mises à jour. La tâche peut alors reprendre sans effacer la première tentative.</p>
+<h2 id="annuler-reessayer-et-redecouper-ne-sont-pas-synonymes">Annuler, réessayer et redécouper ne sont pas synonymes<a class="headerlink" href="#annuler-reessayer-et-redecouper-ne-sont-pas-synonymes" title="Permanent link">&para;</a></h2>
+<p>Une fois l'arrêt qualifié, le verbe de reprise doit être précis.</p>
+<p><strong>Annuler une modification interdite</strong> signifie revenir à un état de référence connu pour les seuls chemins concernés, puis relancer le contrôle de périmètre. Cette action ne valide pas le reste du diff. Elle retire un fait incompatible avec le contrat.</p>
+<p><strong>Réessayer une tâche</strong> signifie conserver le même objectif et la même autorité, mais produire une nouvelle tentative après une correction bornée. L'historique précédent reste visible : cause, actions prises, fichiers touchés et résultats de validation.</p>
+<p><strong>Replanifier</strong> signifie que l'entrée a changé. Une décision humaine, un nouveau contrat ou une dépendance intégrée modifie l'ordre de mission. Relancer exactement le même paquet serait incohérent ; il faut en compiler un nouveau.</p>
+<p><strong>Redécouper ou reclasser</strong> signifie que le changement découvert n'appartient plus au dispositif initial. Une évolution du socle doit rester séparée de la tâche produit. Une migration ou une décision de sécurité peut, selon sa portée, imposer une unité distincte ou une reclassification avec l'autorité correspondante.</p>
+<p>Cette distinction protège la traçabilité. Si toutes les actions sont appelées « reprise », une équipe ne sait plus si l'agent a corrigé une faute, reçu une nouvelle décision ou obtenu un périmètre plus large.</p>
+<h2 id="lechec-reparable-une-boucle-bornee-pas-une-carte-blanche">L'échec réparable : une boucle bornée, pas une carte blanche<a class="headerlink" href="#lechec-reparable-une-boucle-bornee-pas-une-carte-blanche" title="Permanent link">&para;</a></h2>
+<p>Le troisième cas concerne un échec mécanique ou de validation. Par exemple, un test ciblé révèle que le bouton « page suivante » reste actif sur la dernière page. L'objectif, le contrat d'API et le périmètre ne changent pas. La cause est localisée dans une zone autorisée et la correction peut être vérifiée par le même test.</p>
+<p>Une tentative de réparation est raisonnable si quatre conditions sont réunies :</p>
+<ol>
+<li>l'échec est classé et son diagnostic est suffisamment précis ;</li>
+<li>la correction n'exige ni nouvelle dépendance, ni décision produit, ni élargissement de chemins ;</li>
+<li>les commandes à relancer sont connues ;</li>
+<li>le nombre de tentatives est limité.</li>
+</ol>
+<p>Après la correction, il ne suffit pas de relancer la seule commande rouge si d'autres contrôles peuvent avoir été affectés. Le workflow doit au minimum refaire le contrôle des frontières, puis les validations liées aux fichiers corrigés. Si la réparation a modifié le contrat backend, les tests de l'interface qui le consomme redeviennent pertinents même s'ils étaient verts avant.</p>
+<p>Chaque tentative devrait conserver une mémoire compacte : raison initiale, diagnostic, actions, chemins touchés, validations relancées, résultat et prochaine action. Si la réparation cesse de progresser ou atteint la limite autorisée, la boucle s'arrête. Le système transmet alors les tentatives à un humain au lieu de continuer à consommer du temps tout en augmentant le diff.</p>
+<p>Certains échecs ressemblent à tort à des réparations mécaniques. Un test échoue parce que le comportement attendu n'est pas défini : c'est une décision manquante. Une compilation échoue parce qu'il faudrait ajouter une dépendance : c'est une autorisation à obtenir. Une validation révèle une rupture de compatibilité : c'est potentiellement une décision d'architecture ou de migration. La sortie d'un outil ne détermine donc pas à elle seule la catégorie ; le changement nécessaire pour la résoudre compte davantage.</p>
+<h2 id="reprendre-signifie-reconstruire-lautorite-de-la-tache">Reprendre signifie reconstruire l'autorité de la tâche<a class="headerlink" href="#reprendre-signifie-reconstruire-lautorite-de-la-tache" title="Permanent link">&para;</a></h2>
+<p>Une reprise fiable ne consiste pas à envoyer « continue là où tu t'es arrêté » dans le même chat. Elle reconstruit explicitement l'état autorisé.</p>
+<p>Avant de relancer le runner agent, le workflow devrait vérifier :</p>
+<ul>
+<li>que les interventions bloquantes sont résolues ;</li>
+<li>que la réponse humaine est enregistrée et reliée aux tâches concernées ;</li>
+<li>que les dépendances précédentes sont terminées ;</li>
+<li>que les modifications interdites ont été isolées ou retirées ;</li>
+<li>que le brief, le plan et les critères sont encore cohérents ;</li>
+<li>que le nouveau paquet contient la décision et le bon état Git de départ ;</li>
+<li>que les validations à refaire sont explicites.</li>
+</ul>
+<p>La nouvelle tentative reçoit alors le contexte utile de la précédente, pas toute sa conversation. Elle sait ce qui a échoué, ce qui a été décidé, ce qui ne doit pas être reproduit et quelles preuves sont attendues. Les tâches déjà terminées peuvent rester terminées si leurs résultats sont encore valables ; la tâche arrêtée redevient exécutable seulement lorsque ses préconditions sont satisfaites.</p>
+<p>Dans la branche simulée de l'URL, la reprise inclut la décision d'architecture, la nouvelle interface publique du routeur et l'interdiction maintenue de modifier le socle. Elle ne donne pas à l'agent un accès plus large. Au contraire, elle rend possible une implémentation produit plus étroite.</p>
+<blockquote>
+<p>Une bonne reprise ne supprime pas l'arrêt précédent. Elle en fait une entrée vérifiable de la tentative suivante.</p>
+</blockquote>
+<h2 id="ce-que-le-controle-de-frontiere-ne-garantit-pas">Ce que le contrôle de frontière ne garantit pas<a class="headerlink" href="#ce-que-le-controle-de-frontiere-ne-garantit-pas" title="Permanent link">&para;</a></h2>
+<p>Le contrôle décrit ici intervient après l'écriture dans le flux normal. Il peut détecter qu'un chemin observé sort du périmètre et empêcher l'acceptation du résultat. Un mécanisme séparé et explicitement autorisé peut ensuite restaurer un état connu ou demander une décision humaine. <strong>Ce n'est pas un sandbox.</strong></p>
+<p>Il ne prouve pas que le processus était techniquement incapable d'écrire ailleurs, d'accéder au réseau, de lire un secret ou d'exécuter une commande dangereuse. Ces garanties relèvent d'autres mécanismes : permissions du système, isolation du processus, gestion des secrets, politique réseau et environnement d'exécution.</p>
+<p>Il ne détecte pas non plus une erreur sémantique dans un chemin autorisé. L'agent peut respecter parfaitement les dossiers et introduire un défaut métier. Enfin, la portée du contrôle Git doit être annoncée : fichiers suivis, non suivis, index, changements préexistants et renommages ne sont pas toujours observés de la même manière.</p>
+<p>Le bénéfice du garde-fou est plus précis : comparer une politique d'écriture à un ensemble de modifications observées, puis rendre l'écart visible avant la revue. C'est déjà utile, à condition de ne pas lui attribuer une garantie de sécurité qu'il ne fournit pas.</p>
+<h2 id="le-dossier-darret-minimal">Le dossier d'arrêt minimal<a class="headerlink" href="#le-dossier-darret-minimal" title="Permanent link">&para;</a></h2>
+<p>Une équipe peut appliquer cette méthode sans orchestrateur complet. Pour toute tâche interrompue, conserver une fiche courte :</p>
+<div class="highlight"><pre><span></span><code><span class="gh"># Arrêt et reprise</span>
+
+Catégorie : décision manquante / sortie de périmètre / échec réparable
+Phase de détection :
+Tentative concernée :
+
+<span class="gu">Faits observés :</span>
+<span class="gu">-</span>
+
+<span class="gu">Ce qui reste déclaré par l&#39;agent :</span>
+<span class="gu">-</span>
+
+Impact sur le résultat attendu :
+Autorité nécessaire :
+
+Options :
+1.
+2.
+
+Décision et source :
+Actions avant reprise :
+Artefacts à mettre à jour :
+Contrôles à relancer :
+Risque résiduel :
+</code></pre></div>
+<p>La fiche force trois séparations utiles : faits et déclarations, options et décision, correction et validation. Elle empêche surtout qu'une reprise dépende de la mémoire de la personne qui assistait à l'exécution.</p>
+<h2 id="conclusion">Conclusion<a class="headerlink" href="#conclusion" title="Permanent link">&para;</a></h2>
+<p>Savoir s'arrêter est une capacité positive d'un workflow agentique. Une décision manquante doit remonter à la bonne autorité. Une sortie de périmètre doit rester visible, même si la modification est ensuite retirée. Un échec réparable peut déclencher une nouvelle tentative, mais seulement dans une boucle bornée et suivie de contrôles renouvelés.</p>
+<p>Dans les trois cas, la reprise ne doit ni effacer l'histoire, ni élargir silencieusement le contrat. Elle relie un constat, une décision ou une réparation à un nouvel ordre de mission.</p>
+<p>Il reste cependant une question : que vaut la preuve produite par ce workflow ? Un contrôle de chemins réussi et des commandes au vert ne disent pas encore à quelle révision ils se rapportent ni ce qu'ils ont réellement couvert. Pour l'étudier sans confondre le scénario principal avec la branche URL simulée, l'article suivant revient à l'exécution initiale de la pagination : <a href="../local-proof-agent-workflow/"><strong>« Les tests passent » : que prouve le workflow ?</strong></a>.</p>
+<div class="article-footer-contact">
+  <p>Pour discuter de cet article ou me laisser un message public :</p>
+  <a class="article-contact-link" href="https://github.com/velkouby/ai-based-development/issues/new?template=contact.yml">Message sur GitHub</a>
+</div>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Retour en haut de la page
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.sections", "navigation.indexes", "navigation.top", "search.suggest", "search.highlight", "content.code.copy"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copi\u00e9 dans le presse-papier", "clipboard.copy": "Copier dans le presse-papier", "search.result.more.one": "1 de plus sur cette page", "search.result.more.other": "# de plus sur cette page", "search.result.none": "Aucun document trouv\u00e9", "search.result.one": "1 document trouv\u00e9", "search.result.other": "# documents trouv\u00e9s", "search.result.placeholder": "Taper pour d\u00e9marrer la recherche", "search.result.term.missing": "Non trouv\u00e9", "select.version": "S\u00e9lectionner la version"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>
