@@ -637,6 +637,11 @@ to navigate between pages from the interface.
 <p>At the end of this step, we know one possible execution path. We still have no code, and that is a good thing: a scope inconsistency costs less to correct in a plan than in a full-stack diff.</p>
 <h2 id="the-end-to-end-trace">The end-to-end trace<a class="headerlink" href="#the-end-to-end-trace" title="Permanent link">&para;</a></h2>
 <p>The path can now be represented as a chain. Each link receives an input, produces an artifact, and adds a limited amount of knowledge.</p>
+<figure class="article-diagram">
+  <img src="agentic-feature-evidence-chain.png" alt="End-to-end chain across Human, Workflow, and Agent lanes, from a raw request to reviewable evidence." loading="lazy" />
+  <figcaption>Each link adds a limited fact; no single one proves that the feature is acceptable.</figcaption>
+</figure>
+
 <table>
 <thead>
 <tr>

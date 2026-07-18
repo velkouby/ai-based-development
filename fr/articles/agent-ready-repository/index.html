@@ -685,6 +685,11 @@
 <p>L'objectif empêche de confondre la demande et une solution particulière. Les critères d'acceptation rendent le résultat observable. Les chemins <code>modifiables</code> définissent l'autorité d'écriture. Les chemins en <code>lecture_seule</code> fournissent un contexte nécessaire sans autoriser leur modification. Les chemins <code>hors_perimetre</code> ne sont pas nécessaires à la tâche et ne doivent pas être touchés.</p>
 <p>Les validations disent quelles commandes doivent être exécutées. Le contrôle après exécution confronte séparément les fichiers réellement modifiés au périmètre déclaré. Enfin, les conditions d'arrêt rendent explicites les décisions que l'agent n'a pas l'autorité de prendre seul.</p>
 <p>Un tel ordre de mission ne devrait pas être rédigé entièrement à la main pour chaque micro-tâche. Les règles stables viennent du repository ; l'ordre de mission les contextualise pour le cas traité. Le point essentiel est que l'agent reçoive un objectif, une portée, des références, des validations et des limites adaptés à la tâche.</p>
+<figure class="article-diagram">
+  <img src="../../../articles/agent-ready-repository/repository-authority-map.png" alt="Carte des quatre zones d'un repository montrant comment le contrat de tâche transforme leur visibilité en autorisation d'écriture, en lecture seule ou en condition d'arrêt." loading="lazy" />
+  <figcaption>Le contrat de tâche transforme la visibilité du repository en une autorité d’écriture explicite.</figcaption>
+</figure>
+
 <h2 id="un-fichier-dinstructions-est-une-porte-dentree">Un fichier d'instructions est une porte d'entrée<a class="headerlink" href="#un-fichier-dinstructions-est-une-porte-dentree" title="Permanent link">&para;</a></h2>
 <p>Un fichier comme <code>AGENTS.md</code> reste utile, à condition de ne pas lui demander de porter toute la méthode.</p>
 <p>Son rôle est d'abord d'orienter : quels documents lire, où se trouvent les règles d'architecture, quelles commandes sont stables et quels changements exigent un arrêt. Il peut aussi rappeler quelques règles critiques, par exemple ne pas modifier les fichiers générés ou ne pas introduire une dépendance sans accord.</p>

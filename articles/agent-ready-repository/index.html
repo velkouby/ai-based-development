@@ -685,6 +685,11 @@
 <p>The objective prevents the request from being confused with one particular solution. The acceptance criteria make the outcome observable. The <code>writable</code> paths define write authority. The <code>read_only</code> paths provide necessary context without authorizing modifications. The <code>out_of_scope</code> paths are not needed for the task and must not be touched.</p>
 <p>The validations state which commands must be run. The post-execution check separately compares the files actually modified with the declared scope. Finally, the stop conditions make explicit which decisions the agent is not authorized to make on its own.</p>
 <p>An execution brief like this should not be written entirely by hand for every micro-task. Stable rules come from the repository; the execution brief contextualizes them for the task at hand. What matters is that the agent receives an objective, a scope, references, validations, and boundaries appropriate to the task.</p>
+<figure class="article-diagram">
+  <img src="repository-authority-map.png" alt="Map of four repository zones showing how the task contract turns visibility into write access, read-only access, or a stop condition." loading="lazy" />
+  <figcaption>The task contract turns repository visibility into explicit write authority.</figcaption>
+</figure>
+
 <h2 id="an-instruction-file-is-an-entry-point">An instruction file is an entry point<a class="headerlink" href="#an-instruction-file-is-an-entry-point" title="Permanent link">&para;</a></h2>
 <p>A file such as <code>AGENTS.md</code> remains useful, provided it is not expected to carry the entire method.</p>
 <p>Its first purpose is navigation: which documents to read, where the architecture rules live, which commands are stable, and which changes require a stop. It can also repeat a few critical rules, such as not modifying generated files or not introducing a dependency without approval.</p>

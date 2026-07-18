@@ -550,6 +550,11 @@
 <p>A useful stop does more than say that the work is unfinished. It establishes what happened, what is missing, who must decide, and what will need to be checked again.</p>
 </blockquote>
 <p>The mechanisms presented here—persistent state, write boundaries, attempt history, human decisions, and controlled resumption—form a protocol that a framework applying these principles can implement. The artifacts below show how to make that protocol actionable.</p>
+<figure class="article-diagram">
+  <img src="task-stop-resume-paths.png" alt="Three branches distinguish a missing decision, a scope violation, and a repairable failure, each with the authority, action, and resumption point required before a new compiled attempt." loading="lazy" />
+  <figcaption>The reason for stopping determines the authority required and the legitimate resumption point.</figcaption>
+</figure>
+
 <h2 id="three-stops-three-different-authorities">Three stops, three different authorities<a class="headerlink" href="#three-stops-three-different-authorities" title="Permanent link">&para;</a></h2>
 <p>A minimal taxonomy already prevents many incorrect attempts to resume work.</p>
 <table>

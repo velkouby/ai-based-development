@@ -550,6 +550,11 @@
 <p>Un arrêt utile ne dit pas seulement que le travail n'est pas terminé. Il établit ce qui s'est passé, ce qui manque, qui doit décider et ce qui devra être revérifié.</p>
 </blockquote>
 <p>Les mécanismes présentés ici — état persistant, frontières d'écriture, historique des tentatives, décisions humaines et reprises contrôlées — forment un protocole qu'un framework appliquant ces principes peut matérialiser. Les artefacts qui suivent montrent comment rendre ce protocole actionnable.</p>
+<figure class="article-diagram">
+  <img src="../../../articles/agent-task-stop-and-resume/task-stop-resume-paths.png" alt="Trois branches distinguent la décision manquante, la sortie de périmètre et l'échec réparable, avec pour chacune l'autorité, l'action et le point de reprise nécessaires avant une nouvelle tentative compilée." loading="lazy" />
+  <figcaption>La cause de l'arrêt détermine l'autorité nécessaire et le point de reprise.</figcaption>
+</figure>
+
 <h2 id="trois-arrets-trois-autorites-differentes">Trois arrêts, trois autorités différentes<a class="headerlink" href="#trois-arrets-trois-autorites-differentes" title="Permanent link">&para;</a></h2>
 <p>Une taxonomie minimale suffit déjà à éviter de nombreuses mauvaises reprises.</p>
 <table>

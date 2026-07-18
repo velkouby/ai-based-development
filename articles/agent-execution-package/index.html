@@ -626,6 +626,11 @@ observed Git state ─────────┘
 <p>Finally, it records an observation of the starting state, with its known coverage, so that a pre-existing modification is not attributed to the runner.</p>
 <h2 id="a-teaching-execution-package-for-pagination">A teaching execution package for pagination<a class="headerlink" href="#a-teaching-execution-package-for-pagination" title="Permanent link">&para;</a></h2>
 <p>Here is a teaching execution brief for the same feature used in the previous articles. The paths and values are illustrative. The representation favors readability; its transport format may vary across tools.</p>
+<figure class="article-diagram">
+  <img src="execution-package-anatomy.png" alt="Exploded view of an execution package with shared context, three ordered tasks, boundaries, stop conditions, and an output contract." loading="lazy" />
+  <figcaption>Context is shared, but dependencies and boundaries remain specific to each task.</figcaption>
+</figure>
+
 <div class="highlight"><pre><span></span><code><span class="c1"># Teaching example.</span>
 <span class="nt">package</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">objective</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">&gt;-</span>
