@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+  <title id="title">Inside an Execution Package</title>
+  <desc id="desc">An exploded view of shared context, three ordered tasks with explicit boundaries, package-wide guardrails, stop conditions, and a structured output contract.</desc>
+
+  <defs>
+    <marker id="arrow" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="9" markerHeight="9" orient="auto-start-reverse">
+      <path d="M 0 0 L 12 6 L 0 12 z" fill="#07162d"/>
+    </marker>
+    <style>
+      .text { font-family: "Noto Sans", sans-serif; fill: #07162d; }
+      .title { font-size: 54px; font-weight: 700; letter-spacing: -1.2px; }
+      .subtitle { font-size: 26px; font-weight: 400; fill: #33435c; }
+      .section { font-size: 26px; font-weight: 700; letter-spacing: 1.2px; }
+      .chip { font-size: 24px; font-weight: 600; text-anchor: middle; }
+      .task-id { font-size: 28px; font-weight: 800; }
+      .task-title { font-size: 25px; font-weight: 700; }
+      .row-label { font-size: 24px; font-weight: 700; }
+      .row-value { font-size: 24px; font-weight: 500; fill: #33435c; }
+      .guard-title { font-size: 24px; font-weight: 800; letter-spacing: 0.8px; }
+      .guard-text { font-size: 24px; font-weight: 500; fill: #33435c; }
+      .output { font-size: 25px; font-weight: 600; }
+      .panel { fill: #f7f9fc; stroke: #d9e1ec; stroke-width: 2; }
+      .card { fill: #ffffff; stroke: #d9e1ec; stroke-width: 2; }
+      .divider { stroke: #d9e1ec; stroke-width: 2; }
+    </style>
+  </defs>
+
+  <rect width="1600" height="900" fill="#ffffff"/>
+
+  <text class="text title" x="72" y="78">Inside an Execution Package</text>
+  <text class="text subtitle" x="74" y="120">Shared context travels once; task dependencies, boundaries, and stop conditions remain explicit.</text>
+
+  <!-- Shared context loaded once -->
+  <rect class="panel" x="88" y="162" width="1424" height="154" rx="26"/>
+  <rect x="88" y="162" width="12" height="154" rx="6" fill="#7a4fd3"/>
+  <text class="text section" x="126" y="205">SHARED CONTEXT · LOADED ONCE</text>
+
+  <g>
+    <rect x="126" y="226" width="230" height="62" rx="16" fill="#ffffff" stroke="#d9e1ec" stroke-width="2"/>
+    <circle cx="157" cy="257" r="12" fill="#ffffff" stroke="#2f6fdd" stroke-width="4"/>
+    <text class="text chip" x="248" y="266">Objective</text>
+  </g>
+  <g>
+    <rect x="374" y="226" width="230" height="62" rx="16" fill="#ffffff" stroke="#d9e1ec" stroke-width="2"/>
+    <path d="M407 245 v24 M395 257 h24" stroke="#f47b20" stroke-width="4" stroke-linecap="round"/>
+    <text class="text chip" x="504" y="266">Non-goals</text>
+  </g>
+  <g>
+    <rect x="622" y="226" width="230" height="62" rx="16" fill="#ffffff" stroke="#d9e1ec" stroke-width="2"/>
+    <path d="M654 249 l7 7 14-16" fill="none" stroke="#2f6fdd" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+    <text class="text chip" x="756" y="266">Decisions</text>
+  </g>
+  <g>
+    <rect x="870" y="226" width="230" height="62" rx="16" fill="#ffffff" stroke="#d9e1ec" stroke-width="2"/>
+    <path d="M902 244 h20 v25 h-20 z M907 251 h10 M907 258 h10" fill="none" stroke="#1f9d66" stroke-width="3" stroke-linecap="round"/>
+    <text class="text chip" x="1000" y="266">Repo rules</text>
+  </g>
+  <g>
+    <rect x="1118" y="226" width="350" height="62" rx="16" fill="#ffffff" stroke="#d9e1ec" stroke-width="2"/>
+    <circle cx="1152" cy="257" r="13" fill="none" stroke="#7a4fd3" stroke-width="3"/>
+    <path d="M1152 249 v9 l7 5" fill="none" stroke="#7a4fd3" stroke-width="3" stroke-linecap="round"/>
+    <text class="text chip" x="1310" y="266">Git start state</text>
+  </g>
+
+  <!-- Ordered tasks -->
+  <text class="text section" x="126" y="360">ORDERED TASKS</text>
+  <text class="text row-value" x="356" y="360">One session · one result per task</text>
+
+  <path d="M442 510 H478" fill="none" stroke="#07162d" stroke-width="4" stroke-linecap="round" marker-end="url(#arrow)"/>
+  <path d="M778 510 H814" fill="none" stroke="#07162d" stroke-width="4" stroke-linecap="round" marker-end="url(#arrow)"/>
+
+  <g>
+    <rect class="card" x="126" y="386" width="316" height="318" rx="22"/>
+    <rect x="126" y="386" width="316" height="10" rx="5" fill="#2f6fdd"/>
+    <text class="text task-id" x="152" y="430">T-01</text>
+    <text class="text task-title" x="152" y="466">Backend contract</text>
+    <line class="divider" x1="150" y1="484" x2="418" y2="484"/>
+    <text class="text row-label" x="152" y="519">OUTCOME</text>
+    <text class="text row-value" x="152" y="550">Paginated API</text>
+    <text class="text row-label" x="152" y="587" fill="#2f6fdd">WRITE</text>
+    <text class="text row-value" x="152" y="618">backend/customers/**</text>
+    <text class="text row-label" x="152" y="655">VALIDATE</text>
+    <text class="text row-value" x="152" y="686">API contract tests</text>
+  </g>
+
+  <g>
+    <rect class="card" x="462" y="386" width="316" height="318" rx="22"/>
+    <rect x="462" y="386" width="316" height="10" rx="5" fill="#1f9d66"/>
+    <text class="text task-id" x="488" y="430">T-02</text>
+    <text class="text task-title" x="488" y="466">Frontend integration</text>
+    <line class="divider" x1="486" y1="484" x2="754" y2="484"/>
+    <text class="text row-label" x="488" y="519">OUTCOME</text>
+    <text class="text row-value" x="488" y="550">Page controls</text>
+    <text class="text row-label" x="488" y="587" fill="#1f9d66">WRITE</text>
+    <text class="text row-value" x="488" y="618">frontend/customers/**</text>
+    <text class="text row-label" x="488" y="655">VALIDATE</text>
+    <text class="text row-value" x="488" y="686">Directory tests</text>
+  </g>
+
+  <g>
+    <rect class="card" x="798" y="386" width="316" height="318" rx="22"/>
+    <rect x="798" y="386" width="316" height="10" rx="5" fill="#7a4fd3"/>
+    <text class="text task-id" x="824" y="430">T-03</text>
+    <text class="text task-title" x="824" y="466">Consistency review</text>
+    <line class="divider" x1="822" y1="484" x2="1090" y2="484"/>
+    <text class="text row-label" x="824" y="519">OUTCOME</text>
+    <text class="text row-value" x="824" y="550">Contract coherence</text>
+    <text class="text row-label" x="824" y="587" fill="#7a4fd3">WRITE</text>
+    <text class="text row-value" x="824" y="618">No product edits</text>
+    <text class="text row-label" x="824" y="655">VALIDATE</text>
+    <text class="text row-value" x="824" y="686">Integration + build</text>
+  </g>
+
+  <!-- Package-wide boundaries and stop conditions -->
+  <rect class="panel" x="1150" y="342" width="362" height="362" rx="24"/>
+  <rect x="1150" y="342" width="10" height="362" rx="5" fill="#f47b20"/>
+  <text class="text section" x="1182" y="386">GUARDRAILS</text>
+  <line class="divider" x1="1182" y1="408" x2="1480" y2="408"/>
+
+  <text class="text guard-title" x="1182" y="449">READ-ONLY REFERENCES</text>
+  <text class="text guard-text" x="1182" y="484">Shared UI · contracts</text>
+
+  <text class="text guard-title" x="1182" y="535" fill="#f47b20">FORBIDDEN PATHS</text>
+  <text class="text guard-text" x="1182" y="570">Routing · tooling</text>
+
+  <text class="text guard-title" x="1182" y="621" fill="#f47b20">STOP IF</text>
+  <text class="text guard-text" x="1182" y="656">Incompatible contract</text>
+  <text class="text guard-text" x="1182" y="687">or new dependency</text>
+
+  <!-- Output contract -->
+  <rect x="88" y="756" width="1424" height="94" rx="24" fill="#07162d"/>
+  <rect x="116" y="778" width="320" height="50" rx="14" fill="#ffffff"/>
+  <text class="text section" x="139" y="811">OUTPUT CONTRACT</text>
+  <text x="470" y="814" font-family="Noto Sans, sans-serif" font-size="25" font-weight="600" fill="#ffffff">One structured result per task · changed files · blockers · open questions</text>
+</svg>

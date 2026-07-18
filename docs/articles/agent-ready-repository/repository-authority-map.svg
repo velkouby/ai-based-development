@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+  <title id="title">Repository Visibility Is Not Write Authority</title>
+  <desc id="desc">Four repository zones pass through a task contract that grants narrow write access, read-only access, or requires the agent to stop and request a decision.</desc>
+  <defs>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="130%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="7" result="blur"/>
+      <feOffset in="blur" dx="0" dy="5" result="offsetBlur"/>
+      <feFlood flood-color="#07162d" flood-opacity="0.10" result="shadowColor"/>
+      <feComposite in="shadowColor" in2="offsetBlur" operator="in" result="shadowShape"/>
+      <feMerge>
+        <feMergeNode in="shadowShape"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="strokeWidth">
+      <path d="M 0 0 L 12 6 L 0 12 Z" fill="#07162d"/>
+    </marker>
+  </defs>
+
+  <rect width="1600" height="900" fill="#ffffff"/>
+
+  <text x="80" y="91" font-family="Noto Sans, sans-serif" font-size="54" font-weight="700" fill="#07162d">Repository Visibility Is Not Write Authority</text>
+  <text x="82" y="142" font-family="Noto Sans, sans-serif" font-size="28" fill="#07162d">The task contract narrows what the agent may change.</text>
+
+  <rect x="65" y="185" width="1470" height="625" rx="28" fill="#ffffff" stroke="#d9e1ec" stroke-width="2" filter="url(#shadow)"/>
+
+  <text x="100" y="235" font-family="Noto Sans, sans-serif" font-size="24" font-weight="700" letter-spacing="1.5" fill="#07162d">VISIBLE REPOSITORY</text>
+  <text x="707" y="235" font-family="Noto Sans, sans-serif" font-size="24" font-weight="700" letter-spacing="1.5" fill="#07162d">BOUNDED BY</text>
+  <text x="1000" y="235" font-family="Noto Sans, sans-serif" font-size="24" font-weight="700" letter-spacing="1.5" fill="#07162d">RESULTING AUTHORITY</text>
+
+  <!-- Repository zones -->
+  <g filter="url(#shadow)">
+    <rect x="100" y="265" width="500" height="105" rx="18" fill="#f7f9fc" stroke="#d9e1ec" stroke-width="2"/>
+    <rect x="100" y="265" width="10" height="105" rx="5" fill="#1f9d66"/>
+    <circle cx="151" cy="317" r="25" fill="#ffffff" stroke="#1f9d66" stroke-width="3"/>
+    <path d="M139 315h24M151 303v24" stroke="#1f9d66" stroke-width="4" stroke-linecap="round"/>
+    <text x="192" y="307" font-family="Noto Sans, sans-serif" font-size="28" font-weight="700" fill="#07162d">Product code</text>
+    <text x="192" y="343" font-family="Noto Sans, sans-serif" font-size="24" fill="#07162d">Features, screens, APIs</text>
+
+    <rect x="100" y="390" width="500" height="105" rx="18" fill="#f7f9fc" stroke="#d9e1ec" stroke-width="2"/>
+    <rect x="100" y="390" width="10" height="105" rx="5" fill="#2f6fdd"/>
+    <circle cx="151" cy="442" r="25" fill="#ffffff" stroke="#2f6fdd" stroke-width="3"/>
+    <path d="M134 442c10-14 24-14 34 0-10 14-24 14-34 0Z" fill="none" stroke="#2f6fdd" stroke-width="3"/>
+    <circle cx="151" cy="442" r="5" fill="#2f6fdd"/>
+    <text x="192" y="432" font-family="Noto Sans, sans-serif" font-size="28" font-weight="700" fill="#07162d">Shared foundation</text>
+    <text x="192" y="468" font-family="Noto Sans, sans-serif" font-size="24" fill="#07162d">UI primitives, shared contracts</text>
+
+    <rect x="100" y="515" width="500" height="105" rx="18" fill="#f7f9fc" stroke="#d9e1ec" stroke-width="2"/>
+    <rect x="100" y="515" width="10" height="105" rx="5" fill="#7a4fd3"/>
+    <circle cx="151" cy="567" r="25" fill="#ffffff" stroke="#7a4fd3" stroke-width="3"/>
+    <path d="M138 559h26M138 567h26M138 575h17" stroke="#7a4fd3" stroke-width="3" stroke-linecap="round"/>
+    <text x="192" y="557" font-family="Noto Sans, sans-serif" font-size="28" font-weight="700" fill="#07162d">Project tooling</text>
+    <text x="192" y="593" font-family="Noto Sans, sans-serif" font-size="24" fill="#07162d">Scripts, validation, generation</text>
+
+    <rect x="100" y="640" width="500" height="105" rx="18" fill="#f7f9fc" stroke="#d9e1ec" stroke-width="2"/>
+    <rect x="100" y="640" width="10" height="105" rx="5" fill="#f47b20"/>
+    <circle cx="151" cy="692" r="25" fill="#ffffff" stroke="#f47b20" stroke-width="3"/>
+    <path d="M140 681h22v22h-22Z M145 676h12" fill="none" stroke="#f47b20" stroke-width="3" stroke-linejoin="round"/>
+    <text x="192" y="682" font-family="Noto Sans, sans-serif" font-size="26" font-weight="700" fill="#07162d">Generated &amp; control artifacts</text>
+    <text x="192" y="718" font-family="Noto Sans, sans-serif" font-size="24" fill="#07162d">Logs, evidence, workflow output</text>
+  </g>
+
+  <!-- Arrows into the task contract -->
+  <path d="M610 317 H652" stroke="#07162d" stroke-width="3" fill="none" marker-end="url(#arrow)"/>
+  <path d="M610 442 H652" stroke="#07162d" stroke-width="3" fill="none" marker-end="url(#arrow)"/>
+  <path d="M610 567 H652" stroke="#07162d" stroke-width="3" fill="none" marker-end="url(#arrow)"/>
+  <path d="M610 692 H652" stroke="#07162d" stroke-width="3" fill="none" marker-end="url(#arrow)"/>
+
+  <!-- Task contract -->
+  <g filter="url(#shadow)">
+    <rect x="670" y="265" width="260" height="480" rx="24" fill="#f7f9fc" stroke="#7a4fd3" stroke-width="3"/>
+    <circle cx="800" cy="315" r="30" fill="#ffffff" stroke="#7a4fd3" stroke-width="3"/>
+    <path d="M800 296l18 7v15c0 13-8 22-18 28-10-6-18-15-18-28v-15Z" fill="none" stroke="#7a4fd3" stroke-width="3" stroke-linejoin="round"/>
+    <path d="M790 319l7 7 14-16" fill="none" stroke="#7a4fd3" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="800" y="374" text-anchor="middle" font-family="Noto Sans, sans-serif" font-size="29" font-weight="700" fill="#07162d">TASK CONTRACT</text>
+    <text x="800" y="409" text-anchor="middle" font-family="Noto Sans, sans-serif" font-size="24" fill="#07162d">Customer pagination</text>
+    <line x1="700" y1="435" x2="900" y2="435" stroke="#d9e1ec" stroke-width="2"/>
+
+    <circle cx="715" cy="475" r="7" fill="#2f6fdd"/>
+    <text x="738" y="483" font-family="Noto Sans, sans-serif" font-size="24" font-weight="700" fill="#07162d">Objective</text>
+    <circle cx="715" cy="529" r="7" fill="#1f9d66"/>
+    <text x="738" y="537" font-family="Noto Sans, sans-serif" font-size="24" font-weight="700" fill="#07162d">Path rules</text>
+    <circle cx="715" cy="583" r="7" fill="#7a4fd3"/>
+    <text x="738" y="591" font-family="Noto Sans, sans-serif" font-size="24" font-weight="700" fill="#07162d">Checks</text>
+    <circle cx="715" cy="637" r="7" fill="#f47b20"/>
+    <text x="738" y="645" font-family="Noto Sans, sans-serif" font-size="24" font-weight="700" fill="#07162d">Stop conditions</text>
+
+    <rect x="702" y="678" width="196" height="42" rx="21" fill="#ffffff" stroke="#7a4fd3" stroke-width="2"/>
+    <text x="800" y="707" text-anchor="middle" font-family="Noto Sans, sans-serif" font-size="24" font-weight="700" fill="#07162d">NARROWS SCOPE</text>
+  </g>
+
+  <!-- Arrows out of the task contract -->
+  <path d="M948 332 H982" stroke="#07162d" stroke-width="3" fill="none" marker-end="url(#arrow)"/>
+  <path d="M948 505 H982" stroke="#07162d" stroke-width="3" fill="none" marker-end="url(#arrow)"/>
+  <path d="M948 677 H982" stroke="#07162d" stroke-width="3" fill="none" marker-end="url(#arrow)"/>
+
+  <!-- Resulting authority -->
+  <g filter="url(#shadow)">
+    <rect x="1000" y="265" width="500" height="135" rx="20" fill="#f7f9fc" stroke="#1f9d66" stroke-width="3"/>
+    <circle cx="1040" cy="305" r="23" fill="#ffffff" stroke="#1f9d66" stroke-width="3"/>
+    <path d="M1029 306l7 7 15-17" fill="none" stroke="#1f9d66" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="1080" y="313" font-family="Noto Sans, sans-serif" font-size="28" font-weight="700" fill="#07162d">WRITE</text>
+    <text x="1040" y="354" font-family="Noto Sans, sans-serif" font-size="24" fill="#07162d">app/customers/** · api/customers/**</text>
+    <text x="1040" y="385" font-family="Noto Sans, sans-serif" font-size="24" fill="#07162d">Only inside the declared task scope</text>
+
+    <rect x="1000" y="438" width="500" height="135" rx="20" fill="#f7f9fc" stroke="#2f6fdd" stroke-width="3"/>
+    <circle cx="1040" cy="478" r="23" fill="#ffffff" stroke="#2f6fdd" stroke-width="3"/>
+    <path d="M1025 478c9-13 21-13 30 0-9 13-21 13-30 0Z" fill="none" stroke="#2f6fdd" stroke-width="3"/>
+    <circle cx="1040" cy="478" r="5" fill="#2f6fdd"/>
+    <text x="1080" y="486" font-family="Noto Sans, sans-serif" font-size="28" font-weight="700" fill="#07162d">READ-ONLY</text>
+    <text x="1040" y="527" font-family="Noto Sans, sans-serif" font-size="24" fill="#07162d">shared/ui/** · platform/routing/**</text>
+    <text x="1040" y="558" font-family="Noto Sans, sans-serif" font-size="24" fill="#07162d">Context is available; edits are not</text>
+
+    <rect x="1000" y="610" width="500" height="135" rx="20" fill="#f7f9fc" stroke="#f47b20" stroke-width="3"/>
+    <circle cx="1040" cy="650" r="23" fill="#ffffff" stroke="#f47b20" stroke-width="3"/>
+    <path d="M1040 633l17 30h-34Z" fill="none" stroke="#f47b20" stroke-width="3" stroke-linejoin="round"/>
+    <path d="M1040 643v9M1040 657v1" stroke="#f47b20" stroke-width="3" stroke-linecap="round"/>
+    <text x="1080" y="658" font-family="Noto Sans, sans-serif" font-size="28" font-weight="700" fill="#07162d">STOP / DECIDE</text>
+    <text x="1040" y="699" font-family="Noto Sans, sans-serif" font-size="24" fill="#07162d">tooling/** · generated/**</text>
+    <text x="1040" y="730" font-family="Noto Sans, sans-serif" font-size="24" fill="#07162d">Foundation change → human decision</text>
+  </g>
+
+  <line x1="215" y1="847" x2="1385" y2="847" stroke="#d9e1ec" stroke-width="2"/>
+  <rect x="285" y="824" width="1030" height="52" rx="26" fill="#ffffff"/>
+  <text x="800" y="859" text-anchor="middle" font-family="Noto Sans, sans-serif" font-size="28" font-weight="700" fill="#07162d">Visibility provides context. The contract defines authority.</text>
+</svg>
