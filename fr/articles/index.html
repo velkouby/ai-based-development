@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="Articles and technical notes about AI-native software development, agent-based coding, and software engineering practices.">
+        <meta name="description" content="Une série pratique en sept articles pour passer du vibe coding à un développement agentique explicite, borné et vérifiable.">
       
       
         <meta name="author" content="Vincent El Kouby-Benichou, Baracoda">
@@ -33,7 +33,7 @@
     
     
       
-        <title>Tous les articles - AI-Native Software Engineering Notes</title>
+        <title>Articles - AI-Native Software Engineering Notes</title>
       
     
     
@@ -76,7 +76,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#articles" class="md-skip">
+        <a href="#du-principe-a-la-mise-en-uvre" class="md-skip">
           Aller au contenu
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Tous les articles
+              Articles
             
           </span>
         </div>
@@ -406,6 +406,36 @@
     
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table des matières
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#commencer-par-la-vue-densemble" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Commencer par la vue d'ensemble
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#les-six-approfondissements" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Les six approfondissements
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -424,22 +454,79 @@
   
 
 
-<h1 id="articles">Articles<a class="headerlink" href="#articles" title="Permanent link">&para;</a></h1>
+<div class="series-hero">
+<p class="series-hero__eyebrow">Série pratique · 7 articles</p>
+<h1 id="du-principe-a-la-mise-en-uvre">Du principe à la mise en œuvre<a class="headerlink" href="#du-principe-a-la-mise-en-uvre" title="Permanent link">&para;</a></h1>
+<p>Cette série présente une méthode pratique pour intégrer les agents de code dans un système de développement explicite, borné et vérifiable.</p>
+<p>Le premier article est une présentation générale du système. Les six suivants sont des approfondissements pratiques qui suivent le même fil conducteur et montrent comment mettre en œuvre chaque couche, dans l'ordre du parcours : repository, niveau de contrôle, exécution, ordre de mission, arrêt et reprise, puis preuve locale.</p>
+</div>
+<div class="series-section-heading">
+<h2 id="commencer-par-la-vue-densemble">Commencer par la vue d'ensemble<a class="headerlink" href="#commencer-par-la-vue-densemble" title="Permanent link">&para;</a></h2>
+<p>Découvrez la carte du système complet avant d'en examiner les mécanismes. C'est le meilleur point d'entrée pour comprendre comment le repository, le workflow, le contexte et les preuves s'articulent.</p>
+</div>
+<div class="grid cards series-grid series-grid--overview">
 <ul>
-<li><a href="ai-agent-based-coding-best-practices/">Du Vibe Coding au développement agentique vérifiable</a></li>
-<li><a href="agent-ready-repository/">Mon repository agent-ready : ce que l'agent doit savoir avant de coder</a></li>
-<li><a href="agent-coding-modes/">Quatre modes, deux parcours : choisir le bon niveau de contrôle</a></li>
-<li><a href="agentic-feature-end-to-end/">Du brief à la revue locale : une feature agentique de bout en bout</a></li>
-<li><a href="agent-execution-package/">Ce que l'agent reçoit vraiment : anatomie d'un ordre de mission</a></li>
-<li><a href="agent-task-stop-and-resume/">Quand la tâche doit s'arrêter : décisions, frontières et reprise</a></li>
-<li><a href="local-proof-agent-workflow/">« Les tests passent » : que prouve le workflow ?</a></li>
+<li>
+<p><span class="series-card__number">01</span> <span class="series-card__label">Vue d'ensemble</span></p>
+<p><strong><a href="ai-agent-based-coding-best-practices/">Du vibe coding au développement agentique vérifiable</a></strong></p>
+<p>Passer d'une conversation efficace avec un agent à une méthode fondée sur un repository agent-ready, un plan qui compile le contexte, un workflow qui orchestre les contrôles et des preuves relisibles.</p>
+<p><a class="series-card__cta" href="ai-agent-based-coding-best-practices/">Lire la vue d'ensemble →</a></p>
+</li>
 </ul>
+</div>
+<div class="series-section-heading">
+<h2 id="les-six-approfondissements">Les six approfondissements<a class="headerlink" href="#les-six-approfondissements" title="Permanent link">&para;</a></h2>
+<p>Ces articles sont conçus comme une suite : chacun reprend le point où le précédent s'est arrêté, isole un mécanisme et prépare le suivant.</p>
+</div>
+<div class="grid cards series-grid">
+<ul>
+<li>
+<p><span class="series-card__number">02</span> <span class="series-card__label">Repository</span></p>
+<p><strong><a href="agent-ready-repository/">Mon repository agent-ready : ce que l'agent doit savoir avant de coder</a></strong></p>
+<p>Le contrat minimal qui rend les règles, les frontières d'écriture, les validations et les conditions d'arrêt visibles avant que l'agent ne code.</p>
+<p><a class="series-card__cta" href="agent-ready-repository/">Lire l'article →</a></p>
+</li>
+<li>
+<p><span class="series-card__number">03</span> <span class="series-card__label">Niveau de contrôle</span></p>
+<p><strong><a href="agent-coding-modes/">Quatre modes, deux parcours : choisir le bon niveau de contrôle</a></strong></p>
+<p>Une grille de décision pour choisir un dispositif proportionné à la portée, à l'ambiguïté, à la réversibilité et à l'autorité requise.</p>
+<p><a class="series-card__cta" href="agent-coding-modes/">Lire l'article →</a></p>
+</li>
+<li>
+<p><span class="series-card__number">04</span> <span class="series-card__label">Parcours complet</span></p>
+<p><strong><a href="agentic-feature-end-to-end/">Du brief à la revue locale : une feature agentique de bout en bout</a></strong></p>
+<p>Le parcours d'une fonctionnalité structurée, du brief aux tâches, à leur exécution, aux contrôles et à la revue locale.</p>
+<p><a class="series-card__cta" href="agentic-feature-end-to-end/">Lire l'article →</a></p>
+</li>
+<li>
+<p><span class="series-card__number">05</span> <span class="series-card__label">Ordre de mission</span></p>
+<p><strong><a href="agent-execution-package/">Ce que l'agent reçoit vraiment : anatomie d'un ordre de mission</a></strong></p>
+<p>Un bloc ordonné de tâches, son contexte commun, ses contraintes, ainsi que la provenance et l'autorité de chaque information, compilés pour une exécution cohérente.</p>
+<p><a class="series-card__cta" href="agent-execution-package/">Lire l'article →</a></p>
+</li>
+<li>
+<p><span class="series-card__number">06</span> <span class="series-card__label">Arrêt et reprise</span></p>
+<p><strong><a href="agent-task-stop-and-resume/">Quand la tâche doit s'arrêter : décisions, frontières et reprise</a></strong></p>
+<p>Distinguer décision manquante, sortie de périmètre et échec réparable, puis reprendre sans effacer l'histoire ni élargir silencieusement le contrat.</p>
+<p><a class="series-card__cta" href="agent-task-stop-and-resume/">Lire l'article →</a></p>
+</li>
+<li>
+<p><span class="series-card__number">07</span> <span class="series-card__label">Preuve locale</span></p>
+<p><strong><a href="local-proof-agent-workflow/">« Les tests passent » : que prouve le workflow ?</a></strong></p>
+<p>Lire ce qu'un test vert prouve réellement, conserver les lacunes visibles et relier la preuve locale à Git, à la CI et à la décision humaine.</p>
+<p><a class="series-card__cta" href="local-proof-agent-workflow/">Lire l'article →</a></p>
+</li>
+</ul>
+</div>
 
 
 
 
 
 
+
+  
+  
 
 
 
