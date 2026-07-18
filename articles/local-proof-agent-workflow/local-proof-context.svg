@@ -1,0 +1,118 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+  <title id="title">What a Green Check Actually Proves</title>
+  <desc id="desc">A passed check with exit code zero surrounded by the revision, environment, command, scope, time, output, and known limits that define its evidentiary value, with not run and unknown gaps kept visible.</desc>
+  <defs>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="130%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="8" result="blur"/>
+      <feOffset in="blur" dx="0" dy="5" result="offsetBlur"/>
+      <feFlood flood-color="#07162d" flood-opacity="0.10" result="shadowColor"/>
+      <feComposite in="shadowColor" in2="offsetBlur" operator="in" result="shadowShape"/>
+      <feMerge>
+        <feMergeNode in="shadowShape"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <style>
+      .font { font-family: "Noto Sans", "DejaVu Sans", sans-serif; }
+      .navy { fill: #07162d; }
+      .muted { fill: #52627a; }
+      .card { fill: #f7f9fc; stroke: #d9e1ec; stroke-width: 2; }
+      .connector { fill: none; stroke: #94a2b6; stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; }
+      .card-title { font-size: 24px; font-weight: 800; letter-spacing: 1.1px; }
+      .card-body { font-size: 24px; font-weight: 600; }
+    </style>
+  </defs>
+
+  <rect width="1600" height="900" fill="#ffffff"/>
+
+  <g class="font">
+    <text x="800" y="88" text-anchor="middle" class="navy" font-size="54" font-weight="800">What a Green Check Actually Proves</text>
+    <text x="800" y="134" text-anchor="middle" class="muted" font-size="28" font-weight="500">A result becomes evidence only when its context and gaps remain attached.</text>
+
+    <!-- Connectors sit behind the cards -->
+    <path d="M215 295 V313 H620 V330" class="connector"/>
+    <path d="M605 295 V312 H700 V330" class="connector"/>
+    <path d="M995 295 V312 H900 V330" class="connector"/>
+    <path d="M1385 295 V313 H980 V330" class="connector"/>
+    <path d="M620 555 V575 H215 V590" class="connector"/>
+    <path d="M740 555 V575 H605 V590" class="connector"/>
+    <path d="M860 555 V575 H995 V590" class="connector"/>
+    <path d="M980 555 V575 H1385 V590" class="connector"/>
+
+    <!-- Top context cards -->
+    <g filter="url(#shadow)">
+      <rect x="40" y="175" width="350" height="120" rx="20" class="card"/>
+      <rect x="430" y="175" width="350" height="120" rx="20" class="card"/>
+      <rect x="820" y="175" width="350" height="120" rx="20" class="card"/>
+      <rect x="1210" y="175" width="350" height="120" rx="20" class="card"/>
+    </g>
+
+    <circle cx="82" cy="217" r="24" fill="#eaf1fd" stroke="#2f6fdd" stroke-width="3"/>
+    <text x="82" y="225" text-anchor="middle" class="navy" font-size="24" font-weight="800">R</text>
+    <text x="120" y="224" fill="#2459b6" class="card-title">REVISION</text>
+    <text x="80" y="268" class="navy card-body">Commit or working state</text>
+
+    <circle cx="472" cy="217" r="24" fill="#f1ebfb" stroke="#7a4fd3" stroke-width="3"/>
+    <text x="472" y="225" text-anchor="middle" class="navy" font-size="24" font-weight="800">E</text>
+    <text x="510" y="224" fill="#6438bc" class="card-title">ENVIRONMENT</text>
+    <text x="470" y="268" class="navy card-body">Runtime + dependencies</text>
+
+    <circle cx="862" cy="217" r="24" fill="#fff3e8" stroke="#f47b20" stroke-width="3"/>
+    <text x="862" y="225" text-anchor="middle" class="navy" font-size="24" font-weight="800">C</text>
+    <text x="900" y="224" fill="#b94f00" class="card-title">COMMAND</text>
+    <text x="860" y="268" class="navy card-body">Executable + arguments</text>
+
+    <circle cx="1252" cy="217" r="24" fill="#e7f7f0" stroke="#1f9d66" stroke-width="3"/>
+    <text x="1252" y="225" text-anchor="middle" class="navy" font-size="24" font-weight="800">S</text>
+    <text x="1290" y="224" fill="#14784d" class="card-title">SCOPE</text>
+    <text x="1250" y="268" class="navy card-body">Tests, paths, scenarios</text>
+
+    <!-- Central result -->
+    <g filter="url(#shadow)">
+      <rect x="535" y="330" width="530" height="225" rx="32" fill="#ffffff" stroke="#1f9d66" stroke-width="4"/>
+    </g>
+    <circle cx="670" cy="424" r="62" fill="#e7f7f0" stroke="#1f9d66" stroke-width="4"/>
+    <path d="M638 424 L659 446 L704 398" fill="none" stroke="#14784d" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="760" y="411" class="navy" font-size="44" font-weight="900">PASSED</text>
+    <text x="760" y="456" fill="#14784d" font-size="32" font-weight="800">exit 0</text>
+    <line x1="590" y1="493" x2="1010" y2="493" stroke="#d9e1ec" stroke-width="2"/>
+    <text x="800" y="529" text-anchor="middle" class="muted" font-size="26" font-weight="700">A useful fact — not a feature verdict</text>
+
+    <!-- Bottom context cards -->
+    <g filter="url(#shadow)">
+      <rect x="40" y="590" width="350" height="140" rx="20" class="card"/>
+      <rect x="430" y="590" width="350" height="140" rx="20" class="card"/>
+      <rect x="820" y="590" width="350" height="140" rx="20" class="card"/>
+      <rect x="1210" y="590" width="350" height="140" rx="20" class="card"/>
+    </g>
+
+    <circle cx="82" cy="632" r="24" fill="#eaf1fd" stroke="#2f6fdd" stroke-width="3"/>
+    <text x="82" y="640" text-anchor="middle" class="navy" font-size="24" font-weight="800">T</text>
+    <text x="120" y="639" fill="#2459b6" class="card-title">TIME</text>
+    <text x="80" y="682" class="navy card-body">When it ran</text>
+    <text x="80" y="712" class="muted" font-size="24" font-weight="500">and whether still current</text>
+
+    <circle cx="472" cy="632" r="24" fill="#f1ebfb" stroke="#7a4fd3" stroke-width="3"/>
+    <text x="472" y="640" text-anchor="middle" class="navy" font-size="24" font-weight="800">O</text>
+    <text x="510" y="639" fill="#6438bc" class="card-title">OUTPUT</text>
+    <text x="470" y="682" class="navy card-body">Exit code + useful logs</text>
+    <text x="470" y="712" class="muted" font-size="24" font-weight="500">including truncation</text>
+
+    <circle cx="862" cy="632" r="24" fill="#fff3e8" stroke="#f47b20" stroke-width="3"/>
+    <text x="862" y="640" text-anchor="middle" class="navy" font-size="24" font-weight="800">L</text>
+    <text x="900" y="639" fill="#b94f00" class="card-title">KNOWN LIMITS</text>
+    <text x="860" y="682" class="navy card-body">What this check</text>
+    <text x="860" y="712" class="muted" font-size="24" font-weight="500">cannot establish</text>
+
+    <text x="1250" y="627" fill="#b94f00" class="card-title">EVIDENCE GAPS</text>
+    <rect x="1250" y="645" width="270" height="34" rx="17" fill="#fff3e8" stroke="#f47b20" stroke-width="2"/>
+    <text x="1385" y="671" text-anchor="middle" class="navy" font-size="24" font-weight="800">NOT RUN</text>
+    <rect x="1250" y="688" width="270" height="34" rx="17" fill="#f1ebfb" stroke="#7a4fd3" stroke-width="2"/>
+    <text x="1385" y="714" text-anchor="middle" class="navy" font-size="24" font-weight="800">UNKNOWN</text>
+
+    <g filter="url(#shadow)">
+      <rect x="250" y="780" width="1100" height="76" rx="38" fill="#07162d"/>
+    </g>
+    <text x="800" y="829" text-anchor="middle" fill="#ffffff" font-size="28" font-weight="800">GREEN IS THE RESULT  •  CONTEXT DEFINES THE CLAIM</text>
+  </g>
+</svg>
