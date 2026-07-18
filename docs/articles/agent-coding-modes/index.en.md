@@ -82,6 +82,11 @@ The decision process has four steps:
 3. select the mode compatible with the dominant risk;
 4. record the decision owner and the facts that would require the choice to be reassessed.
 
+<figure class="article-diagram">
+  <img src="control-level-decision-flow.png" alt="Decision flow connecting the request, escalation signals, five non-scored dimensions, the dominant risk, the mode and path, and the responsible decision authority." loading="lazy" />
+  <figcaption>The dominant risk sets the minimum level of control; the other dimensions refine the decision.</figcaption>
+</figure>
+
 ## The decision record
 
 The decision should be reviewable without reopening the conversation. A short record is enough if it captures the reasoning and the decision authority.

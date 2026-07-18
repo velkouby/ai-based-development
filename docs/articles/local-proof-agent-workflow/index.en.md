@@ -27,6 +27,11 @@ A framework applying these principles can retain some of these facts: attempts, 
 
 > The color of a check summarizes a result. The evidence must make it possible to reconstruct that result's scope.
 
+<figure class="article-diagram">
+  <img src="local-proof-context.png" alt="A PASSED check with a zero exit code is surrounded by its revision, environment, command, scope, time, output, and known limits, while NOT RUN and UNKNOWN gaps remain visible." loading="lazy" />
+  <figcaption>A green check can be interpreted only with its context, scope, and known limitations.</figcaption>
+</figure>
+
 ## “Green” is not a property of the code
 
 Saying that a test passes almost always omits the rest of the sentence: which test, run where, when, against what, and under which assumptions?

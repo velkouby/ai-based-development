@@ -82,6 +82,11 @@ La règle de lecture tient en quatre étapes :
 3. choisir le mode compatible avec le risque dominant ;
 4. consigner le décideur et les faits qui obligeraient à réévaluer ce choix.
 
+<figure class="article-diagram">
+  <img src="../../../articles/agent-coding-modes/control-level-decision-flow.png" alt="Schéma de décision reliant la demande, les signaux d'escalade, cinq dimensions non notées, le risque dominant, le mode et le parcours, puis l'autorité de décision." loading="lazy" />
+  <figcaption>Le risque dominant fixe le contrôle minimal ; les autres dimensions affinent la décision.</figcaption>
+</figure>
+
 ## La fiche de décision
 
 La décision doit pouvoir être relue sans rouvrir la conversation. Une fiche courte suffit si elle consigne le raisonnement et l'autorité.

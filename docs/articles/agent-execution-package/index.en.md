@@ -94,6 +94,11 @@ Finally, it records an observation of the starting state, with its known coverag
 
 Here is a teaching execution brief for the same feature used in the previous articles. The paths and values are illustrative. The representation favors readability; its transport format may vary across tools.
 
+<figure class="article-diagram">
+  <img src="execution-package-anatomy.png" alt="Exploded view of an execution package with shared context, three ordered tasks, boundaries, stop conditions, and an output contract." loading="lazy" />
+  <figcaption>Context is shared, but dependencies and boundaries remain specific to each task.</figcaption>
+</figure>
+
 ```yaml
 # Teaching example.
 package:

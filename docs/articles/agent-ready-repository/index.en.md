@@ -138,6 +138,11 @@ The validations state which commands must be run. The post-execution check separ
 
 An execution brief like this should not be written entirely by hand for every micro-task. Stable rules come from the repository; the execution brief contextualizes them for the task at hand. What matters is that the agent receives an objective, a scope, references, validations, and boundaries appropriate to the task.
 
+<figure class="article-diagram">
+  <img src="repository-authority-map.png" alt="Map of four repository zones showing how the task contract turns visibility into write access, read-only access, or a stop condition." loading="lazy" />
+  <figcaption>The task contract turns repository visibility into explicit write authority.</figcaption>
+</figure>
+
 ## An instruction file is an entry point
 
 A file such as `AGENTS.md` remains useful, provided it is not expected to carry the entire method.

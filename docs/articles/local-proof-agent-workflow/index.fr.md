@@ -27,6 +27,11 @@ Un framework appliquant ces principes peut conserver une partie de ces faits : t
 
 > La couleur d'un contrôle résume un résultat. La preuve doit permettre d'en reconstruire la portée.
 
+<figure class="article-diagram">
+  <img src="../../../articles/local-proof-agent-workflow/local-proof-context.png" alt="Un contrôle PASSED avec un code de retour nul est entouré de la révision, de l'environnement, de la commande, du périmètre, de l'instant, des sorties et des limites connues, tandis que les états non exécuté et inconnu restent visibles." loading="lazy" />
+  <figcaption>Un contrôle vert n'est interprétable qu'avec son contexte, sa portée et ses limites.</figcaption>
+</figure>
+
 ## « Vert » n'est pas une propriété du code
 
 Dire qu'un test passe omet presque toujours le complément de la phrase : quel test, lancé où, quand, sur quoi et avec quelles hypothèses ?

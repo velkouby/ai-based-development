@@ -82,8 +82,8 @@ Cette séparation protège l’architecture et rend le socle upgradeable. Un tem
 C’est le type de frontière qu’un système de développement AI-native doit matérialiser : un socle full-stack propre, testable, documenté et upgradeable, avec une séparation stricte entre chemins foundation-owned et project-owned, un contrat machine, des validations, des preuves et un workflow durable indépendant de la mémoire du chat.
 
 <figure class="article-diagram">
-  <img src="agent-human-development-layers.png" alt="Layered AI-native development system for humans and coding agents." loading="lazy" />
-  <figcaption>Human + agent development system: humans steer, agents execute, and the workflow turns repository rules into verifiable execution.</figcaption>
+  <img src="../../../articles/ai-agent-based-coding-best-practices/agent-human-development-layers.png" alt="Système de développement AI-native en couches pour les humains et les agents de code." loading="lazy" />
+  <figcaption>Système de développement humain + agent : les humains orientent et relisent, les agents exécutent, et le workflow transforme les règles du repository en exécution vérifiable.</figcaption>
 </figure>
 
 ## Quatre modes d’intervention pour calibrer le niveau de rituel
@@ -107,8 +107,8 @@ Une méthode AI-native doit calibrer le niveau de structure selon l’impact ré
 > Le vibe coding garde sa valeur quand il reste local, réversible et soumis aux règles du repository.
 
 <figure class="article-diagram">
-  <img src="agent-coding-modes.png" alt="Four agent coding modes from controlled vibe coding to foundation evolution." loading="lazy" />
-  <figcaption>Four agent coding modes calibrated by scope, risk, ceremony, and evidence.</figcaption>
+  <img src="../../../articles/ai-agent-based-coding-best-practices/agent-coding-modes.png" alt="Quatre modes de développement agentique, du vibe coding contrôlé à l'évolution du socle." loading="lazy" />
+  <figcaption>Quatre modes de développement agentique calibrés selon la portée, le risque, le niveau de rituel et les preuves.</figcaption>
 </figure>
 
 Ces modes forment une échelle. Plus le changement est transversal, durable ou risqué, plus il doit remonter vers des modes structurés. Plus il est local, observable et réversible, plus il peut descendre vers des modes légers. La bonne unité de travail reste la **feature reviewable** : une branche, une PR, une intention lisible, un périmètre borné, des validations et des preuves. Si le besoin ne tient pas dans une branche et une PR lisible, ce n’est pas le workflow qu’il faut complexifier. C’est le besoin qu’il faut découper.

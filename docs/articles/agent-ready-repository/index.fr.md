@@ -138,6 +138,11 @@ Les validations disent quelles commandes doivent être exécutées. Le contrôle
 
 Un tel ordre de mission ne devrait pas être rédigé entièrement à la main pour chaque micro-tâche. Les règles stables viennent du repository ; l'ordre de mission les contextualise pour le cas traité. Le point essentiel est que l'agent reçoive un objectif, une portée, des références, des validations et des limites adaptés à la tâche.
 
+<figure class="article-diagram">
+  <img src="../../../articles/agent-ready-repository/repository-authority-map.png" alt="Carte des quatre zones d'un repository montrant comment le contrat de tâche transforme leur visibilité en autorisation d'écriture, en lecture seule ou en condition d'arrêt." loading="lazy" />
+  <figcaption>Le contrat de tâche transforme la visibilité du repository en une autorité d’écriture explicite.</figcaption>
+</figure>
+
 ## Un fichier d'instructions est une porte d'entrée
 
 Un fichier comme `AGENTS.md` reste utile, à condition de ne pas lui demander de porter toute la méthode.

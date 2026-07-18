@@ -91,6 +91,11 @@ Une question ouverte bloque la suite. Elle devient une intervention à résoudre
 
 Le parcours peut maintenant être représenté comme une chaîne. Chaque maillon reçoit une entrée, produit un artefact et ajoute une connaissance limitée.
 
+<figure class="article-diagram">
+  <img src="../../../articles/agentic-feature-end-to-end/agentic-feature-evidence-chain.png" alt="Chaîne de bout en bout entre les couloirs humain, workflow et agent, de la demande brute à une preuve relisible." loading="lazy" />
+  <figcaption>Chaque maillon ajoute un fait limité ; aucun ne prouve seul que la feature est acceptable.</figcaption>
+</figure>
+
 | Maillon | Entrée | Sortie persistante | Ce que l'on peut alors affirmer |
 | --- | --- | --- | --- |
 | Qualification | Demande brute | Fiche de décision | Le niveau de contrôle choisi est explicite |

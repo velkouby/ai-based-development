@@ -27,6 +27,11 @@ Mais « la tâche est bloquée » reste une information insuffisante. Une questi
 
 Les mécanismes présentés ici — état persistant, frontières d'écriture, historique des tentatives, décisions humaines et reprises contrôlées — forment un protocole qu'un framework appliquant ces principes peut matérialiser. Les artefacts qui suivent montrent comment rendre ce protocole actionnable.
 
+<figure class="article-diagram">
+  <img src="../../../articles/agent-task-stop-and-resume/task-stop-resume-paths.png" alt="Trois branches distinguent la décision manquante, la sortie de périmètre et l'échec réparable, avec pour chacune l'autorité, l'action et le point de reprise nécessaires avant une nouvelle tentative compilée." loading="lazy" />
+  <figcaption>La cause de l'arrêt détermine l'autorité nécessaire et le point de reprise.</figcaption>
+</figure>
+
 ## Trois arrêts, trois autorités différentes
 
 Une taxonomie minimale suffit déjà à éviter de nombreuses mauvaises reprises.

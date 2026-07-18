@@ -91,6 +91,11 @@ At the end of this step, we know one possible execution path. We still have no c
 
 The path can now be represented as a chain. Each link receives an input, produces an artifact, and adds a limited amount of knowledge.
 
+<figure class="article-diagram">
+  <img src="agentic-feature-evidence-chain.png" alt="End-to-end chain across Human, Workflow, and Agent lanes, from a raw request to reviewable evidence." loading="lazy" />
+  <figcaption>Each link adds a limited fact; no single one proves that the feature is acceptable.</figcaption>
+</figure>
+
 | Link | Input | Persisted output | What we can then claim |
 | --- | --- | --- | --- |
 | Qualification | Raw request | Decision record | The selected level of control is explicit |

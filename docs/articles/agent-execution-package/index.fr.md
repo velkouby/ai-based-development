@@ -94,6 +94,11 @@ Enfin, il enregistre une observation de l'état de départ, avec sa couverture c
 
 Voici un ordre de mission pédagogique pour la même fonctionnalité que dans les articles précédents. Les chemins et les valeurs sont illustratifs. La représentation privilégie la lisibilité ; son format de transport peut varier selon les outils.
 
+<figure class="article-diagram">
+  <img src="../../../articles/agent-execution-package/execution-package-anatomy.png" alt="Vue éclatée d'un paquet d'exécution avec contexte commun, trois tâches ordonnées, frontières, conditions d'arrêt et contrat de sortie." loading="lazy" />
+  <figcaption>Le contexte est partagé, mais les dépendances et les frontières restent propres à chaque tâche.</figcaption>
+</figure>
+
 ```yaml
 # Exemple pédagogique.
 paquet:

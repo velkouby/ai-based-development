@@ -27,6 +27,11 @@ But “the task is blocked” is still insufficient information. An unresolved p
 
 The mechanisms presented here—persistent state, write boundaries, attempt history, human decisions, and controlled resumption—form a protocol that a framework applying these principles can implement. The artifacts below show how to make that protocol actionable.
 
+<figure class="article-diagram">
+  <img src="task-stop-resume-paths.png" alt="Three branches distinguish a missing decision, a scope violation, and a repairable failure, each with the authority, action, and resumption point required before a new compiled attempt." loading="lazy" />
+  <figcaption>The reason for stopping determines the authority required and the legitimate resumption point.</figcaption>
+</figure>
+
 ## Three stops, three different authorities
 
 A minimal taxonomy already prevents many incorrect attempts to resume work.
