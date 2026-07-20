@@ -4,12 +4,12 @@ author: "Vincent El Kouby-Benichou, Baracoda"
 company: "Baracoda"
 company_url: "https://baracoda.com"
 description: >-
-  An agent should not receive a super-prompt, but an execution package compiled from the brief, the plan, repository rules, human decisions, and the starting Git state. Here is how to build one without losing the provenance or authority of each piece of information.
+  Using customer-directory pagination, we open the execution package sent to the runner: shared context, task block, boundaries, Git state, and output contract.
 ---
 
 # What the Agent Actually Receives: Anatomy of an Execution Brief { .article-title }
 
-An agent does not need a super-prompt that summarizes the entire project. It needs a bounded execution brief: a compilation of the expected outcome, executable tasks, repository rules, human decisions, validations, and local state at the moment the work begins.
+It is 9:34 a.m. The pagination brief has been approved, all three tasks are ready, and the runner has not started yet. Let us open exactly what it will receive to execute the whole block without loading the same context three times.
 { .article-lead }
 
 <p class="article-meta">
@@ -17,255 +17,329 @@ An agent does not need a super-prompt that summarizes the entire project. It nee
   <a class="article-contact-link" href="https://www.linkedin.com/in/vincentelkoubybenichou/">LinkedIn</a>
 </p>
 
-In [the previous article](../agentic-feature-end-to-end/index.md), we followed a Structured Feature from its brief to local review. Between planning and implementation was a short but decisive step in the timeline: building the package sent to the agent runner.
+In [the previous article](../agentic-feature-end-to-end/index.md), we followed server-side pagination for the customer directory from the brief to local review. An execution package appeared between the plan and the runner. Let us now pause the timeline just before coding and open that package piece by piece.
 
-The question appears simple: **what does the agent actually receive when it is time to code?** The answer should be neither "the entire repository," nor "the entire conversation," nor "a highly detailed prompt." Those approaches blend intent, rules, and observed facts into prose whose origins become difficult to reconstruct.
+The plan contains three tasks: evolve the API, adapt the interface, and then check their consistency. Page numbering starts at `1`, the page size is `25`, an invalid page returns HTTP 404 with the code `pagination_page_invalide`, and URL synchronization remains a non-goal.
 
-A framework that implements this principle must assemble several sources before handing a task block to the agent: the brief, the plan, selected tasks, the repository contract, recorded decisions, context references, validations, and a view of the starting Git state. The example below shows what this execution brief should contain to preserve provenance, the authority of each piece of information, and the starting state.
+At this point, every required decision has been made. The remaining job is to transform this information into a unit the runner can execute without reconstructing the mission's authority from the conversation and the entire repository.
 
-> The execution package is not prose designed to persuade the agent to work well. It is the execution brief that tells the agent what to accomplish, where its constraints come from, and where its authority ends.
+> An execution package is not a longer prompt. It is an ordered block of tasks with shared context, task-specific boundaries, and an observable starting state.
 
-## Why this is not a super-prompt
+## 9:34 a.m.: A Three-Line Prompt Is Not Enough
 
-A prompt gives instructions to a model. An execution package describes a unit of work for a system: an ordered task block, its shared context, and its task-specific constraints.
-
-A super-prompt may contain an objective, rules, and excerpts from documentation. But once everything is merged into prose, the roles become blurred: a list of files may be mistaken for write authorization, a planning suggestion for a repository rule, or an old decision for a current fact.
-
-An execution package preserves these distinctions. It can be transported to the runner in a structured form, then partially rendered as text for the model. The transport format is not the point. What matters is that, before and after the runner session, the workflow can:
-
-- identify the source of every important constraint;
-- select the tasks that are actually executable;
-- distinguish writable paths from read-only references;
-- identify a human decision that has already been made;
-- record the local state from which execution begins;
-- compare the result with the declared boundaries;
-- preserve the expected validations independently of what the agent claims to have run.
-
-This structure does not create system-level permissions. Writing "read-only" in a package does not remove the process's write access. The package describes the authority granted; a sandbox can enforce it before the fact, or a diff check can detect a violation afterward. The workflow must always state which mechanism is in place.
-
-## Four sources, four forms of authority
-
-The execution package for customer-directory pagination is compiled from four families of sources.
-
-| Source | What it contributes | Primary authority | What it cannot decide |
-| --- | --- | --- | --- |
-| Human | Objective, non-goals, acceptance criteria, answers, and decisions | Product intent and reserved decisions | The facts actually present in the code or Git |
-| Repository | Architecture, ownership, stable boundaries, and standard commands | Technical rules and policies that apply to the project | The product outcome expected from this package, unless it is already contractual |
-| Planning | Decomposition, dependencies, relevant context, and per-task validations | Operational ordering derived from the intent and rules | Broaden the brief or bypass a repository policy |
-| Runtime | Selected tasks, current attempt, observed Git state, and tracking location | Facts about the current execution | Invent intent or approve business risk |
-
-This is not a single hierarchy in which one source always overrides the others. Authority depends on the subject.
-
-Humans have authority over the outcome to achieve. The repository has authority over ownership of code areas. The plan orders the work without being allowed to rewrite either of those contracts. The runtime has authority over what it observes now, but a Git fact does not say whether a change is desirable.
-
-This separation makes conflicts manageable. If the plan places a protected directory among the writable paths, the workflow must not present that inconsistency as valid authorization. If the brief requests behavior that depends on an unresolved product decision, the plan must not turn that gap into an implicit technical choice. In both cases, compiling the execution brief should fail or produce an explicit stop.
-
-> Provenance says where information came from. Authority says what decisions the information is authoritative for. Both must survive compilation.
-
-## Compiling the execution brief
-
-The compilation can be represented without depending on any particular tool:
+We could send the agent this:
 
 ```text
-brief and human decisions ─┐
-                           │
-repository contract ───────┼─> selection and resolution ─> execution package ─> agent runner
-                           │
-plan, tasks, dependencies ─┤
-                           │
-observed Git state ─────────┘
+Add server-side pagination to the customer directory.
+Update the backend, frontend, and tests.
+Follow the repository conventions.
 ```
 
-The word "compilation" is not decorative. Like a compiler, this step transforms several inputs with different roles into a narrower executable representation. It can also reject an inconsistent input.
+The instruction sounds reasonable. Yet the agent still has to guess almost everything that governs its work.
 
-For a Structured Feature, the workflow must perform at least five operations.
+| Question during execution | What those three lines do not say |
+| --- | --- |
+| Which page should load first? | Page `1` |
+| How many items should be requested? | `25` |
+| What happens for an invalid page? | Return HTTP 404 with `pagination_page_invalide` |
+| Should the page appear in the URL? | No; it remains in local state for this release |
+| Which files are writable? | The customer areas in the backend and frontend, with a boundary specific to each task |
+| May shared components evolve? | No; they may be inspected, but changing them requires separate work |
+| Which commands count? | `make test-back`, `make test-front`, and `make build-front` |
+| What must be returned at the end? | A separate result for T-01, T-02, and T-03, including declared files, commands, questions, and blockers |
 
-First, it selects a block of tasks that can run in sequence. The first task is ready at the start of the session; later tasks become executable as the preceding tasks in the block finish. An open decision or a dependency outside the block continues to prevent execution.
+Adding these answers to one large paragraph would solve only part of the problem. Their roles would remain ambiguous: a reference to inspect could look like write authorization, a planning suggestion like a product decision, and an expected validation like a command that has already run.
 
-Second, it preserves the boundaries defined for each task and constructs the package's allowed write envelope. Grouping three tasks does not grant the agent general authorization across the repository: the observed diff must remain within the controlled union of those boundaries.
+The package keeps these categories separate so that the runner knows what to do and the workflow knows what to check afterward.
 
-Third, it attaches decisions that have already been made. If the first page number and initial page size have been decided, the agent should neither ask those questions again nor choose different values.
+## 9:35 a.m.: Selecting a Coherent Task Block
 
-Fourth, it selects context shared by the package, followed by references specific to each task. The brief, stable rules, and shared decisions are loaded only once.
+The feature plan contains this chain:
 
-Finally, it records an observation of the starting state, with its known coverage, so that a pre-existing modification is not attributed to the runner.
+```text
+T-01 · backend contract
+  -> T-02 · frontend integration
+    -> T-03 · consistency check
+```
 
-## A teaching execution package for pagination
+T-02 depends on the contract produced by T-01. T-03 becomes relevant only after both changes. The three tasks also share the same objective, pagination decisions, and general boundaries. They therefore form a **coherent block** that the runner can execute in one session.
 
-Here is a teaching execution brief for the same feature used in the previous articles. The paths and values are illustrative. The representation favors readability; its transport format may vary across tools.
+```text
+complete plan
+  -> select [T-01, T-02, T-03]
+  -> add shared context and per-task contracts
+  -> customer-pagination-01 package
+  -> one runner session
+  -> one result per task
+```
 
-<figure class="article-diagram">
-  <img src="execution-package-anatomy.png" alt="Exploded view of an execution package with shared context, three ordered tasks, boundaries, stop conditions, and an output contract." loading="lazy" />
-  <figcaption>Context is shared, but dependencies and boundaries remain specific to each task.</figcaption>
-</figure>
+Grouping them does not flatten the tasks. T-02 still depends on T-01; if T-01 uncovers an incompatibility with an existing consumer, the runner must stop the package before reporting T-02 or T-03 as complete.
+
+Nor does the grouping grant access to the whole feature by default. A shared-router evolution does not join this block: URL synchronization is a non-goal, `shared/routing/**` is read-only, and changing its public interface would involve another owner, other consumers, and different validations.
+
+> The workflow plans work at the task level. The coding agent plans the detailed modifications within the block.
+
+## 9:36 a.m.: Loading Shared Context Once
+
+In an implementation, the shared part of the package can look like this:
 
 ```yaml
-# Teaching example.
 package:
+  id: "customer-pagination-01"
+  attempt: "001"
+  block: [T-01, T-02, T-03]
+
   objective: >-
     Add server-side pagination to the customer directory and allow users
-    to move between pages from the interface.
-  non_goals:
-    - "Add persistent filters"
-    - "Modify the router or shared interface primitives"
+    to change pages from the interface.
+
   acceptance_criteria:
-    - "The API returns the items, the current page, and the total result count."
-    - "The interface preserves its loading, empty, and error states."
-    - "A pagination action loads the requested page."
+    - "The API returns the items, current page, and total result count."
+    - "The directory loads page 1 when it opens."
+    - "Previous and Next actions respect the boundaries."
+    - "The loading, empty, and error states remain distinct."
 
-  tasks:
-    - id: T-01
-      outcome: "Extend the response and cover pagination edge cases."
-      depends_on: []
-      writable: ["backend/customers/**"]
-      read_only_references: ["frontend/customers/**"]
-      validations: ["Targeted pagination contract tests"]
+  decisions:
+    first_page: 1
+    page_size: 25
+    invalid_page:
+      http_status: 404
+      code: "pagination_page_invalide"
+    page_storage: "local state"
 
-    - id: T-02
-      outcome: "Consume the contract and render the page controls."
-      depends_on: [T-01]
-      writable: ["frontend/customers/**"]
-      read_only_references:
-        - "backend/customers/contracts.*"
-        - "shared/ui/**"
-      validations: ["Customer-directory behavior tests"]
+  non_goals:
+    - "Synchronize the page with the URL."
+    - "Modify a shared primitive."
+    - "Add a dependency."
+    - "Migrate or restructure data."
 
-    - id: T-03
-      outcome: "Review consistency between the contract and its integration."
-      depends_on: [T-01, T-02]
-      writable: []
-      read_only_references:
-        - "backend/customers/**"
-        - "frontend/customers/**"
-      validations:
-        - "Pagination integration tests"
-        - "Project build"
+  shared_references:
+    - "docs/customers/pagination.md"
+    - "agent-docs/architecture.md"
+    - "agent-docs/write-boundaries.md"
 
-  human_decisions:
-    - "The first page is numbered 1."
-    - "The default page size is 25 items."
+  writable_envelope:
+    - "backend/customers/**"
+    - "frontend/customers/**"
 
-  forbidden_for_entire_package:
+  read_only:
+    - "docs/customers/pagination.md"
+    - "shared/ui/**"
+    - "shared/state/**"
     - "shared/routing/**"
+
+  forbidden:
     - "tooling/**"
-    - "orchestration/**"
+    - "generated/**"
+    - "workflow-state/**"
 
   stop_if:
-    - "The contract must become incompatible with an existing consumer."
+    - "A product decision remains open."
+    - "The contract becomes incompatible with an existing consumer."
     - "A new dependency is required."
-    - "The solution requires a change to the shared foundation."
-
-  git_start:
-    repository_detected: true
-    expected_branch: "<working branch>"
-    observed_local_state: "<status recorded before execution>"
-    base_revision: "not immutably linked in this excerpt"
-    index_coverage: "to be confirmed"
+    - "The solution requires changing a shared area."
+    - "A validation requires expanding the scope or environment."
 ```
 
-In a real system, the package or its associated manifest should link the objective and criteria to the human-authored brief, the task block to the plan, each boundary to the repository contract, decisions to the preserved answers, and the Git state to a runtime observation.
+Shared context is loaded once because it governs the entire block. It does not replace each task's contract. The writable envelope describes the maximum union of areas for the package; it does not mean that T-01 may edit the frontend or that T-02 may rewrite the backend.
 
-All three tasks appear in the same package, but they do not become a flat list. T-02 depends on T-01; T-03 depends on both earlier tasks. The runner receives this ordering, executes the block in a single session, and returns a separate result for each task. If T-01 reveals an incompatibility or a missing decision, the package must stop before reporting T-02 and T-03 as complete.
+The package does not contain all project documentation either. It carries the short decisions the agent will need continuously and points to the precise documents worth inspecting. Payment rules, future tasks, and the full chat history do not help paginate the directory, so they stay outside the context.
 
-This grouping avoids loading the same brief, contract, and decisions three times. It also allows the agent to preserve consistency between the shape of the backend response, its use in the frontend, and the broader validations. For a larger feature, the plan can naturally produce several coherent packages instead of one oversized batch.
+<figure class="article-diagram">
+  <img src="execution-package-anatomy.png" alt="Exploded view of the pagination execution package with shared context, three ordered tasks, read-only references, forbidden paths, stop conditions, and an output contract." loading="lazy" />
+  <figcaption>Context travels once; outcomes, dependencies, and boundaries remain attached to each task.</figcaption>
+</figure>
 
-Per-task boundaries remain useful for preparing the execution brief and interpreting the runner's report. However, if the workflow takes only one Git snapshot before and one after the session, the independent observation applies at the package level: it shows which paths changed within the overall allowed envelope. Attributing one particular file to T-01 or T-02 remains a runner declaration unless intermediate checkpoints are added.
+## 9:37 a.m.: Opening the Three Task Cards
 
-Context references are not writable paths either. They explain where to find a contract or pattern. The write boundary remains separate. This distinction prevents a file recommended for reading from being interpreted as an invitation to modify it.
+The runner next receives the expected outcome, dependencies, paths, and validation specific to each task.
 
-Finally, validations belong to the execution brief, not to the agent's final report. Their presence means, "these checks are expected." It does not mean that they were run. The workflow must separately record the commands that were actually executed, their results, and any missing validations.
+```yaml
+tasks:
+  - id: T-01
+    outcome:
+      - "GET /api/customers?page=2 returns items, page, and total."
+      - "An invalid page returns HTTP 404 with pagination_page_invalide."
+    depends_on: []
+    writable:
+      - "backend/customers/api.py"
+      - "backend/customers/tests/test_pagination.py"
+    read_only_references:
+      - "docs/customers/pagination.md"
+      - "frontend/customers/customer-api.ts"
+    expected_validation: "make test-back"
+    stop_if:
+      - "The required contract would be incompatible with an existing consumer."
 
-## Provenance must be inspectable
+  - id: T-02
+    outcome:
+      - "customer-api.ts sends the requested page."
+      - "The directory loads page 1 when it opens."
+      - "Previous is disabled on page 1."
+      - "Next is disabled when the total has been reached."
+      - "The loading, empty, and error states remain covered."
+    depends_on: [T-01]
+    writable:
+      - "frontend/customers/customer-api.ts"
+      - "frontend/customers/customer-list.tsx"
+      - "frontend/customers/customer-list.test.tsx"
+    read_only_references:
+      - "backend/customers/api.py"
+      - "shared/ui/**"
+      - "shared/state/**"
+      - "shared/routing/**"
+    expected_validation: "make test-front"
+    stop_if:
+      - "The solution requires changing Button, shared state, or the router."
 
-Provenance can be made useful without imposing a complex schema. For each decisive piece of information, four attributes are often enough:
+  - id: T-03
+    outcome:
+      - "Check that the client consumes the backend contract exactly."
+      - "Check that no URL synchronization has been introduced."
+      - "Report any inconsistency without opening a new scope."
+    depends_on: [T-01, T-02]
+    writable: []
+    read_only_references:
+      - "backend/customers/**"
+      - "frontend/customers/**"
+    expected_validation: "make build-front"
+```
 
-| Information | Review question |
-| --- | --- |
-| Source | Which document, decision, or observation supplied this value? |
-| Authority | Does this value express intent, a rule, a plan, or a fact? |
-| Freshness | Which version, decision, or attempt does it apply to? |
-| Transformation | Was it copied, summarized, derived, or added by the runtime? |
+The five expected files are therefore not a flat list attached to the prompt. Two belong to T-01, three to T-02, and none to T-03. This precision helps the agent order its work and makes its report reviewable task by task.
 
-Consider the page size. If it comes from a human answer recorded after the brief was written, the package must carry the most recent decision and retain a link to its origin. Copying it only into the plan creates two sources that can diverge.
+It does not, however, prove attribution. Because the runner executes the entire package in one session and the workflow takes no Git snapshot between tasks, the independent check will see the package diff. It can confirm that all five paths remain within the overall envelope, but not that a particular line was truly written during T-01 rather than T-02. That attribution remains declarative.
 
-Now consider the writable paths. They may be derived from the repository's general contract, then narrowed by the plan. The effective result is the intersection of the authorizations, not the most permissive list. The plan can reduce write authority; it should not be able to make a protected area writable.
+Validations have the same status at this point. `make test-front` appears in T-02 because that check must cover the directory behavior. The field is not a result. After the runner and the scope check, the workflow must still run or observe the command, preserve its exit code, and report any missing validation.
 
-This logic also makes the execution brief auditable before the run. A reviewer can inspect not only the expected outcome, but also the decisions the compiler made while assembling the context.
+## 9:38 a.m.: Recording the Starting Git State
 
-## The starting Git state is an input, not final evidence
+Immediately before handing the package to the runner, the workflow observes the working tree:
 
-The initial Git state deserves an explicit place in the package because post-execution checks depend on a comparison. At a minimum, the workflow should know whether it is in a repository, which branch it is on, which revision serves as the starting point, and whether the working tree already contains changes to tracked files—staged or unstaged—as well as untracked files.
+```text
+$ git branch --show-current
+feature/customer-pagination
 
-An initial view of local state and previously modified paths is enough to reduce some confusion during local execution. It is not enough to claim unambiguously that a change belongs to one attempt or revision.
+$ git rev-parse --short HEAD
+7a31c42
 
-Several limitations must remain visible:
+$ git status --short --untracked-files=all
+# no output
+```
 
-- a local status does not, by itself, bind the package to an immutable base commit;
-- a dirty working tree complicates attribution of changes to the runner;
-- the index and working tree must be observed separately;
-- untracked files must be explicitly included in the observation scope;
-- the expected branch does not prove that the complete execution happened on that branch;
-- a starting snapshot does not replace the Git state recorded at the end.
+The package therefore records:
 
-The accurate claim is therefore not, "the package proves that the repository was clean." It is, "the package records this view of the initial state, with this coverage." Linking the evidence to a pull request requires more: base and head commits, index state, environment information, and validations executed on the relevant revision. We will return to this in the article about evidence.
+```yaml
+git_start:
+  branch: "feature/customer-pagination"
+  head: "7a31c42"
+  modified_tracked_files: []
+  staged_files: []
+  untracked_files: []
+  state: "clean"
+```
 
-## A structured package can still contain too much context
+This observation is useful: if five files appear after execution, none of them was visible in the selected starting state. Yet it remains an input, not final evidence. It says nothing about which commands will succeed, does not guarantee that the runner will remain on this branch, and does not replace the Git state recorded at the end.
 
-Structure reduces amnesia and ambiguity of provenance. It does not guarantee that the selection is relevant.
+An implementation should preserve the full Git object ID even though the article displays its short form. If the working tree were already modified, the package would need to list the affected paths or state explicitly that change attribution will be ambiguous.
 
-Putting the full brief, the plan, every task, every instruction, and a broad view of the repository into the package may seem prudent. Yet it can dilute the executable task block, carry obsolete decisions, and multiply apparent contradictions.
+## 9:39 a.m.: Rendering the Execution Brief for the Runner
 
-Before including an element, the workflow can apply four questions:
+The structured package can now be rendered into a direct instruction for the coding agent:
 
-1. Is it necessary to execute one of the package's tasks or decide to stop?
-2. Is its source sufficiently authoritative and current?
-3. Is there a smaller representation that preserves the useful meaning?
-4. Should it be included, or merely referenced with a reason to consult it?
+```text
+Execute T-01, then T-02, then T-03 in this session.
 
-Minimal context is not the shortest context. Removing a stop condition would be poor compression; copying an entire document when one precise reference is enough adds noise. The package must support action and make reserved decisions recognizable, not replace the repository inside the context window.
+Load the shared context once.
+Respect the write boundary specific to each task.
+Never write under shared/**, tooling/**, generated/**, or workflow-state/**.
+Keep the page in local state; do not synchronize the URL.
 
-## What the execution brief actually changes
+Stop the entire package as soon as a stop condition is encountered.
+Do not report a dependent task as complete after that stop.
 
-A well-constructed execution package improves three concrete things.
+Return a separate result for T-01, T-02, and T-03 with:
+- the status and outcome achieved;
+- the files you declare you changed;
+- the commands you declare you ran;
+- any remaining questions, warnings, and blockers.
+```
 
-First, it makes the run reconstructible: intent, decisions, scope, and expected validations remain accessible without rereading the conversation.
+The text is shorter than the data that produced it because it can summarize and order what matters to the runner. The complete structure remains available to the workflow for checking the result. This separation avoids treating the rendered text as the only record of the authority granted.
 
-Second, it makes deviations classifiable. A modification to a read-only area can be compared with an explicit boundary; a missing validation appears as absent instead of disappearing into an optimistic summary.
+The expected output contract can be just as explicit:
 
-Finally, it separates responsibilities more clearly. The agent proposes code and a structured report. The workflow preserves state, checks scope, and runs the planned validations. Humans decide questions beyond the authority of the tasks in the package and judge the residual risk.
+```yaml
+runner_result:
+  package_status: "completed | blocked | failed"
+  task_results:
+    - id: "T-01"
+      status: "..."
+      summary: "..."
+      declared_files: []
+      declared_commands: []
+      blocker: null
+  open_questions: []
+  warnings: []
+```
 
-But the package does not repair an unstable brief. It cannot make an overbroad context selection relevant. It does not turn a path policy into a sandbox. It does not guarantee that the selected tests cover the behavior. And by itself, it does not prove that the final diff corresponds to a merge-ready revision.
+When attempt `001` begins, none of those results has been filled in. The package defines the shape of the response; it does not prejudge its contents. Once the session ends, the agent's declared file list must be compared with the observed Git state, and the expected validations with their actual executions.
 
-> A precise execution brief does not make the agent infallible. It makes the agent's instructions, boundaries, and deviations inspectable.
+## Tracing Every Decision Back to Its Source
 
-## Audit your own execution package
+Provenance becomes concrete when we follow a few package values back to their sources.
 
-Before adding more automation, a team can take a real package or reconstruct one from a recent task and check the following points:
+| Compiled value | Source | Authority for this value |
+| --- | --- | --- |
+| Objective and criteria | Feature brief | Expected product outcome |
+| Page size `25` and `pagination_page_invalide` error | `docs/customers/pagination.md` | Approved domain convention |
+| Page retained in local state | Decision made during qualification | Trade-off for this release |
+| `shared/routing/**` is read-only | Repository contract narrowed by the plan | Architectural boundary for the task |
+| T-02 depends on T-01 | Executable plan | Work ordering |
+| Clean working tree at `7a31c42` | Git observation at 9:38 a.m. | Local fact at the start of the attempt |
 
-- ☐ The objective and non-goals come from an identifiable human source.
-- ☐ Every acceptance criterion describes an observable outcome.
-- ☐ Executable tasks are distinguished from tasks shown only for context.
-- ☐ Dependencies prevent premature execution.
-- ☐ Writable, read-only, and forbidden paths have distinct meanings.
-- ☐ A context reference is never confused with write authorization.
-- ☐ Human decisions already made are preserved with their origin.
-- ☐ Stop conditions identify the required decision and role.
-- ☐ Expected validations exist independently of the agent's report.
-- ☐ The initial Git state clearly states what was and was not observed.
-- ☐ A conflict among the brief, plan, and repository rules either blocks compilation or remains explicitly visible.
-- ☐ Every context block can justify its presence in the current package.
+Authority depends on the subject. The plan may narrow the paths allowed by the repository; it cannot make a protected area writable. A Git observation can establish that a file is present; it cannot decide whether that change is desirable.
 
-If one of these elements exists only in chat, the package is incomplete. If it exists but its origin cannot be recovered, the package lacks provenance. If it is present but cannot be checked, it remains an instruction and must be presented as such.
+Compilation must therefore reject contradictions instead of blending them into ambiguous prose. If T-02 suddenly declared `shared/routing/**` writable, the package should not launch. If a task set the page size to `50` while the persisted decision says `25`, the discrepancy should be resolved before the runner starts.
+
+## What This Package Enables—and What It Does Not
+
+At 9:39 a.m., the runner has a more precise mission without receiving the entire project in its context window. It can coordinate the API evolution with its consumer, retain the same decisions across all three tasks, and organize the detailed edits itself.
+
+The workflow also gains comparison points: expected tasks, the union of writable paths, read-only references, validations, and the output shape. But these benefits have clear limits.
+
+- The package **describes authority**; by itself, it does not remove process permissions. Without a sandbox, path checking happens after writing.
+- Commands in the package are **expected validations**, not results. An exit code must be observed and recorded separately.
+- One snapshot before and one after the session qualifies **the package diff**, not the author of each task-level change.
+- A clean starting Git state improves local attribution, but does not yet bind the attempt to a final merge-ready revision.
+- A valid structure does not guarantee that the selected context is relevant, complete, or current.
+- An oversized package would dilute the objective again. Any router evolution therefore remains a separate unit of work.
+
+> A good package does not prevent the agent from making mistakes. It makes its instructions, boundaries, and deviations comparable with facts.
+
+## Checking the Package Before Starting the Attempt
+
+For this pagination feature, the pre-execution review fits into ten concrete questions:
+
+- ☐ Do the criteria name the initial page, boundaries, and interface states?
+- ☐ Do page size `25` and the 404 error still come from the current decision source?
+- ☐ Can T-01, T-02, and T-03 run in sequence without a dependency outside the block?
+- ☐ Does every writable file belong to a specific task?
+- ☐ Are `shared/ui/**`, `shared/state/**`, and `shared/routing/**` read-only?
+- ☐ Do `tooling/**`, `generated/**`, and `workflow-state/**` remain forbidden?
+- ☐ Do all three expected commands exist independently of the future agent report?
+- ☐ Does every stop condition say when not to continue to the next task?
+- ☐ Does the Git state cover tracked, staged, and untracked files?
+- ☐ Must the runner return a separate result for each of the three tasks?
+
+If any answer is missing, correcting the package is safer than asking the agent to fill the silence during implementation.
 
 ## Conclusion
 
-What the agent receives before coding affects its ability to stay within the authority it has been granted more than its ability to generate code.
+Attempt `001` is now ready. The runner will receive the brief, decisions, rules, and starting Git state once. It will execute T-01, T-02, and T-03 in the same session while preserving their dependencies, boundaries, and distinct results.
 
-The brief provides intent. The repository provides rules. The plan provides decomposition and dependencies. Human decisions close questions that have already been settled. The runtime selects a coherent block of tasks that can execute in sequence, adds local state, and hands the runner a bounded execution brief.
+The benefit does not come from a particularly persuasive prompt. It comes from precise preparation: selecting a coherent block, removing unrelated context, preserving provenance, announcing validations, and making stops actionable.
 
-The quality of this assembly is not measured by its length. It is measured by whether, for every important piece of information, we can answer: where did it come from, what is it authoritative for, is it still current, and how will the result be checked against that expectation?
-
-The remaining question is what happens when execution cannot comply with this brief: a decision is missing, a boundary is crossed, or a validation fails. That is the subject of the next article: [**when the task must stop, and how to resume it without losing its history**](../agent-task-stop-and-resume/index.md).
+But a well-prepared package does not guarantee an incident-free execution. A decision may be missing, a boundary may be crossed, or a validation may fail. [The next article shows how to classify those stops and resume without erasing the previous attempt](../agent-task-stop-and-resume/index.md).
 
 <div class="article-footer-contact">
   <p>To discuss this article or leave me a public message:</p>

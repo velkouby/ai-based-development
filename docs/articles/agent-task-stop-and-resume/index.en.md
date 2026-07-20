@@ -4,12 +4,12 @@ author: "Vincent El Kouby-Benichou, Baracoda"
 company: "Baracoda"
 company_url: "https://baracoda.com"
 description: >-
-  A missing decision, a scope violation, and a failing test do not call for the same response. Here is how to stop an agentic task cleanly, preserve the relevant facts, and resume without erasing its history.
+  A frontend test fails after an implementation that stayed within scope. By following two concrete attempts, we can see when to repair, when to ask for a decision, and when to stop at a write boundary.
 ---
 
 # When a Task Must Stop: Decisions, Boundaries, and Resumption { .article-title }
 
-A missing decision, a scope violation, and a failing test do not call for the same response. A reliable agentic workflow must know why it is stopping, who can unblock the situation, and which facts will allow the work to resume.
+The pagination package produced the five expected files, the backend tests pass, and the frontend builds. Yet one test reveals that the “Next” button remains enabled on the last page. Should we start over, ask for a human decision, or repair the code locally? Let us follow the facts to the exact resumption point.
 { .article-lead }
 
 <p class="article-meta">
@@ -17,228 +17,327 @@ A missing decision, a scope violation, and a failing test do not call for the sa
   <a class="article-contact-link" href="https://www.linkedin.com/in/vincentelkoubybenichou/">LinkedIn</a>
 </p>
 
-In [the previous article](../agent-execution-package/index.md), the brief, the plan, the repository rules, and the decisions already made became a bounded execution brief. It told the agent where to write, what to consult, how to validate, and when not to continue.
+In [the previous article](../agent-execution-package/index.md), the brief, the plan, the repository rules, and human decisions were compiled into an execution brief. The runner received a coherent block of three tasks: evolve the API, adapt the directory, and then check their consistency.
 
-Stop conditions are not a precautionary add-on to the execution package. They are an operational part of it. Without them, the agent is encouraged to turn every uncertainty into an implementation choice and every obstacle into a silent expansion of scope.
+It is time to let that package run. The first attempt ends neither in complete success nor in disaster. It stops on a precise defect, inside an authorized area, with a test that can verify the correction.
 
-But “the task is blocked” is still insufficient information. An unresolved product question before coding, a change observed in a protected area, and a failing unit test do not have the same owner, remedy, or resumption point.
+This is the ideal case for understanding resumption. A simple “continue” would be too vague. Replaying the entire feature would waste work that is already done. Ignoring the red test would plainly be wrong. The workflow must classify the stop, preserve the first attempt, and construct a narrower second brief.
 
-> A useful stop does more than say that the work is unfinished. It establishes what happened, what is missing, who must decide, and what will need to be checked again.
-
-The mechanisms presented here—persistent state, write boundaries, attempt history, human decisions, and controlled resumption—form a protocol that a framework applying these principles can implement. The artifacts below show how to make that protocol actionable.
+> Resuming does not mean starting over. It means continuing from the last known state with the same authority, a precise diagnosis, and checks that must run again.
 
 <figure class="article-diagram">
-  <img src="task-stop-resume-paths.png" alt="Three branches distinguish a missing decision, a scope violation, and a repairable failure, each with the authority, action, and resumption point required before a new compiled attempt." loading="lazy" />
-  <figcaption>The reason for stopping determines the authority required and the legitimate resumption point.</figcaption>
+  <img src="task-stop-resume-paths.png" alt="Timeline of customer pagination: a clean start at revision 7a31c42, attempt 001 stopped by the frontend test, attempt 002 limited to one file, and then local review, with two contrast branches for a missing human decision and a shared-routing scope violation." loading="lazy" />
+  <figcaption>Attempt 002 resumes from the validation failure; a missing decision or a crossed boundary would require a different path.</figcaption>
 </figure>
 
-## Three stops, three different authorities
+## The package starts from a known state
 
-A minimal taxonomy already prevents many incorrect attempts to resume work.
+The starting point is not “roughly yesterday's repository.” The workflow records a precise state before launching the runner:
 
-| Situation | Triggering fact | Who can act? | Legitimate resumption |
-| --- | --- | --- | --- |
-| **Missing decision** | A question changes the expected outcome or requires authority that is not present | Product owner, architect, security owner, or domain owner | Record the decision, update the relevant input, then recompile the work |
-| **Scope violation** | The observed files touch an unauthorized, read-only, or forbidden area | Task lead and, when necessary, owner of the shared foundation | Isolate or remove the change, split or reclassify the work, then resume from a valid scope |
-| **Repairable failure** | A validation or mechanical step fails without raising a new decision | Agent or developer, within a bounded repair policy | Fix the cause, rerun the affected checks, and record a new attempt |
+```yaml
+start:
+  branch: feature/customer-pagination
+  revision: 7a31c42
+  working_tree: clean
 
-The essential difference is authority. An agent can fix a formatting error when both the command and the remedy are deterministic. It cannot decide on its own that an API incompatibility is acceptable, that a shared primitive may change, or that a permission may be broadened.
+package:
+  tasks: [T-01, T-02, T-03]
+  writes_allowed:
+    - backend/customers/**
+    - frontend/customers/**
+  read_only:
+    - shared/routing/**
+  non_goals:
+    - synchronize the page with the URL
+    - modify a shared primitive
+```
 
-We must also distinguish a **stop** from a **failure**. Waiting for a product decision is a normal workflow stop, not a malfunction. Detecting a scope violation means the guardrail worked, even if the attempt cannot be accepted. Conversely, mechanically repeating a failing validation without a diagnosis is not resumption; it is a loop.
+This snapshot provides three useful reference points. The branch and revision identify the local base. The clean working tree prevents an earlier change from being confused with the runner's work. Finally, the package states that `shared/routing/**` may be consulted but not modified.
 
-## A missing decision must block before coding
+That does not turn the package into a sandbox. The process may still write to the wrong directory if the environment technically allows it. The boundaries describe the mission's authority; the path check will later determine whether the observed changes respected it.
 
-The best time to stop a task is often before the agent runner is launched.
+## Attempt 001: five expected files, one red test
 
-Suppose the brief asks for pagination in the customer directory but does not specify what should happen when a page above the new maximum is requested. Should the API return an empty page, clamp the request to the last valid page, or return an explicit error? This choice affects the user experience, the UI contract, and the tests.
+The runner executes the `T-01 → T-02 → T-03` block in one session and reports all three tasks as completed. The workflow does not treat that declaration as validation. It inspects Git first.
 
-The planner can propose options and describe their consequences. It must not present one of them as a mere technical convention. The workflow should then retain an intervention record containing at least:
-
-- the problem stated without unnecessary jargon;
-- the exact question that needs a decision;
-- the known options and their effects;
-- the role expected to make the decision;
-- the tasks and criteria affected;
-- the answer, its source, and any supporting rationale.
-
-As long as this intervention remains open, no dependent task should be executable. Once the answer is given, it should not merely be injected into a new conversation. It becomes a persistent decision, linked to the intervention that prompted it, and is then included in the next execution package. If it changes the brief, the plan, or the scope, the relevant artifact must be updated and the work recompiled before resumption.
-
-This sequence avoids two failure modes. The first is allowing the agent to code an assumption and then presenting the diff as a way to “ask for confirmation.” The second is receiving a human answer without updating the artifact that held authority. In that case, the next agent may inherit the old ambiguity.
-
-> Answering a question is not enough. The answer must be incorporated into the source that governs the next execution.
-
-If the question reveals that the entire brief is unstable, the task should not resume. The team must return to the problem definition. If it concerns only a local decision already anticipated by the plan, a targeted update may be enough. The resumption point therefore depends on where the uncertainty originated.
-
-## A scope violation is an observed fact after writing
-
-The second case is more uncomfortable: the agent has already written code, and the workflow then finds that a modified file violates the execution brief.
-
-The useful check compares two sources: the declared scope of the executed tasks and the paths actually observed in the working tree. The file list reported by the agent can help with diagnosis, but it must not be the only source. An agent can omit a file, misinterpret a rename, or produce an incomplete summary.
-
-For the customer directory, a conceptual contract could allow writes in the frontend and backend product areas, allow reads from shared routing, and forbid changes to it:
+Five paths have changed since the starting snapshot:
 
 ```text
-writes allowed
-  frontend/customers/**
-  backend/customers/**
-
-read-only
-  shared/routing/**
-
-stop if
-  synchronizing with the URL requires a change to shared routing
+backend/customers/api.py
+backend/customers/tests/test_pagination.py
+frontend/customers/customer-api.ts
+frontend/customers/customer-list.tsx
+frontend/customers/customer-list.test.tsx
 ```
 
-These paths illustrate how responsibilities can be divided between product areas and shared routing.
+All five belong to the two authorized product areas. The write-boundary check passes. The three targeted commands can now run:
 
-If the observed diff contains a file under `shared/routing/`, the result is not “almost compliant.” The attempt crossed a boundary. Functional validations must not turn that crossing into retroactive authorization: a green test does not grant a product task the right to modify the shared foundation.
+| Check | Exit code | Fact established |
+| --- | ---: | --- |
+| `make test-back` | `0` | The selected backend tests detected no failure |
+| `make test-front` | `1` | At least one frontend scenario failed |
+| `make build-front` | `0` | The requested frontend build completed without error |
+| Global quality | Not run | No conclusion can be drawn about this check |
 
-The workflow must then preserve the finding before any repair: affected paths, violated rule, detection phase, known starting state, and validations already run or not run. This chronology matters. It distinguishes a modification produced during the attempt from a change that existed before it started.
+The useful detail appears in the output from `make test-front`:
 
-If the working tree was already modified, automatically removing the offending file could destroy someone else's work. The correct response is to suspend the repair and ask a human to determine which changes belong to the attempt and which predate it. Automatic restoration is reasonable only when the system knows exactly which reference state it is restoring and which changes belong to the attempt.
+```text
+FAIL CustomerList > disables Next on the last page
 
-## Teaching variant: pagination and the URL
+Expected: disabled
+Received: enabled
+```
 
-The following scenario is a teaching example for tracing a stop caused by a scope violation, the resulting decision, and the conditions for resumption.
+Pagination can load data and the application builds, but the user can still request a page beyond the last one. The two green commands do not compensate for this divergence from the expected behavior.
 
-In this variant, the team extends pagination with an additional requirement: the current page must appear in the URL so that a link can be shared. Because this synchronization was a non-goal of the initial brief, the request is first reclassified, the brief is revised, and a new execution package is compiled. Shared routing remains read-only, with an explicit stop condition. During implementation, the agent nevertheless concludes that the router's public interface is insufficient and modifies a shared primitive.
+The attempt result must therefore remain explicit:
 
-The post-execution check then observes two categories of changes: the expected product files and one file in shared routing. It classifies the attempt as a scope violation and stops the chain before marking the task complete.
+```yaml
+attempt: "001"
+runner_declared_result: completed
+boundaries: passed
+validations:
+  "make test-back": passed
+  "make test-front": failed
+  "make build-front": passed
+global_quality: not_run
+status: needs_retry
+```
 
-Here is a compact stop record that the workflow could retain:
+This distinction matters. The runner completed what it believed it had to do. The workflow observed that the execution brief is not yet satisfied.
+
+## Why this failure is repairable without a human decision
+
+Before authorizing another attempt, we must examine the required correction, not only the color of the test.
+
+Here, four facts are already known:
+
+1. the expected outcome is explicit: “Next” must be disabled on the last page;
+2. the failure is localized in `CustomerList` behavior;
+3. the correction can remain within `frontend/customers/**`;
+4. it requires no new dependency, contract change, or product decision.
+
+One plausible cause is that the component identifies the last page from the visible items rather than using the total returned by the API. The correction can remain very small:
+
+```diff
+- disabled={items.length === 0}
++ disabled={page * pageSize >= total}
+```
+
+This diff is an implementation example, not the diagnosis by itself. The more general reason a retry is authorized is that the objective and authority remain unchanged, the defect has a reproducible validation signal, and the repair stays within the original scope.
+
+This is a **repairable failure**. The agent may act within a bounded recovery policy. If the fix ultimately required a new product rule, a backend contract change, or a shared primitive, the category would have to change and the attempt would stop.
+
+## The exact resumption point
+
+The workflow does not tell the runner, “pagination is broken; try again.” It prepares resumption context from attempt 001:
+
+```yaml
+resumption:
+  from_attempt: "001"
+  from_gate: targeted_validation
+  failed_check: "make test-front"
+
+  diagnosis:
+    test: "CustomerList > disables Next on the last page"
+    expected: disabled
+    observed: enabled
+
+  repair_writes_allowed:
+    - frontend/customers/customer-list.tsx
+
+  preserved_state:
+    - the diff produced by attempt 001
+    - the existing brief and decisions
+    - the original write boundaries
+    - the outputs from validations that already ran
+
+  validations_to_rerun:
+    - "make test-back"
+    - "make test-front"
+    - "make build-front"
+```
+
+The resumption point is therefore the repair of the frontend outcome before the validation gate. The backend is not implemented again. The product plan is not recomputed. The working tree is not arbitrarily restored to `7a31c42`: it still contains the five files from attempt 001, one of which the next attempt will change again.
+
+The three commands do run again. `make test-front` must verify the repaired defect. `make build-front` must establish that the change still builds. `make test-back` confirms that the targeted set selected for this package remains green. A team could choose a different set, but it must be written down before the resumption is presented as validated.
+
+## Attempt 002: one repaired file, three green checks
+
+The second attempt changes only:
+
+```text
+frontend/customers/customer-list.tsx
+```
+
+This list describes the **delta of attempt 002**. It does not replace the feature's overall diff, which still contains all five files observed after the first execution.
+
+The write-boundary check runs again, and all three targeted commands then return `0`:
+
+```yaml
+attempt: "002"
+derived_from: "001"
+files_changed_during_repair:
+  - frontend/customers/customer-list.tsx
+
+boundaries: passed
+validations:
+  "make test-back": passed
+  "make test-front": passed
+  "make build-front": passed
+global_quality: not_run
+status: completed
+```
+
+The package can now proceed to local review. That status must not be translated as “the feature is correct” or “it is ready to merge.” We know that the five paths remain inside the authorized envelope and that the three targeted commands passed against the local state of attempt 002. We also know that the global quality check did not run.
+
+Most importantly, the green attempt does not erase the red one:
+
+| Attempt | Observed state | Change specific to the attempt | Outcome |
+| --- | --- | --- | --- |
+| `001` | Clean start at `7a31c42`, then five product files | Package implementation | `make test-front` failed, `needs_retry` |
+| `002` | Diff from `001` preserved | `customer-list.tsx` | Three targeted validations passed |
+
+This history explains why a correction was necessary and what was actually checked again.
+
+## The same red test, but with a missing decision
+
+The previous retry was legitimate because the word **disabled** already appeared in the expected behavior. Now imagine a less precise brief: “prevent the user from going beyond the last page.”
+
+Two interfaces satisfy that sentence: hide the “Next” button, or keep it visible but disabled. The choice affects layout stability, the clarity of navigation, and accessibility behavior. An agent should not turn that silence into a design preference.
+
+The workflow retains an intervention instead:
 
 ```markdown
-# Stop record — teaching example
+# Intervention UI-01
 
-Request: synchronize the directory page with the URL
-Phase: post-write check
-Outcome: stopped at a write boundary
+Problem: the behavior of “Next” on the last page is undefined.
 
-Facts recorded in this example:
-- feature files were modified within the authorized scope;
-- a shared-routing file was also modified;
-- that area was declared read-only;
-- the planned validations were not run after the scope check failed.
+Options:
+1. keep the button visible and disable it;
+2. hide the button.
 
-Options submitted for decision:
-1. remove URL synchronization and revise the criteria;
-2. find a local adaptation that uses the existing public interface;
-3. open a separate Foundation Evolution effort, then resume the feature.
-
-Human decision:
-- retain the requirement for a shareable URL;
-- revert the unauthorized change;
-- handle the router extension as a separate unit of work;
-- resume pagination after that extension has been integrated.
+Required authority: product and design.
+Affected elements: navigation criterion, T-02, and frontend test.
+Resumption point: update the criterion and test, then recompile the repair.
 ```
 
-This record is deliberately compact: it does not describe the entire resumption mechanism. It preserves what a team needs to understand the stop and authorize what comes next.
+Until an answer exists, another coding attempt would be premature. When the authorized person chooses “visible and disabled,” the decision is recorded, the affected criterion is updated, and the next execution brief receives that answer.
 
-The decision is not to add `shared/routing/**` to the authorized paths of the existing task. That would disguise the scope violation by widening the contract after the fact. The shared change becomes a **Foundation Evolution** effort with its own intent, impact analysis, consumers, validations, and review.
+This is not a retry under an unchanged contract. An input that governs execution has changed. The affected work must therefore be **recompiled** before it resumes. In our main scenario, this intervention does not exist: the test from attempt 001 demonstrates that the decision had already been made.
 
-The pagination feature remains stopped until this dependency is available. After the shared extension is integrated, the pagination plan is reassessed: a new starting revision, a new public interface to reuse, an unchanged product scope, and updated validations. The task can then resume without erasing the first attempt.
+## The same package, but with a crossed boundary
 
-## Reverting, retrying, and splitting the work are not synonyms
+Consider another variant. While trying to fix navigation, the agent also decides to persist the page in the URL and creates:
 
-Once the stop has been classified, the verb used for resumption must be precise.
+```text
+shared/routing/customer-page.ts
+```
 
-**Reverting an unauthorized change** means returning only the affected paths to a known reference state, then rerunning the scope check. This action does not validate the rest of the diff. It removes a fact that is incompatible with the contract.
+The choice may look technically coherent. It nevertheless violates two explicit parts of the execution brief: `shared/routing/**` is read-only, and URL synchronization is a non-goal.
 
-**Retrying a task** means keeping the same objective and authority but producing a new attempt after a bounded correction. The earlier attempt remains visible: cause, actions taken, files touched, and validation results.
+The path check now observes six files instead of the five expected product paths:
 
-**Replanning** means that the input has changed. A human decision, a new contract, or an integrated dependency changes the execution brief. Rerunning exactly the same package would be inconsistent; a new one must be compiled.
+```yaml
+boundaries:
+  status: failed
+  violation:
+    path: shared/routing/customer-page.ts
+    rule: read_only
 
-**Splitting or reclassifying** means that the discovered change no longer belongs to the original unit of work. A Foundation Evolution effort must remain separate from the product task. Depending on its scope, a migration or security decision may also require a separate unit or reclassification with the corresponding authority.
+validations:
+  "make test-back": skipped_due_to_boundary
+  "make test-front": skipped_due_to_boundary
+  "make build-front": skipped_due_to_boundary
+```
 
-This distinction protects traceability. If every action is called “resumption,” a team can no longer tell whether the agent fixed a mistake, received a new decision, or was granted a broader scope.
+The validations planned by the workflow do not run after this gate fails. Even if the runner claims that it tested the code, a functional green result would not retroactively give the product task authority to change shared routing.
 
-## Repairable failure: a bounded loop, not a blank check
+This variant does not automatically open an architecture question. The existing decision is enough: URL synchronization remains out of scope. The normal resumption path is to record the violation, remove or isolate the change attributable to the attempt, and then prepare a repair within the product areas.
 
-The third case is a mechanical or validation failure. For example, a targeted test reveals that the “next page” button remains enabled on the last page. The objective, API contract, and scope do not change. The cause is localized in an authorized area, and the same test can verify the correction.
+If the product requirement genuinely changed, the team could open a separate **Foundation Evolution** effort with its own consumers, validations, and review authority. It should not widen the package that crossed its boundary after the fact.
 
-A repair attempt is reasonable when four conditions are met:
+## Retrying, recompiling, and reclassifying are three different resumptions
 
-1. the failure is classified and the diagnosis is sufficiently precise;
-2. the correction requires no new dependency, product decision, or path expansion;
-3. the commands to rerun are known;
-4. the number of attempts is limited.
+The three branches of the same example now yield a concrete rule:
 
-After the correction, rerunning only the failing command is not enough if other checks may have been affected. At a minimum, the workflow must repeat the scope check and then the validations related to the corrected files. If the repair changed the backend contract, the tests for the UI that consumes it become relevant again, even if they were green before.
+| Situation | What changes | Required authority | Resumption point |
+| --- | --- | --- | --- |
+| Repairable frontend test | Code, within the existing contract | Agent or developer, within a bounded budget | Repair from the red validation, then rerun the affected checks |
+| Undefined “Next” behavior | An acceptance criterion | Product and design | Record the decision, update the input, then recompile |
+| `shared/routing/customer-page.ts` observed | The diff crossed a boundary | Task lead; foundation owner only if separate work is considered | Isolate or remove the change, restore a valid scope, then compile a new attempt |
 
-Each attempt should retain a compact history: initial reason, diagnosis, actions, paths touched, validations rerun, result, and next action. If the repair stops making progress or reaches the authorized limit, the loop stops. The system then hands the attempts to a human instead of continuing to consume time while allowing the diff to grow.
+A **retry** preserves the objective, decisions, and authority. **Recompilation** incorporates a changed input. **Reclassification** creates a different kind of work because the scope or required authority has changed.
 
-Some failures only appear mechanically repairable. A test fails because the expected behavior is undefined: that is a missing decision. A build fails because resolving it would require a new dependency: that requires authorization. A validation reveals a compatibility break: that may require an architecture or migration decision. The output of a tool therefore does not determine the category by itself; the change required to resolve it matters more.
+Using the same word, “resumption,” for all three operations conceals what actually happened.
 
-## Resuming means reconstructing the task's authority
+## A repair loop must remain bounded
 
-Reliable resumption does not mean sending “continue where you left off” in the same chat. It explicitly reconstructs the authorized state.
+A red validation does not authorize an unlimited sequence of corrections. Every attempt should retain at least:
 
-Before restarting the agent runner, the workflow should verify:
+- the signature of the initial failure;
+- the proposed diagnosis;
+- the actions taken;
+- the paths touched during the repair;
+- the checks rerun and their results;
+- the remaining attempt budget;
+- the next action if the problem persists.
 
-- that blocking interventions have been resolved;
-- that the human answer has been recorded and linked to the affected tasks;
-- that preceding dependencies have been completed;
-- that unauthorized changes have been isolated or removed;
-- that the brief, plan, and criteria remain coherent;
-- that the new package contains the decision and the correct starting Git state;
-- that the validations to rerun are explicit.
+If `make test-front` fails a second time with the same symptom and no observable progress, the workflow must stop the loop at the configured threshold. It hands both diagnoses and both diffs to a human. It must neither keep expanding the change nor broaden paths to “try something else.”
 
-The new attempt then receives the useful context from the previous one, not its entire conversation. It knows what failed, what was decided, what must not be repeated, and which evidence is expected. Completed tasks can remain complete if their results are still valid; the stopped task becomes executable again only when its preconditions are satisfied.
+The category can also change during diagnosis. If fixing the button ultimately requires changing the API contract, the resumption is no longer the small repair compiled above. If it reveals undefined product behavior, it becomes an intervention. If it requires shared routing, it falls outside the package's authority.
 
-In the URL teaching variant, resumption includes the architecture decision, the router's new public interface, and the unchanged prohibition on modifying the shared foundation. It does not grant the agent broader access. On the contrary, it makes a narrower product implementation possible.
+## A Git boundary is not a security boundary
 
-> A good resumption does not discard the previous stop record. It turns that stop into a verifiable input for the next attempt.
+In this flow, the check compares the write policy with the paths observed after the runner finishes. It can prevent an out-of-scope result from proceeding to validations and review. **It is not a sandbox.**
 
-## What the scope check does not guarantee
+It does not prove that the process was technically unable to access the network, read a secret, or execute a dangerous command. Those guarantees belong to system permissions, process isolation, secret management, and network policy.
 
-The check described here runs after writing in the normal flow. It can detect that an observed path is outside the scope and prevent the result from being accepted. A separate, explicitly authorized mechanism can then restore a known state or request a human decision. **This is not a sandbox.**
+The Git coverage must also be stated. A reliable check for this case must see tracked files, staged and unstaged modifications, and the new untracked file `shared/routing/customer-page.ts`. Renames and pre-existing changes further complicate attribution.
 
-It does not prove that the process was technically unable to write elsewhere, access the network, read a secret, or run a dangerous command. Those guarantees belong to other mechanisms: system permissions, process isolation, secret management, network policy, and the execution environment.
+Our clean start at `7a31c42` keeps the variant simple: the new path did not exist before the attempt. In an already modified working tree, deleting it automatically could destroy someone else's work. Restoration is reasonable only when the reference state and ownership of the changes are known, and only after the scope violation has been recorded.
 
-Nor does it detect a semantic error in an authorized path. The agent can remain perfectly within the declared directories and still introduce a business defect. Finally, the scope of the Git check must be stated: tracked files, untracked files, the index, pre-existing changes, and renames are not always observed in the same way.
+Finally, staying inside the allowed directories does not guarantee business correctness. The defect in the “Next” button lived in a perfectly authorized area. Boundaries answer “where did the task write?”, not “is the behavior correct?”
 
-The guardrail provides a narrower benefit: it compares a write policy with a set of observed modifications, then exposes the discrepancy before review. That is already useful, provided it is not credited with a security guarantee it does not provide.
+## The minimal stop-and-resumption record
 
-## The minimal stop record
-
-A team can apply this method without a full orchestrator. For every interrupted task, retain a short record:
+A team can apply this protocol with a short record, even without a full orchestrator:
 
 ```markdown
 # Stop and resumption
 
-Category: missing decision / scope violation / repairable failure
+Attempt:
+Starting Git state:
 Detection phase:
-Affected attempt:
+Category: missing decision / crossed boundary / repairable failure
 
 Observed facts:
 -
 
-What remains agent-declared:
+Runner declarations:
 -
 
-Impact on the expected outcome:
-Authority required:
-
-Options:
-1.
-2.
-
-Decision and source:
-Actions before resumption:
-Artifacts to update:
+Required authority:
+Decision or diagnosis:
+Exact resumption point:
+Paths writable during resumption:
 Checks to rerun:
+Previous attempts to preserve:
+Checks not run:
 Residual risk:
 ```
 
-The record enforces three useful separations: facts from declarations, options from decisions, and correction from validation. Most importantly, it prevents resumption from depending on the memory of the person who watched the execution.
+The record separates observations, declarations, authority, and checks. Most importantly, it lets a new session resume without depending on the memory of the previous chat.
 
 ## Conclusion
 
-Knowing when to stop is a positive capability in an agentic workflow. A missing decision must be escalated to the right authority. A scope violation must remain visible, even if the modification is later removed. A repairable failure can trigger a new attempt, but only within a bounded loop followed by renewed checks.
+The first pagination attempt required neither a new feature nor a product decision. It required a bounded correction: the expected behavior was explicit, the defect was local, the boundaries had held, and a test could verify the outcome.
 
-In all three cases, resumption must neither erase history nor silently expand the contract. It links a finding, decision, or repair to a new execution brief.
+Attempt 002 therefore resumed from the failed `make test-front`, changed one file, and reran `make test-back`, `make test-front`, and `make build-front`. It erased neither attempt 001 nor the global check that remained unexecuted.
 
-One question remains: what is the evidence produced by this workflow actually worth? A successful scope check and commands that completed successfully do not yet tell us which revision they apply to or what they actually covered. To study this without confusing the main scenario with the URL variant, the next article returns to the initial pagination execution: [**“The Tests Pass”: What Does the Workflow Prove?**](../local-proof-agent-workflow/index.md).
+The variants show why this precision matters. Without a decided behavior, the workflow must wait for human authority and recompile. With `shared/routing/customer-page.ts` in the diff, it must stop at the boundary before validations. In neither case does a simple “continue” describe the next step correctly.
+
+We now have two local attempts: one red, then one green. What do their commands actually allow us to claim, and which state of the code do they apply to? That is the subject of the next article: [**“The Tests Pass”: What Does the Workflow Prove?**](../local-proof-agent-workflow/index.md).
 
 <div class="article-footer-contact">
   <p>To discuss this article or leave me a public message:</p>

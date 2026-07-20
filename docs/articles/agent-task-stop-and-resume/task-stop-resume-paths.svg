@@ -1,112 +1,139 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
-  <title id="title">Three Stops, Three Paths to Resume</title>
-  <desc id="desc">A three-branch workflow showing how a missing decision, a scope violation, and a repairable failure require different authorities and actions before a new compiled attempt can begin.</desc>
+  <title id="title">Customer pagination: one failed attempt and one bounded retry</title>
+  <desc id="desc">A concrete timeline starts from clean revision 7a31c42, shows attempt 001 failing the frontend test, attempt 002 repairing one file and passing three targeted checks, then branches to the different paths required for a missing decision or a shared-routing boundary violation.</desc>
   <defs>
-    <filter id="shadow" x="-10%" y="-10%" width="120%" height="130%">
-      <feGaussianBlur in="SourceAlpha" stdDeviation="8" result="blur"/>
+    <filter id="shadow" x="-12%" y="-12%" width="124%" height="136%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="7" result="blur"/>
       <feOffset in="blur" dx="0" dy="5" result="offsetBlur"/>
-      <feFlood flood-color="#07162d" flood-opacity="0.10" result="shadowColor"/>
+      <feFlood flood-color="#07162d" flood-opacity="0.11" result="shadowColor"/>
       <feComposite in="shadowColor" in2="offsetBlur" operator="in" result="shadowShape"/>
       <feMerge>
         <feMergeNode in="shadowShape"/>
         <feMergeNode in="SourceGraphic"/>
       </feMerge>
     </filter>
-    <marker id="arrow" viewBox="0 0 12 12" markerWidth="14" markerHeight="14" refX="10" refY="6" orient="auto" markerUnits="userSpaceOnUse">
-      <path d="M 0 0 L 12 6 L 0 12 z" fill="#607089"/>
+    <marker id="arrow" viewBox="0 0 12 12" markerWidth="13" markerHeight="13" refX="10" refY="6" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0 0 L12 6 L0 12 Z" fill="#65758b"/>
     </marker>
     <style>
       .font { font-family: "Noto Sans", "DejaVu Sans", sans-serif; }
+      .mono { font-family: "DejaVu Sans Mono", monospace; }
       .navy { fill: #07162d; }
       .muted { fill: #52627a; }
-      .card { fill: #f7f9fc; stroke: #d9e1ec; stroke-width: 2; }
-      .connector { fill: none; stroke: #607089; stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; }
-      .section-label { font-size: 24px; font-weight: 800; letter-spacing: 1.2px; }
-      .body { font-size: 24px; font-weight: 500; }
+      .card { fill: #ffffff; stroke: #d9e1ec; stroke-width: 2; }
+      .connector { fill: none; stroke: #65758b; stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; }
+      .eyebrow { font-size: 20px; font-weight: 800; letter-spacing: 1.2px; }
+      .heading { font-size: 29px; font-weight: 800; }
+      .body { font-size: 22px; font-weight: 600; }
+      .small { font-size: 19px; font-weight: 600; }
     </style>
   </defs>
 
   <rect width="1600" height="900" fill="#ffffff"/>
 
   <g class="font">
-    <text x="800" y="76" text-anchor="middle" class="navy" font-size="54" font-weight="800">Three Stops, Three Paths to Resume</text>
-    <text x="800" y="122" text-anchor="middle" class="muted" font-size="28" font-weight="500">The reason for stopping determines the authority, action, and legitimate restart.</text>
+    <text x="800" y="62" text-anchor="middle" class="navy mono" font-size="46" font-weight="800">feature/customer-pagination</text>
+    <text x="800" y="105" text-anchor="middle" class="muted mono" font-size="24" font-weight="700">7a31c42  ·  CLEAN START  ·  BOUNDED RESUMPTION</text>
 
-    <rect x="620" y="150" width="360" height="64" rx="32" fill="#ffffff" stroke="#07162d" stroke-width="3" filter="url(#shadow)"/>
-    <rect x="640" y="170" width="24" height="24" rx="4" fill="#f47b20"/>
-    <text x="692" y="192" class="navy" font-size="28" font-weight="800">STOP DETECTED</text>
+    <path d="M382 315 H422" class="connector" marker-end="url(#arrow)"/>
+    <path d="M782 315 H822" class="connector" marker-end="url(#arrow)"/>
+    <path d="M1182 315 H1222" class="connector" marker-end="url(#arrow)"/>
 
-    <path d="M800 214 V230 H300 V245" class="connector" marker-end="url(#arrow)"/>
-    <path d="M800 214 V245" class="connector" marker-end="url(#arrow)"/>
-    <path d="M800 214 V230 H1300 V245" class="connector" marker-end="url(#arrow)"/>
-
-    <!-- Missing decision -->
+    <!-- Attempt 001 -->
     <g filter="url(#shadow)">
-      <rect x="70" y="250" width="460" height="415" rx="22" class="card"/>
-      <path d="M92 250 H508 A22 22 0 0 1 530 272" fill="none" stroke="#f47b20" stroke-width="8" stroke-linecap="round"/>
+      <rect x="42" y="150" width="340" height="330" rx="22" class="card"/>
+      <path d="M64 150 H360 A22 22 0 0 1 382 172" fill="none" stroke="#2f6fdd" stroke-width="8" stroke-linecap="round"/>
     </g>
-    <circle cx="115" cy="299" r="27" fill="#fff3e8" stroke="#f47b20" stroke-width="3"/>
-    <text x="115" y="308" text-anchor="middle" class="navy" font-size="24" font-weight="800">01</text>
-    <text x="158" y="307" class="navy" font-size="28" font-weight="800">MISSING DECISION</text>
-    <text x="110" y="347" class="muted" font-size="24" font-weight="600">Before coding</text>
-    <line x1="110" y1="369" x2="490" y2="369" stroke="#d9e1ec" stroke-width="2"/>
-    <text x="110" y="408" fill="#b94f00" class="section-label">AUTHORITY</text>
-    <text x="110" y="442" class="navy body">Product, architecture, security,</text>
-    <text x="110" y="473" class="navy body">or domain owner</text>
-    <text x="110" y="513" fill="#b94f00" class="section-label">ACTION</text>
-    <text x="110" y="547" class="navy body">Record the decision</text>
-    <text x="110" y="578" class="navy body">Update the governing input</text>
-    <text x="110" y="618" fill="#b94f00" class="section-label">RESUME POINT</text>
-    <text x="110" y="652" class="navy body">Recompile the work</text>
+    <text x="76" y="192" fill="#2f6fdd" class="eyebrow">ATTEMPT 001</text>
+    <text x="76" y="232" class="navy heading">5 product files</text>
+    <rect x="76" y="254" width="272" height="38" rx="19" fill="#e7f7f0"/>
+    <text x="212" y="280" text-anchor="middle" fill="#14784d" class="small">BOUNDARY · PASSED</text>
+    <line x1="76" y1="312" x2="348" y2="312" stroke="#d9e1ec" stroke-width="2"/>
+    <text x="76" y="345" class="muted mono" font-size="20">make test-back</text>
+    <text x="348" y="345" text-anchor="end" fill="#14784d" class="body mono">0</text>
+    <text x="76" y="382" class="muted mono" font-size="20">make test-front</text>
+    <text x="348" y="382" text-anchor="end" fill="#bf3d32" class="body mono">1</text>
+    <text x="76" y="419" class="muted mono" font-size="20">make build-front</text>
+    <text x="348" y="419" text-anchor="end" fill="#14784d" class="body mono">0</text>
+    <text x="76" y="456" class="muted mono" font-size="20">global</text>
+    <text x="348" y="456" text-anchor="end" fill="#8b6508" class="small mono">NOT RUN</text>
 
-    <!-- Scope violation -->
+    <!-- Failed validation -->
     <g filter="url(#shadow)">
-      <rect x="570" y="250" width="460" height="415" rx="22" class="card"/>
-      <path d="M592 250 H1008 A22 22 0 0 1 1030 272" fill="none" stroke="#7a4fd3" stroke-width="8" stroke-linecap="round"/>
+      <rect x="442" y="150" width="340" height="330" rx="22" fill="#fff9f6" stroke="#efc1ae" stroke-width="2"/>
+      <path d="M464 150 H760 A22 22 0 0 1 782 172" fill="none" stroke="#e85d3f" stroke-width="8" stroke-linecap="round"/>
     </g>
-    <circle cx="615" cy="299" r="27" fill="#f1ebfb" stroke="#7a4fd3" stroke-width="3"/>
-    <text x="615" y="308" text-anchor="middle" class="navy" font-size="24" font-weight="800">02</text>
-    <text x="658" y="307" class="navy" font-size="28" font-weight="800">SCOPE VIOLATION</text>
-    <text x="610" y="347" class="muted" font-size="24" font-weight="600">Observed after writing</text>
-    <line x1="610" y1="369" x2="990" y2="369" stroke="#d9e1ec" stroke-width="2"/>
-    <text x="610" y="408" fill="#6438bc" class="section-label">AUTHORITY</text>
-    <text x="610" y="442" class="navy body">Task lead + foundation owner</text>
-    <text x="610" y="473" class="navy body">when shared code is involved</text>
-    <text x="610" y="513" fill="#6438bc" class="section-label">ACTION</text>
-    <text x="610" y="547" class="navy body">Isolate or remove the change</text>
-    <text x="610" y="578" class="navy body">Split or reclassify the work</text>
-    <text x="610" y="618" fill="#6438bc" class="section-label">RESUME POINT</text>
-    <text x="610" y="652" class="navy body">Start from a valid scope</text>
+    <text x="476" y="192" fill="#c3442d" class="eyebrow">VALIDATION STOP</text>
+    <text x="476" y="232" class="navy heading">Next on last page</text>
+    <line x1="476" y1="255" x2="748" y2="255" stroke="#efc1ae" stroke-width="2"/>
+    <text x="476" y="294" class="muted body">Expected</text>
+    <text x="748" y="294" text-anchor="end" class="navy body mono">disabled</text>
+    <text x="476" y="334" class="muted body">Received</text>
+    <text x="748" y="334" text-anchor="end" fill="#bf3d32" class="body mono">enabled</text>
+    <rect x="476" y="370" width="272" height="54" rx="27" fill="#fde9e4" stroke="#efc1ae" stroke-width="2"/>
+    <text x="612" y="405" text-anchor="middle" fill="#b33825" class="eyebrow mono">NEEDS_RETRY</text>
+    <text x="612" y="456" text-anchor="middle" class="muted small">Same objective · same authority</text>
 
-    <!-- Repairable failure -->
+    <!-- Attempt 002 -->
     <g filter="url(#shadow)">
-      <rect x="1070" y="250" width="460" height="415" rx="22" class="card"/>
-      <path d="M1092 250 H1508 A22 22 0 0 1 1530 272" fill="none" stroke="#1f9d66" stroke-width="8" stroke-linecap="round"/>
+      <rect x="842" y="150" width="340" height="330" rx="22" class="card"/>
+      <path d="M864 150 H1160 A22 22 0 0 1 1182 172" fill="none" stroke="#7a4fd3" stroke-width="8" stroke-linecap="round"/>
     </g>
-    <circle cx="1115" cy="299" r="27" fill="#e7f7f0" stroke="#1f9d66" stroke-width="3"/>
-    <text x="1115" y="308" text-anchor="middle" class="navy" font-size="24" font-weight="800">03</text>
-    <text x="1158" y="307" class="navy" font-size="28" font-weight="800">REPAIRABLE FAILURE</text>
-    <text x="1110" y="347" class="muted" font-size="24" font-weight="600">Validation or mechanical step</text>
-    <line x1="1110" y1="369" x2="1490" y2="369" stroke="#d9e1ec" stroke-width="2"/>
-    <text x="1110" y="408" fill="#14784d" class="section-label">AUTHORITY</text>
-    <text x="1110" y="442" class="navy body">Agent or developer</text>
-    <text x="1110" y="473" class="navy body">within a bounded policy</text>
-    <text x="1110" y="513" fill="#14784d" class="section-label">ACTION</text>
-    <text x="1110" y="547" class="navy body">Fix the diagnosed cause</text>
-    <text x="1110" y="578" class="navy body">Rerun affected checks</text>
-    <text x="1110" y="618" fill="#14784d" class="section-label">RESUME POINT</text>
-    <text x="1110" y="652" class="navy body">New attempt, same contract</text>
+    <text x="876" y="192" fill="#6438bc" class="eyebrow">ATTEMPT 002</text>
+    <text x="876" y="232" class="navy heading">1-file repair</text>
+    <text x="876" y="270" class="muted mono" font-size="18">customer-list.tsx</text>
+    <line x1="876" y1="293" x2="1148" y2="293" stroke="#d9e1ec" stroke-width="2"/>
+    <rect x="876" y="317" width="272" height="42" rx="21" fill="#e7f7f0"/>
+    <text x="1012" y="345" text-anchor="middle" fill="#14784d" class="small">BOUNDARY · PASSED</text>
+    <text x="876" y="402" class="muted body">Targeted checks</text>
+    <text x="1148" y="402" text-anchor="end" fill="#14784d" class="heading mono">3/3</text>
+    <text x="1012" y="450" text-anchor="middle" fill="#14784d" class="eyebrow mono">COMPLETED</text>
 
-    <path d="M300 665 V705 H800" class="connector"/>
-    <path d="M800 665 V742" class="connector" marker-end="url(#arrow)"/>
-    <path d="M1300 665 V705 H800" class="connector"/>
-
+    <!-- Local review -->
     <g filter="url(#shadow)">
-      <rect x="310" y="750" width="980" height="105" rx="24" fill="#ffffff" stroke="#2f6fdd" stroke-width="3"/>
+      <rect x="1242" y="150" width="316" height="330" rx="22" class="card"/>
+      <path d="M1264 150 H1536 A22 22 0 0 1 1558 172" fill="none" stroke="#1f9d66" stroke-width="8" stroke-linecap="round"/>
     </g>
-    <circle cx="372" cy="802" r="35" fill="#eaf1fd" stroke="#2f6fdd" stroke-width="3"/>
-    <text x="372" y="811" text-anchor="middle" class="navy" font-size="24" font-weight="800">N+1</text>
-    <text x="430" y="796" class="navy" font-size="32" font-weight="800">NEW COMPILED ATTEMPT</text>
-    <text x="430" y="832" class="muted" font-size="24" font-weight="600">Updated authority  •  explicit scope  •  previous stop preserved</text>
+    <text x="1276" y="192" fill="#14784d" class="eyebrow">LOCAL REVIEW</text>
+    <text x="1276" y="232" class="navy heading">Evidence, not verdict</text>
+    <line x1="1276" y1="255" x2="1524" y2="255" stroke="#d9e1ec" stroke-width="2"/>
+    <text x="1276" y="298" class="muted body">Final diff</text>
+    <text x="1524" y="298" text-anchor="end" class="navy body">5 files</text>
+    <text x="1276" y="340" class="muted body">History</text>
+    <text x="1524" y="340" text-anchor="end" class="navy body">2 attempts</text>
+    <text x="1276" y="382" class="muted body">Global quality</text>
+    <text x="1524" y="382" text-anchor="end" fill="#8b6508" class="small mono">NOT RUN</text>
+    <rect x="1276" y="413" width="248" height="40" rx="20" fill="#eef4ff"/>
+    <text x="1400" y="440" text-anchor="middle" fill="#285cae" class="small">READY TO REVIEW</text>
+
+    <!-- Branch connector -->
+    <path d="M612 480 V532 H370 V570" class="connector" marker-end="url(#arrow)"/>
+    <path d="M612 532 H1210 V570" class="connector" marker-end="url(#arrow)"/>
+    <rect x="551" y="511" width="122" height="40" rx="20" fill="#ffffff" stroke="#65758b" stroke-width="2"/>
+    <text x="612" y="538" text-anchor="middle" class="muted eyebrow">CONTRAST</text>
+
+    <!-- Missing decision branch -->
+    <g filter="url(#shadow)">
+      <rect x="90" y="580" width="560" height="220" rx="22" fill="#fffaf1" stroke="#efd69a" stroke-width="2"/>
+      <path d="M112 580 H628 A22 22 0 0 1 650 602" fill="none" stroke="#d79a18" stroke-width="8" stroke-linecap="round"/>
+    </g>
+    <text x="128" y="626" fill="#996b08" class="eyebrow">IF THE EXPECTATION IS MISSING</text>
+    <text x="128" y="672" class="navy heading">Human decision</text>
+    <text x="128" y="710" class="muted body">Hide Next or keep it disabled?</text>
+    <rect x="128" y="738" width="484" height="40" rx="20" fill="#fff2cf"/>
+    <text x="370" y="765" text-anchor="middle" fill="#805907" class="small mono">UPDATE INPUT  →  RECOMPILE</text>
+
+    <!-- Scope violation branch -->
+    <g filter="url(#shadow)">
+      <rect x="850" y="580" width="660" height="220" rx="22" fill="#faf7ff" stroke="#d6c5f2" stroke-width="2"/>
+      <path d="M872 580 H1488 A22 22 0 0 1 1510 602" fill="none" stroke="#7a4fd3" stroke-width="8" stroke-linecap="round"/>
+    </g>
+    <text x="888" y="626" fill="#6438bc" class="eyebrow">IF A READ-ONLY PATH IS MODIFIED</text>
+    <text x="888" y="670" class="navy mono" font-size="25" font-weight="800">shared/routing/customer-page.ts</text>
+    <text x="888" y="710" fill="#6438bc" class="body">BOUNDARY · FAILED</text>
+    <rect x="888" y="738" width="584" height="40" rx="20" fill="#eee7fa"/>
+    <text x="1180" y="765" text-anchor="middle" fill="#5730a6" class="small mono">VALIDATIONS SKIPPED  →  RESTORE SCOPE</text>
+
+    <text x="800" y="858" text-anchor="middle" class="navy mono" font-size="24" font-weight="800">RETRY  ≠  RECOMPILE  ≠  RECLASSIFY</text>
   </g>
 </svg>

@@ -4,12 +4,12 @@ author: "Vincent El Kouby-Benichou, Baracoda"
 company: "Baracoda"
 company_url: "https://baracoda.com"
 description: >-
-  A zero exit code is not a verdict on a feature. Here is how to read local evidence, make its gaps visible, and prepare to connect it to Git, CI, and human judgment.
+  Three green commands do not validate a feature by themselves. Let us inspect two concrete attempts, their Git state, and their manifest to see what local evidence really allows us to claim.
 ---
 
 # “The Tests Pass”: What Does the Workflow Prove? { .article-title }
 
-A passing test result is a useful fact. It is not yet a conclusion about the feature. To understand what it proves, we need to know which command ran, what it covered, which revision it concerned, which environment it used, and everything it did not verify.
+Three commands return `0` on the second attempt. Five files have changed, all within scope. Yet the precise conclusion is not “the feature is validated”: an identified local state passed specific checks after a first failing attempt that the workflow preserved.
 { .article-lead }
 
 <p class="article-meta">
@@ -17,328 +17,341 @@ A passing test result is a useful fact. It is not yet a conclusion about the fea
   <a class="article-contact-link" href="https://www.linkedin.com/in/vincentelkoubybenichou/">LinkedIn</a>
 </p>
 
-In the [previous article](../agent-task-stop-and-resume/index.md), a teaching scenario involving URL synchronization helped us examine stopping and resuming work. To analyze evidence without mixing that scenario into the main execution, let us return to the original pagination feature described in the [end-to-end trace](../agentic-feature-end-to-end/index.md), without the URL extension. Assume that its tasks are complete, the observed files remain within the authorized scope, and every command that ran returned `0`.
+In the [previous article](../agent-task-stop-and-resume/index.md), we followed attempt 001's frontend failure to the bounded repair in attempt 002. We also saw why a URL-synchronization change under `shared/routing/**` would require a different stop. We now stay with the successful local-repair path, whose package only writes under `backend/customers/**` and `frontend/customers/**`.
 
-Can we now write, “customer directory pagination has been validated”?
+The runner has just completed a second attempt. Before summarizing the outcome as “the tests pass,” let us inspect the Git state, commands, and evidence manifest that the reviewer will actually receive.
 
-Not yet. We can make a more precise claim: in a given local context, certain commands completed without errors against the observed working-tree state. That sentence may sound less impressive. It is far more useful to the person reviewing the change.
+The point to establish is simple: a green result becomes useful when we can answer five questions.
 
-A framework applying these principles can retain some of these facts: attempts, detected files, scope checks, executed commands, exit codes, and a review summary. That does not turn the local artifact it produces into a complete attestation for a pull request.
+1. Which state of the code did the command run against?
+2. What did it actually execute?
+3. Which observable result did it produce?
+4. Which part of the change does that result cover?
+5. What remains unrun, unknown, or subject to human judgment?
 
-> The color of a check summarizes a result. The evidence must make it possible to reconstruct that result's scope.
+> Green summarizes the outcome of a command. Evidence preserves the state, scope, history, and gaps required to interpret it.
 
-<figure class="article-diagram">
-  <img src="local-proof-context.png" alt="A PASSED check with a zero exit code is surrounded by its revision, environment, command, scope, time, output, and known limits, while NOT RUN and UNKNOWN gaps remain visible." loading="lazy" />
-  <figcaption>A green check can be interpreted only with its context, scope, and known limitations.</figcaption>
-</figure>
+## Start with an identifiable state
 
-## “Green” is not a property of the code
+Before the first attempt, the workflow records the branch, starting revision, and working-tree state:
 
-Saying that a test passes almost always omits the rest of the sentence: which test, run where, when, against what, and under which assumptions?
+```console
+$ git branch --show-current
+feature/customer-pagination
 
-A validation result can be represented as a tuple:
+$ git rev-parse --short HEAD
+7a31c42
+
+$ git status --short --untracked-files=all
+```
+
+The final command prints no lines. In this observation, the working tree, Git index, and list of untracked files are empty. The package therefore starts on `feature/customer-pagination`, from commit `7a31c42`, with no detected local changes.
+
+This snapshot does not guarantee that the repository will remain clean. It only establishes the comparison point before the runner executes T-01, T-02, and T-03: evolve the backend contract, adapt the frontend directory, and then review their consistency.
+
+The runner loads the package, modifies the five expected files, and reports all three tasks as complete. That declaration triggers the checks; it does not replace them.
+
+## Attempt 001: two green commands, one failing behavior
+
+The path check passes: every observed file belongs to an authorized product area. The workflow then runs the three targeted validations declared in the execution brief.
 
 ```text
-result = (
-  revision or working state,
-  environment,
-  command,
-  covered scope,
-  timestamp,
-  exit code,
-  useful output,
-  known limitations
-)
-```
+Attempt 001
 
-Removing one of these elements does not necessarily make the result false. It reduces what someone else can conclude from it.
-
-A backend unit-test command returning `0` establishes that the cases present in that suite did not fail in that environment. It does not demonstrate that the interface can consume the new contract. A frontend type check does not demonstrate that the pagination controls behave correctly. A successful build does not demonstrate that the `loading`, `empty`, and `error` states are understandable to a user.
-
-Even an end-to-end suite does not “prove the feature” in an absolute sense. It exercises the paths it contains, with the data and environment it is given. Its value may be high; its scope remains bounded.
-
-The right question is therefore not:
-
-> Are the tests green?
-
-But:
-
-> Which hypotheses does the green result rule out, and which ones remain open?
-
-## Four sources of truth to keep separate
-
-An agentic execution can easily mix several categories of information. They must remain distinct during review.
-
-| Source | Example | What we can claim | Main limitation |
-| --- | --- | --- | --- |
-| **Agent declaration** | “I added pagination and the tests pass” | The agent reports completion and describes its result | The declaration is not an independent check |
-| **Workflow observation** | A command returned `0` between two timestamps | The command completed successfully according to its exit code | By default, the workflow does not know whether the command is sufficient |
-| **Git-reported state** | Paths are modified in the working tree | Git sees those differences at inspection time | Without identified base and head commits, attribution to a revision remains incomplete |
-| **Human decision** | “These checks are sufficient to submit the change for merge” | An authorized person accepts the level of residual risk | The decision depends on the quality of the facts available to that person |
-
-These four sources can agree without being interchangeable. The agent may report one modified file while the workflow observes a different list in Git. When they diverge, the difference itself becomes a fact to examine.
-
-Likewise, a tool may record “completed” because every declared command succeeded. That status does not say whether an important validation was omitted. An absent command has no red exit code.
-
-> An omitted validation must never appear as a successful check. It must appear as missing information, an explicit choice, or a residual risk.
-
-## Inspecting local evidence
-
-For the pagination example, imagine the following local artifact. Its field names and values were chosen for teaching purposes: they illustrate one way a framework can retain the facts that matter during review.
-
-```yaml
-attempt:
-  id: run-002
-  created_at: 2026-07-17T09:42:18Z
-
-agent:
-  declared_result: completed
-  summary: >-
-    Pagination contract added to the API and integrated into the directory.
-
-git_observed:
-  before:
-    already_modified_files: []
-  after:
-    modified_files:
-      - backend/customers/api.py
-      - backend/customers/tests/test_pagination.py
-      - frontend/customers/customer-list.tsx
-      - frontend/customers/customer-list.test.tsx
-  changed_during_attempt:
-    - backend/customers/api.py
-    - backend/customers/tests/test_pagination.py
-    - frontend/customers/customer-list.tsx
-    - frontend/customers/customer-list.test.tsx
-
-boundaries:
+Path check
   status: passed
-  violations: []
 
-validations:
-  - command: backend-tests customers
-    exit_code: 0
-    started_at: 2026-07-17T09:43:02Z
-    ended_at: 2026-07-17T09:43:07Z
-  - command: frontend-tests customer-list
-    exit_code: 0
-    started_at: 2026-07-17T09:43:07Z
-    ended_at: 2026-07-17T09:43:13Z
+$ make test-back
+  exit code: 0
 
-global_quality:
+$ make test-front
+  FAIL CustomerList > disables Next on the last page
+  expected: disabled
+  received: enabled
+  exit code: 1
+
+$ make build-front
+  exit code: 0
+
+Global quality
   status: not_run
+
+Attempt status
+  needs_retry
 ```
 
-The paths and commands are illustrative. The excerpt nevertheless raises concrete questions:
+This combination is informative. The backend passes. The frontend builds. Yet an observable behavior remains wrong: on the last page, the “Next” button is still enabled.
 
-- were there truly no files modified before execution, or were they captured incorrectly?
-- does the final list include staged, unstaged, and untracked changes?
-- were the commands selected from the repository contract, from the plan, or by the agent?
-- is their complete output retained elsewhere, or only an excerpt?
-- why was the global quality check not run?
-- which acceptance criterion does each command exercise?
-- on which commit can this attempt be replayed?
+The green build does not cancel the red test. These commands ask different questions. `make build-front` establishes that the requested frontend can be built in this environment; it does not verify that navigation respects pagination boundaries.
 
-Useful evidence does not make these questions disappear. It makes them visible early enough for review to address them.
+The attempt therefore moves to `needs_retry`. The workflow keeps the test name, expected result, received result, and the other two green commands. It neither replaces the evidence with a vague “the tests fail” nor marks the feature complete because two out of three checks succeeded.
 
-## What a framework can establish locally
+## Attempt 002: repair one behavior, then revalidate the whole state
 
-To make local evidence inspectable, an implementation can:
+The diagnosis requires no new product decision, dependency, or scope extension. The repair can remain in the component that owns the behavior:
 
-- give each attempt an identifier, a timestamp, and a link to its detailed result;
-- inspect Git state before and after the runner executes;
-- calculate which files changed during execution, rather than automatically treating the entire working tree as the agent's work;
-- compare observed paths with declared boundaries;
-- run configured validations only after certain structural checks;
-- retain each command's exit code, timestamps, and a portion of its standard output and error streams;
-- keep earlier attempts when a correction and another validation pass are required;
-- gather files, checks, risks, and open questions into a summary that prepares the review.
+```text
+file changed during attempt 002
+  frontend/customers/customer-list.tsx
+```
 
-With these capabilities, the workflow can support a precise claim: a significant part of the local execution is inspectable.
+Attempt 002 receives the previous failure, the same write authority, and the same validations. After the repair, the workflow checks the paths again and reruns the three commands declared for the package:
 
-This setup does not, however, establish that:
+```text
+Attempt 002
 
-- the Git capture necessarily covers every possible state of the index and working tree;
-- the initial state was clean or explicitly accepted;
-- the artifact identifies immutable base and head commits;
-- all system, runtime, dependency, and tool versions were recorded;
-- the commands that ran cover every acceptance criterion;
-- CI repeated the checks in an isolated environment;
-- the retained output is exhaustive;
-- the business behavior is correct.
+Path check
+  status: passed
 
-These gaps do not invalidate local evidence. They simply prevent claims that exceed its actual scope.
+$ make test-back
+  exit code: 0
 
-## A command is only meaningful with its scope
+$ make test-front
+  exit code: 0
 
-For pagination, validations can be classified by the question they answer.
+$ make build-front
+  exit code: 0
 
-| Check | Question actually tested | What it does not cover by itself |
+Global quality
+  status: not_run
+
+Attempt status
+  completed
+```
+
+Rerunning all three commands produces coherent evidence for the package's final state. Another policy could select a justified subset based on the repair's impact; in this path, the contract requires all three validations, so all three run again.
+
+The latest green result does not rewrite history. Attempt 001 remains visible with its failure, while attempt 002 shows the bounded repair that produced the new result.
+
+<figure class="article-diagram">
+  <img src="local-proof-context.png" alt="Two customer-pagination attempts are connected: the first preserves a failing frontend test, and the second passes three targeted commands after a bounded repair. The current HEAD, five observed paths, unrun global quality check, and missing result commit remain visible." loading="lazy" />
+  <figcaption>Attempt 002's green result can only be interpreted with its Git state, scope, previous failing attempt, and missing checks.</figcaption>
+</figure>
+
+## What Git actually observes
+
+At the end of attempt 001, the workflow retained the same Git observations it will now collect again. At the end of attempt 002, the working tree still contains the feature's complete diff. The runner changed only one file during this second attempt, but the other four modifications produced during the first remain present.
+
+```console
+$ git branch --show-current
+feature/customer-pagination
+
+$ git rev-parse --short HEAD
+7a31c42
+
+$ git diff --name-only
+backend/customers/api.py
+backend/customers/tests/test_pagination.py
+frontend/customers/customer-api.ts
+frontend/customers/customer-list.tsx
+frontend/customers/customer-list.test.tsx
+
+$ git diff --cached --name-only
+
+$ git ls-files --others --exclude-standard
+```
+
+The first two commands confirm that the runner remained on the starting branch and that `HEAD` is still `7a31c42`. `git diff --name-only` compares the working tree with the index; because the index is empty of changes and still points to that same `HEAD`, its five paths also form the diff from the starting commit. The last command finds no untracked files.
+
+Comparing the snapshots supports two distinct claims:
+
+- between the clean start and final state, five files appeared in the feature diff;
+- between the start and end of attempt 002, only `frontend/customers/customer-list.tsx` changed.
+
+This distinction prevents the repair attempt from receiving credit for the entire feature. It also prevents the agent-reported file list from being confused with the list observed by Git. Without intermediate checkpoints between T-01, T-02, and T-03, Git still cannot establish which task produced each line.
+
+## Check the paths file by file
+
+The execution brief allows writes under `backend/customers/**` and `frontend/customers/**`. Shared layers remain read-only; tooling, generated files, and workflow state are forbidden.
+
+| Observed path | Matching rule | Conclusion |
 | --- | --- | --- |
-| Backend unit tests | Do boundary calculations and metadata satisfy the coded cases? | Actual serialization, database behavior, consumers |
-| API integration test | Does the route return the expected contract with test data? | Interface rendering and compatibility with every client |
-| Frontend type check | Do the interface and its calls satisfy the types known at compile time? | Runtime behavior and visual quality |
-| Component tests | Do the “previous” and “next” controls and the implemented states behave as expected in the test scenarios? | Complete navigation, real network behavior, exhaustive accessibility |
-| End-to-end test | Does the tested user journey work in the test environment? | Cases absent from the scenario, load, production |
-| Visual review | Do the main states appear correct with the observed data? | Automated regression detection and behaviors not exercised during review |
+| `backend/customers/api.py` | `backend/customers/**` | Writable |
+| `backend/customers/tests/test_pagination.py` | `backend/customers/**` | Writable |
+| `frontend/customers/customer-api.ts` | `frontend/customers/**` | Writable |
+| `frontend/customers/customer-list.tsx` | `frontend/customers/**` | Writable |
+| `frontend/customers/customer-list.test.tsx` | `frontend/customers/**` | Writable |
 
-This table prevents two opposite mistakes. The first is mechanically requiring every possible validation. The second is treating a few green checks as implicit coverage of the entire feature.
+No observed path touches `shared/ui/**`, `shared/state/**`, `shared/routing/**`, `tooling/**`, `generated/**`, or `workflow-state/**`. The `passed` status therefore means: **every path included in this observation matches a writable area in the package**.
 
-The level of validation should remain proportional to the [mode selected for the change](../agent-coding-modes/index.md). A full-stack Structured Feature requires a combination of checks across its surfaces and contracts. It does not necessarily require testing the entire monorepo on every local attempt. Any check not run must be deferred to an identified stage or explicitly accepted as a risk.
+It does not mean that the process was technically unable to write elsewhere. The check happens after writing; it is not a sandbox. Nor does it detect a business error inside an authorized path—exactly the kind of error the frontend test found in attempt 001.
 
-## Connecting acceptance criteria to validations
+## Open the attempt 002 manifest
 
-The pagination brief can contain four observable criteria:
-
-| Acceptance criterion | Planned validation | Result source | Remaining gap or human follow-up |
-| --- | --- | --- | --- |
-| The API returns the items, current page, and total result count | Unit tests and API integration test | Local workflow, then CI | Verify compatibility with existing consumers |
-| The user can move forward and backward without going past the first or last page | Component tests and end-to-end journey | Local workflow or CI, depending on the environment | Verify keyboard behavior and focus |
-| The `loading`, `empty`, and `error` states remain distinct | Component tests | Local workflow | Visual review with representative data |
-| The directory loads the first page when opened | Targeted component test | Local workflow | Confirm the default value in the brief and contract |
-
-This matrix does not guarantee that the tests are good. It reveals when a criterion has no validation, when a test claims to cover too much, or when a product decision is hiding inside a technical scenario.
-
-It also reveals the role of manual review. “Manual review completed” is neither a weakness nor equivalent to `passed`. Proper evidence records who checked what, against which version, and with what result. If that information is unavailable, the status must remain “to do” or “unknown.”
-
-## Gaps must be data
-
-A workflow interface is tempted to show only green and red. Evidence needs at least two additional states: **not run** and **unknown**.
-
-- **Not run** means the check was identified but did not execute. The reason may be legitimate: unavailable environment, cost, a check deferred to CI, or a planned manual validation.
-- **Unknown** means the information needed to reach a conclusion was not captured. Examples include the initial state of the index or the exact version of a tool.
-- **Truncated** must be explicit when only part of the output is retained. The exit code remains available, but detailed analysis may require the complete artifact.
-- **Unstable** means a check failed and then passed without a known cause. The latest green result does not erase the previous attempt.
-
-An execution can therefore be acceptable overall while still containing gaps. The manifest is not meant to turn everything into a failure. It enables the reviewer to distinguish a known absence from an invisible omission.
-
-## From local evidence to revision-bound evidence
-
-The [end-to-end trace](../agentic-feature-end-to-end/index.md) prepares the handoff to Git; it does not replace it. As long as the evidence describes a mutable working tree, another change can be added, removed, or staged after the evidence is produced.
-
-To connect results to a proposed change, we must at least identify:
-
-- the base commit from which the work started;
-- the head commit containing exactly the reviewed change;
-- the branch or pull request reference;
-- the state of the working tree and index at the relevant time;
-- the source of the result: local workstation, ephemeral environment, or CI;
-- essential environment versions;
-- the artifacts or logs that make the output retrievable.
-
-Git then provides a content identity and a stable diff between two revisions. CI can run checks against the pull request head in an environment described by the pipeline. Neither decides whether the coverage is sufficient. Together, they make the connection between a revision and its results much stronger.
-
-There is also a timing problem. If a fix is added after a green run, the previous validation does not automatically apply to the new commit. A review interface should make that mismatch visible rather than preserving a green badge detached from its revision.
-
-## The target manifest
-
-The following example is a **design target**: one possible manifest for moving from inspectable local evidence to revision-bound provenance. It remains a proposed structure; every field should be populated from a real, verifiable observation if it is to support the associated conclusion.
+The manifest gathers the facts required to reconstruct the latest result without erasing the previous attempt:
 
 ```yaml
 evidence:
-  execution:
-    id: stable-run-id
-    attempt: 2
-    source: local  # local | ci
-    started_at: 2026-07-17T09:42:18Z
-    ended_at: 2026-07-17T09:43:19Z
+  attempt:
+    id: "002"
+    previous_attempt: "001"
+    status: completed
+    source: local
 
   revision:
-    base_commit: abc123
-    head_commit: def456
     branch: feature/customer-pagination
-    working_tree_clean_before: true
-    index_clean_before: true
+    base_commit: 7a31c42
+    current_head: 7a31c42
+    result_commit: null
+    feature_started_clean: true
+    mutable_working_tree: true
 
-  changes:
-    observed_files: []
-    allowed_files: []
+  git:
+    carried_from_attempt_001:
+      - backend/customers/api.py
+      - backend/customers/tests/test_pagination.py
+      - frontend/customers/customer-api.ts
+      - frontend/customers/customer-list.tsx
+      - frontend/customers/customer-list.test.tsx
+    changed_during_attempt_002:
+      - frontend/customers/customer-list.tsx
+    final_modified_files:
+      - backend/customers/api.py
+      - backend/customers/tests/test_pagination.py
+      - frontend/customers/customer-api.ts
+      - frontend/customers/customer-list.tsx
+      - frontend/customers/customer-list.test.tsx
+    staged_files: []
+    untracked_files: []
+
+  path_policy:
+    status: passed
     violations: []
 
-  environment:
-    system: linux
-    runtime: identified-version
-    dependencies: identified-lockfile
-
   validations:
-    - id: backend-pagination
-      command: stable-repository-command
-      status: passed
+    - command: make test-back
       exit_code: 0
-      validated_revision: def456
-      index_at_check: clean
-      working_tree_at_check: clean
+      status: passed
       criteria: [AC-1]
-      output: artifact://validation/backend-pagination
+    - command: make test-front
+      exit_code: 0
+      status: passed
+      criteria: [AC-2, AC-3, AC-4]
+    - command: make build-front
+      exit_code: 0
+      status: passed
+      criteria: []
 
-  checks_not_run:
-    - id: end-to-end
-      reason: deferred_to_ci
-      risk: browser_integration_not_verified_locally
+  global_quality:
+    status: not_run
 
-  agent_declarations:
-    result: completed
+  previous_attempt:
+    id: "001"
+    status: needs_retry
+    failed_command: make test-front
+    failure: "Next remained enabled on the last page"
+
+  agent_declaration:
+    status: completed
+    open_questions: []
 
   human_review:
     status: pending
-    residual_risks: []
 ```
 
-A few details matter:
+Several separations are deliberate. `agent_declaration` reports what the runner says it completed; `git`, `path_policy`, and `validations` contain workflow observations. `previous_attempt` preserves the failure that explains the retry. `human_review` remains `pending`, even when every targeted validation is green.
 
-- `passed`, `not_run`, and `unknown` are distinct;
-- the agent's declaration remains separate from workflow observations;
-- the acceptance-criteria-to-validation matrix is readable without interpreting command names;
-- the risk attached to a deferred validation does not disappear;
-- human review remains `pending` even when every command is green.
+Two values are particularly effective at preventing an overbroad conclusion. `global_quality: not_run` says that the global quality profile did not run. `result_commit: null` says that the manifest still describes a mutable working tree, not a commit containing exactly the reviewed change. `current_head: 7a31c42` records the real Git `HEAD`; it is the base below the uncommitted diff, not an identity for that diff.
 
-The manifest can be shorter for a local fix and richer for a Foundation Evolution effort. Its function does not change: expose provenance, scope, and gaps before the decision.
+## Map each criterion to a check
 
-## What CI adds—and what it does not
+A command does not cover a feature “in general.” The plan must say which question it is meant to exercise, and review must then confirm that the tests present actually match that intention.
 
-CI provides three important properties: execution tied to a revision, a more reproducible environment, and visibility shared across the team. It can also enforce a version matrix, retain artifacts, and block merges when certain checks fail.
+| Acceptance criterion | Planned check | Observed in attempt 002 | What remains to review |
+| --- | --- | --- | --- |
+| **AC-1.** The API returns items, current page, and total count; an invalid page returns HTTP 404 with code `pagination_page_invalide` | `make test-back` | Exit code `0` | The cases in the suite and compatibility with known consumers |
+| **AC-2.** Users can move forward and backward without crossing the first or last page | `make test-front` | Exit code `0`; the upper bound failed in attempt 001 | Whether the test scenario faithfully represents the intended interaction |
+| **AC-3.** The `loading`, `empty`, and `error` states remain distinct | `make test-front` | Exit code `0` | Visual rendering, keyboard behavior, and accessibility |
+| **AC-4.** The directory loads the first page when opened | `make test-front` | Exit code `0` | Whether the default still matches the brief |
+| The frontend must remain buildable | `make build-front` | Exit code `0` | This structural gate does not judge product behavior |
 
-It does not automatically correct a poor choice of validations. A pipeline can be perfectly green while ignoring an acceptance criterion. It can also succeed because a command has become too permissive or because a suite does not exercise the new behavior.
+The “planned check” column comes from the plan. The “observed result” column comes from execution. Confusing them would make a command name look like a guarantee of coverage. The manifest can strengthen the connection by retaining relevant test identifiers or inspectable outputs; review is still responsible for judging whether the mapping is credible.
 
-The local workflow and CI are therefore complementary:
+## What we can claim—and nothing more
+
+| Evidence | Legitimate claim | Unsupported claim |
+| --- | --- | --- |
+| Clean start and final Git inspection | These five paths make up the local diff observed since `7a31c42` | Every line can be independently attributed to a precise task |
+| Path policy `passed` | Every observed path matches a write rule | The process could not write anywhere else |
+| `make test-back` returns `0` | That backend command passed against the final local state | The API is correct in every environment |
+| `make test-front` returns `0` in attempt 002 | The existing frontend scenarios passed after the repair | Every browser, visual state, and accessible interaction is correct |
+| `make build-front` returns `0` | The requested build completed successfully | The feature is usable or acceptable |
+| `global_quality: not_run` | No global quality result exists for this attempt | Global quality implicitly passed |
+| `result_commit: null` | No commit contains exactly the locally validated diff yet | The same results already apply to a pull request revision |
+
+Gaps must remain data. **Not run** means an identified check did not execute. **Unknown** means required information—such as an uncaptured tool version—is missing. **Truncated** must appear when only part of an output is retained. **Unstable** must remain visible when a check passes after a failure whose cause is not understood.
+
+Our frontend test is not classified as unstable: a precise cause was observed, one file was repaired, and a new attempt was recorded. That does not prove that the diagnosis was exhaustive; it at least makes the sequence open to challenge.
+
+## The final review record
+
+The manifest is designed for tools. The reviewer needs a more direct summary that does not lose provenance:
+
+```markdown
+# Local review — customer directory pagination
+
+Starting point:
+- branch: feature/customer-pagination
+- base commit: 7a31c42
+- clean working tree before attempt 001
+
+Execution:
+- attempt 001: needs_retry
+- attempt 002: completed
+- bounded repair: frontend/customers/customer-list.tsx
+
+Observed change:
+- 5 modified files
+- 0 staged files
+- 0 untracked files
+- path policy: passed
+
+Targeted validations on attempt 002:
+- make test-back: passed
+- make test-front: passed
+- make build-front: passed
+
+Not run:
+- global quality profile
+- CI
+- human visual and accessibility review
+
+Decision:
+- ready for local diff review
+- not yet bound to a result commit
+- not yet approved for merge
+```
+
+This summary does not say “pagination is validated.” It says why the diff can now be reviewed, which targeted validations passed, which failure preceded that result, and which gates remain closed.
+
+## From working tree to commit and CI
+
+Local evidence ends with `current_head: 7a31c42` and `result_commit: null`. As long as the change remains in a working tree, a file can still be edited after the green commands. Attempt 002's results do not automatically apply to that new state.
+
+The expected handoff is therefore explicit:
 
 ```text
-local evidence
-  -> prepares review and detects problems early
-  -> is tied to a commit
-  -> CI repeats or completes the checks on that revision
-  -> the PR gathers the diff, results, decisions, and risks
-  -> a human accepts, requests another attempt, or rejects
+attempt 002 on a mutable working tree
+  -> human review of the local diff
+  -> a commit containing exactly that diff
+  -> CI validations on that head commit
+  -> a pull request gathering the diff, results, gaps, and decisions
+  -> human acceptance, request for another attempt, or rejection
 ```
 
-The best handoff is not “everything was green on my machine.” It is an evidence manifest that says which checks can be replayed, which are reserved for CI, and which checks still require human judgment.
+Git then provides a content identity. CI runs checks against that identity in an environment described by the pipeline. Neither decides that the commands are sufficient, that the criteria are covered correctly, or that the residual risk is acceptable.
 
-## A review checklist that resists the green badge
-
-Before accepting the sentence “the tests pass,” the reviewer can ask ten questions:
-
-1. Is the exact revision or working-tree state that was checked identifiable?
-2. Was the initial state clean, or are its pre-existing changes known?
-3. Are the commands that actually ran visible?
-4. Are their exit codes, timestamps, and useful outputs available?
-5. Does their scope match the modified surfaces?
-6. Does every acceptance criterion have a check or an explicit decision?
-7. Are unrun validations and unknown information visible?
-8. Was a red attempt, a retry, or an unstable result retained?
-9. Did CI check the commit currently under review?
-10. Who has the authority to accept the residual risk?
-
-If the answers are accessible without reopening the conversation with the agent, the workflow has already become more valuable. If they are connected to the revision and CI artifacts, the pull request becomes substantially easier to challenge and approve.
+If another fix is added after the validated commit, the link must be rebuilt: new head commit, new results. A reliable review interface makes a stale green result visible instead of leaving it attached to the pull request as though it still applied to the latest state.
 
 ## Conclusion
 
-“The tests pass” is neither useless nor sufficient. It is the beginning of a demonstration: one or more commands completed without error in a given context.
+In this example, “the tests pass” can be replaced with a verifiable sentence: on attempt 002, from base commit `7a31c42`, all five observed files remain within the authorized scope, and `make test-back`, `make test-front`, and `make build-front` return `0`. Global quality did not run, no result commit contains the diff yet, and human review remains pending.
 
-Local evidence makes that context inspectable. Git ties the change to revisions. CI replays or completes the checks on an identified head commit. The acceptance-criteria-to-validation matrix shows the expected coverage. Human review ultimately decides whether the facts and gaps are compatible with the risk.
+This wording is less triumphant. It is also far more actionable.
 
-A framework applying these principles can already make this first step substantially more useful. The target manifest shows how to connect it to a revision without presenting a design intention as an achieved guarantee.
+It closes the path opened at the start of this series: [the overview establishes the full workflow](../ai-agent-based-coding-best-practices/index.md), [the repository makes rules visible](../agent-ready-repository/index.md), [the mode determines the level of control](../agent-coding-modes/index.md), [the feature follows an end-to-end path](../agentic-feature-end-to-end/index.md), the plan becomes [an execution brief](../agent-execution-package/index.md), the runner proposes a change, [stops remain traceable](../agent-task-stop-and-resume/index.md), and local evidence finally prepares Git, CI, and human judgment without replacing them.
 
-One question remains: how many decisions can reasonably be stabilized in a brief before its gray areas become more expensive than writing a specification? That will be the subject of the next article: **When the Brief Is Not Enough: Introducing a Spec Without Bureaucracy**.
+A reliable agentic workflow does not promise that the agent will always be right. It makes a better question possible: **which precise facts support our acceptance of this change, and which risks are we still choosing to carry?**
 
 <div class="article-footer-contact">
   <p>To discuss this article or leave me a public message:</p>

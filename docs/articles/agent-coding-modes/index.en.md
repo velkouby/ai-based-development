@@ -4,12 +4,12 @@ author: "Vincent El Kouby-Benichou, Baracoda"
 company: "Baracoda"
 company_url: "https://baracoda.com"
 description: >-
-  A local fix, an end-to-end feature, and a foundation change do not call for the same level of control. Here is how to choose a process that is proportionate to the risk of the change.
+  Four concrete situations involving the same customer directory show how to choose a level of control, a path, and stop conditions proportionate to the real risk of the change.
 ---
 
 # Four Modes, Two Paths: Choosing the Right Level of Control { .article-title }
 
-A local fix, an end-to-end feature, and a foundation change do not justify the same context, validations, or decision authority. The right level of control depends on the risk profile of the change, not on the number of lines or the tool that produces them.
+Fixing a label, adding a local action, implementing end-to-end pagination, and discovering that a shared primitive must change should not produce the same execution brief. Let us use these four concrete situations to choose the context, validations, and decision authority each one actually requires.
 { .article-lead }
 
 <p class="article-meta">
@@ -17,221 +17,290 @@ A local fix, an end-to-end feature, and a foundation change do not justify the s
   <a class="article-contact-link" href="https://www.linkedin.com/in/vincentelkoubybenichou/">LinkedIn</a>
 </p>
 
-An [agent-ready repository](../agent-ready-repository/index.md) tells the agent where it may act, which rules it must follow, and when it must stop. It does not yet tell us how much structure each request deserves.
+In the [previous article](../agent-ready-repository/index.md), we prepared the ground and sketched out the form of an execution brief and the report expected after execution. Let us now return to the point before either is produced: the rules, areas, and commands are known, but an agent-ready repository does not, by itself, determine how much structure each request deserves.
 
-Changing the empty-state label, adding a local action, implementing end-to-end pagination for the customer directory, and modifying a shared primitive are four fundamentally different kinds of change. Sending all four through exactly the same path would be a mistake in both directions: too little control makes a change fragile; too much turns a local fix into a ceremony.
+Imagine that four situations arise during the same morning in the customer directory:
 
-Line count is a poor guide. A change of a few characters in an authorization rule can affect every user. Conversely, a visual adjustment spread across several files may remain local, visible, and easy to reverse. The size of the Git diff tells us neither who should decide nor what the change commits us to.
+1. replace “No results” with “No customers match these filters”;
+2. add a “Reset filters” action using the existing mechanisms;
+3. add server-side pagination to the API and interface;
+4. discover, while investigating pagination, that synchronizing it with the URL would require the shared router to evolve.
 
-The foundational article, [From Vibe Coding to Verifiable Agentic Development](../ai-agent-based-coding-best-practices/index.md), introduced four modes of agent-assisted development. Here, they become a practical decision model.
+A good coding agent can probably modify all four areas. That is not the right question. We need to decide what we authorize it to decide, which context we provide, which facts we want to review, and which discoveries must stop the work.
 
-> The right level of control is neither the systematic maximum nor the default minimum. It is the lightest process that makes both risk and decision authority visible.
+The foundational article, [From Vibe Coding to Verifiable Agentic Development](../ai-agent-based-coding-best-practices/index.md), distinguished four modes of agent-assisted development. We will now apply them to these concrete situations.
 
-## Mode, path, and tool answer different questions
+> The right level of control is the lightest process that makes risk, scope, and decision authority visible.
 
-Before choosing, we need to separate three concepts.
+## One Morning, Four Situations in the Same Customer Directory
 
-- The **mode** characterizes the change and the level of governance it requires.
-- The **path** organizes the work: inputs, steps, artifacts, controls, and review.
-- The **tool** executes some or all of that path.
+A first pass already points to four different treatments.
 
-These distinctions keep a decision model from turning into software documentation. The four modes presented here are neither configuration values nor runtime states. A team can apply them with Markdown files, scripts, an internal platform, or a combination of existing tools.
-
-> The mode characterizes the change. The path organizes the work. The tool remains an implementation detail.
-
-The modes are not a maturity ladder, either. A Structured Feature is not “better” than a controlled local fix. It simply addresses a different profile. Foundation Evolution is different again because it also raises a question of ownership. As soon as a shared primitive, rule, or piece of tooling must change, that category takes precedence, even if the expected diff is tiny.
-
-## Five dimensions for characterizing a change
-
-The decision can begin with five questions. They are not a scoring system; they make the risk open to discussion.
-
-| Dimension | Question to ask | Lightweight profile | Signal for additional control |
+| Request or discovery | Dominant observed fact | Initial mode | Path |
 | --- | --- | --- | --- |
-| Scope | Does the change remain within a known product area? | Local behavior, obvious paths | Multiple layers, domains, or shared areas |
-| Ambiguity | Are the expected outcome and the defining choices already settled? | Observable outcome, solution constrained by existing conventions | Product, technical, or architectural decision still open |
-| Reversibility | Would reverting the change in Git actually remove its effects? | No persistent data or users already depending on the change | Migration, external effect, or coordinated rollback required |
-| Surfaces and contracts | How many interfaces must evolve together? | One module, with no shared contract change | UI, API, data, infrastructure, or multiple clients |
-| Authority | Who can accept the decisions introduced by the change? | Implementer and module owner | Product, platform, security, architecture, or an external partner |
+| Fix the empty-state label | Local, visible, and reversible change | **Controlled Vibe Coding** | Lightweight, direct |
+| Add “Reset filters” | Several steps, but one product area and existing contracts | **Guided Coding** | Lightweight, tracked |
+| Add server-side pagination | API, interface, internal contract, and tests must evolve together | **Structured Feature** | Orchestrated |
+| URL synchronization requires the shared router | Shared primitive with multiple consumers | **Foundation Evolution**, if this requirement is retained | Orchestrated, as separate work |
 
-Scope and affected surfaces may look similar, but they describe different things. Scope measures how far the work extends across the repository. Surfaces and contracts measure coupling: a small change may stay within a single file while altering a contract consumed by several systems.
+This table gives the result. Let us now see what each decision actually changes for the agent.
 
-Reversibility must also be assessed against the real-world effect, not Git alone. Reverting a Git revision is straightforward. Restoring data after a migration, withdrawing an API response that consumers already rely on, or undoing a message sent to an external system may not be.
+### Situation 1: Fix the Empty-State Label
 
-Authority does not measure technical difficulty. It answers a different question: does the person requesting or implementing the change have the authority to accept its consequences? If approval requires the security lead, an API owner, or the platform team, the path must make that decision visible.
+The request is precise: when filters return no customers, the interface must display “No customers match these filters.”
 
-## Triggers that set a minimum level of control
+In our example repository, the empty state and its test live under `frontend/customers/**`. The execution brief can fit in a few lines:
 
-Even before comparing the five dimensions, certain triggers rule out a lightweight mode unless there is an explicit decision:
+```markdown
+Objective: change the filtered empty-state text.
+Writable area: frontend/customers/**.
+Context: reuse the feature-local translation and the existing test.
+Validation: run the targeted empty-state test, then review the diff.
+Stop if: the text comes from a generated file or a shared primitive must change.
+```
 
-- security, authentication, or authorization;
-- sensitive data or regulatory obligations;
-- a migration, data deletion, or destructive operation;
-- a new dependency or infrastructure service;
-- a public, external, or difficult-to-evolve contract;
-- shared foundation, tooling, or a common rule;
-- an external effect that is difficult to reverse.
+The agent locates the source, changes the label and its test, runs the targeted validation, and then presents the diff. It does not need a full-stack plan to follow this sequence.
 
-These triggers do not all prescribe the same mode. An authorization change within a product feature is not necessarily Foundation Evolution. It does require an explicit decision from someone with the appropriate authority and may justify an orchestrated path.
+The word **controlled** remains essential. The agent does not receive “fix this however you want”; it receives an area, a convention to reuse, a validation, and a boundary. If the targeted test passes, we know only that this test passed in the local environment and that the diff is available for review. We are not claiming to have validated the entire application.
 
-The answer is not to add points and calculate an average. Four low-risk indicators do not cancel out a data migration or a security decision. The most constraining factor sets the minimum level of control.
+### Situation 2: Add “Reset Filters”
 
-The decision process has four steps:
+This time, clicking the action must restore the filters to their initial values and reload the directory. The design-system button, the reset function, and the directory-loading mechanism already exist.
 
-1. identify triggers that require stronger control;
-2. characterize the five dimensions;
-3. select the mode compatible with the dominant risk;
-4. record the decision owner and the facts that would require the choice to be reassessed.
+The request remains local, but it requires several integration choices. A short brief settles them before coding begins:
+
+```markdown
+Expected behavior:
+- in the empty state, display “Reset filters” when at least one filter is active;
+- on click, clear the filters and reload the directory;
+- preserve the existing loading, empty, and error states.
+
+Reuse:
+- the existing Button component;
+- the existing resetFilters() function;
+- the current reloading mechanism.
+
+Non-goals:
+- create a new API route;
+- modify `shared/state/**` or the shared `Button` component.
+
+Stop if: a permission, dependency, or shared primitive becomes necessary.
+```
+
+The mini-plan can then be very concrete:
+
+1. connect the existing action to the feature's empty state;
+2. add a test verifying that the click clears the filters and triggers a reload;
+3. run the feature tests and review the diff.
+
+Lightweight tracking—a brief, plan, checklist, and short work log—makes it possible to resume the work and see what was validated. The log is useful, but it is still written by the agent; it is not independent evidence.
+
+This is **Guided Coding**. The task is nontrivial, but its outcome, likely paths, and conventions to reuse are known. If exploration reveals that a new API route is required, the request does not silently expand: the work stops and must be reclassified.
+
+### Situation 3: Add Server-Side Pagination
+
+The phrase “add server-side pagination” hides several coordinated decisions:
+
+- the API must accept the pagination parameters defined by the project's conventions;
+- its response must provide the items, current page, and total result count;
+- the interface must load the first page and allow users to navigate;
+- the `loading`, `empty`, and `error` states must continue to work;
+- the default page size and behavior for an invalid page must reuse an existing convention or be decided before execution;
+- the contract change must remain compatible with its current consumers.
+
+In our teaching example, the convention already exists: the page size is 25 items, and an invalid page returns HTTP 404 with the code `pagination_page_invalide`. These choices go into the brief; the agent does not have to reinvent them during implementation.
+
+Before coding, the contract decisions must therefore be made explicit and their owner identified. Even before the plan is compiled, the surfaces that must be coordinated are visible:
+
+| Surface | Expected change | Dependency to respect |
+| --- | --- | --- |
+| Customer API — `backend/customers/**` | Paginate the response and cover boundary cases | The selected contract and its known consumers |
+| Directory interface — `frontend/customers/**` | Consume the metadata and display navigation | The same contract, without reinventing it in the interface |
+| Integration | Verify consistency across both sides and the existing states | Backend and frontend completed |
+
+The next article will turn this map into an executable plan. At this stage, it is enough to show why a single brief followed by unrestricted modification would be fragile. The path will need to retain the brief, plan, write boundaries, human decisions, validations, and observed results. An agent can then receive prepared context for executing a coherent block of tasks instead of reconstructing the mission from the project's entire history.
+
+This is a **Structured Feature** following an **orchestrated path**. The difficulty does not necessarily come from the volume of code; it comes from the coupling between several surfaces and the contract decision they share.
+
+### Discovery 4: URL Synchronization Requires the Shared Router
+
+Finally, suppose the team wants to make the current page shareable through a URL such as `/customers?page=3`. Exploration shows that the shared router does not yet support this case and that `shared/routing/**` is a protected area for the product task.
+
+The right output from the agent is not an opportunistic router change. It is an actionable stop:
+
+```markdown
+Finding: synchronization requires a capability missing from the shared router.
+Boundary: shared/routing/** is outside the feature's write scope; it remains available read-only.
+
+Options:
+1. keep the page in local state and ship without a shareable URL;
+2. open a separate effort to evolve the router, including a consumer impact review.
+
+Decision needed: determine whether URL synchronization is required for this release.
+```
+
+The workflow may detect that a diff crossed into `shared/routing/**`, but that check happens after the write. The better outcome is therefore for the agent to apply the stop condition as soon as it understands the dependency. No mechanical check can infer every architectural requirement on its own.
+
+If the team chooses the second option, the new effort's input must identify the router's consumers, expected compatibility, transition, rollback, broader validations, and the owner authorized to accept the impact.
+
+This is **Foundation Evolution**. It follows an orchestrated path, but as a separate unit of work. The product need explains why the primitive may have to evolve; it does not authorize silent changes to whatever parts of the foundation the feature happens to need.
+
+## Characterizing Pagination in Concrete Terms
+
+The four examples show the outcome. To make the decision reproducible, let us return to pagination and apply the decision model in order.
+
+### Gate 1: Look for Anything That Rules Out a Lightweight Start
+
+Some facts impose a minimum level of control before any broader assessment.
+
+| Signal to check | What the pagination ticket shows | Consequence |
+| --- | --- | --- |
+| Security, authorization, or sensitive data | No new authorization rule or use of sensitive data | No escalation on this point |
+| Data migration or deletion | No migration planned | No escalation on this point |
+| New dependency or infrastructure | Explicitly out of scope | Stop if it becomes necessary |
+| Public or external contract | Internal API contract, with consumers to inventory | API owner's approval |
+| Shared foundation or common rule | No shared change planned | Stop if the router or a shared primitive must evolve |
+| External effect that is difficult to reverse | No external effect planned | No escalation on this point |
+
+No signal turns pagination into security, migration, or foundation work here. The internal contract does, however, prevent us from treating the request as a local fix.
+
+### Gate 2: Answer Five Observable Questions
+
+The five dimensions do not produce a score. They force us to write down what we actually know.
+
+| Question | Where to look | Answer for pagination |
+| --- | --- | --- |
+| **Scope:** which areas must change? | Repository tree, owners, and responsibility areas | Customer backend, customer frontend, and associated tests |
+| **Ambiguity:** can we write the acceptance criteria without inventing a decision? | Request, conventions, and remaining open questions | Clear product outcome; exact contract shape to confirm |
+| **Reversibility:** does a Git revert remove the entire effect? | Persistent data, consumers, and external effects | No migrated data, but API and interface must be rolled back together |
+| **Surfaces and contracts:** who consumes what is changing? | API calls, shared types, clients, and tests | Interface and internal API coupled through one common contract |
+| **Authority:** who can accept the consequences? | Module and contract owners | Feature owner and API owner |
+
+The dominant risk is now visible: several surfaces must evolve around a common internal contract. That is enough to select a **Structured Feature**, even without a migration, dependency, or public contract.
 
 <figure class="article-diagram">
   <img src="control-level-decision-flow.png" alt="Decision flow connecting the request, escalation signals, five non-scored dimensions, the dominant risk, the mode and path, and the responsible decision authority." loading="lazy" />
-  <figcaption>The dominant risk sets the minimum level of control; the other dimensions refine the decision.</figcaption>
+  <figcaption>The dominant risk sets the minimum level of control; the other dimensions refine the scope, validations, and authority.</figcaption>
 </figure>
 
-## The decision record
+## Mode, Path, and Tool: Three Different Questions
 
-The decision should be reviewable without reopening the conversation. A short record is enough if it captures the reasoning and the decision authority.
+The examples now let us distinguish these three concepts without adding more theory.
 
-The following example is a human-facing decision aid that is independent of any tool. It is neither a configuration file nor the execution brief sent to the agent.
+- The **mode** explains why the change requires this level of governance: local, guided, structured, or shared.
+- The **path** describes what will actually happen: inputs, steps, tracking, checks, validations, and review.
+- The **tool** executes some or all of the path: Markdown files, scripts, a coding agent, or an orchestration platform.
+
+The mode therefore does not depend on the chosen tool. Changing the model or interface does not turn a migration into a local fix. Conversely, a team does not need a complete orchestrator to review a small diff properly.
+
+## Two Paths as Work Sequences
+
+The four modes do not require four execution pipelines. Two paths, with proportionate variants, are enough.
+
+| Case | Concrete sequence | What remains to be reviewed |
+| --- | --- | --- |
+| **Lightweight, direct** — Controlled Vibe Coding | Bounded request → local rules → modification → targeted test → diff | The diff, the command that was run, and its result |
+| **Lightweight, tracked** — Guided Coding | Short brief → mini-plan → checklist → modification → declared validations → log → diff | The plan followed, deviations, validations, and diff |
+| **Orchestrated, product** — Structured Feature | Decision → clarified brief → bounded tasks → execution context → modifications → checks → declared validations → diff → local review | Decisions, boundaries, per-task results, the status of declared validations, and local evidence |
+| **Orchestrated, shared** — Foundation Evolution | Impact proposal → identified owner → separate work → modification → compatibility → broader validations → dedicated review | Affected consumers, transition, and approval role |
+
+On the lightweight path, the agent may maintain the tracking itself. This helps resume and review the work, but it does not become an independent attestation.
+
+On the orchestrated path, the workflow separates responsibilities further: the agent proposes and modifies; the workflow checks boundaries, the presence and shape of outputs, and declared validations; the human decides whether those facts are sufficient. The absence of any declared validation—and any declared validation that was not run—must remain visible. Path checks remain post-write checks, not a sandbox.
+
+## Three Cases That Often Mislead
+
+Line count remains a poor shortcut. These three counterexamples show why.
+
+| Initial impression | Dominant fact | Better decision |
+| --- | --- | --- |
+| “It is only a three-line permission condition.” | It changes who can view or modify data | Structured Feature with an explicit security decision; Foundation Evolution if the rule is shared |
+| “The rename touches forty files, so everything must be orchestrated.” | Mechanical transformation within one area, with no public contract or persistent data | Guided Coding, lightweight tracked path, targeted validations, and a mechanical diff that is easy to review |
+| “Just add an Export CSV button.” | Exploration reveals that no export route or permission rule exists | Stop the guided task; reclassify it as a Structured Feature with product and security decisions |
+
+A small modification can therefore require approval from someone with broader authority. A large diff can remain reversible and unambiguous. What matters is the effect of the change, not its apparent size in Git.
+
+## The Mode Is a Revisable Hypothesis
+
+The initial classification is never permission to expand the scope. Exploration may reveal a dependency, external contract, migration, or shared primitive missing from the original ticket.
+
+The fourth situation illustrates this principle: URL synchronization requires `shared/routing/**`, which is outside the write scope. The product task must then produce three things:
+
+1. **the new fact:** the shared router does not cover the need;
+2. **the options:** ship pagination with local state, or open a Foundation Evolution effort;
+3. **the resumption decision:** new scope, new owner, and new validations, or keep the item as a non-goal.
+
+For the rest of the series, the decision is to keep URL synchronization as a **non-goal**. Pagination may continue without changing the router. Any future Foundation Evolution effort will remain separate work.
+
+This controlled reclassification matters more than a perfect taxonomy at the outset. A good decision model does not try to predict all the code. It makes the facts that require a new decision visible.
+
+## The Record the Next Article Will Actually Receive
+
+The decision can now be reviewed without reopening the conversation. For pagination, the final record looks like this:
 
 ```markdown
-# Decision Record
+# Decision — Customer Directory Pagination
 
-Request:
-Observable outcome:
-Initial scope:
+Request: add server-side pagination to the customer directory.
 
-| Dimension | Observation | Level |
-| --- | --- | --- |
-| Scope | | low / moderate / high |
-| Ambiguity | | low / moderate / high |
-| Reversibility | | simple / coordinated / difficult |
-| Surfaces and contracts | | one / several / shared or external |
-| Required authority | | module / domain / product, platform, or security |
+Observable outcomes:
+- the API returns the items, current page, and total result count;
+- the directory loads the first page when opened;
+- users can move forward and backward without going past the first or last page;
+- the loading, empty, and error states remain distinct.
 
-Escalation triggers:
-- [ ] security, authorization, or sensitive data
-- [ ] migration or destructive operation
-- [ ] new dependency or infrastructure
-- [ ] public or external contract
-- [ ] foundation, tooling, or common rule
-- [ ] external effect that is difficult to reverse
+Assessment findings and scope assumptions:
+- expected writes under backend/customers/** and frontend/customers/**;
+- internal API contract to evolve in a coordinated way;
+- page size set to 25 by the existing convention;
+- invalid page handled with an HTTP 404 response and the code
+  `pagination_page_invalide`;
+- no external effect to undo, but API and interface must be rolled back
+  together if the change is abandoned.
+
+Non-goals:
+- synchronize the page with the URL;
+- modify the router or another shared primitive;
+- add a dependency;
+- migrate or restructure data.
 
 Decision:
-- Initial mode:
-- Path:
-- Rationale:
-- Minimum input:
-- Minimum output:
-- Decision owner(s) or approval role:
-- Reassess if:
+- mode: Structured Feature;
+- path: orchestrated;
+- roles to involve: feature owner and API owner;
+- minimum input: clarified brief, acceptance criteria, and non-goals;
+- minimum output: bounded tasks, checks, results from declared validations,
+  a reviewable diff, and human review.
+
+Reassess if:
+- a product decision remains open before execution;
+- a consumer requires an incompatible contract;
+- the implementation would violate any of the non-goals.
 ```
 
-This record comes before the task contract introduced in the previous article. The record selects the level of governance; the contract then bounds execution. In the record, scope is still expressed in terms of surfaces and responsibilities. Exact paths belong in the task contract. Deciding how to work is not yet the same as specifying exactly where the agent may write.
+In another repository, the page size or invalid-page behavior may not be defined. They then become questions for the brief: execution waits for their resolution instead of turning silence into a product decision.
 
-## Four variations on the same customer directory
+This record selects the level of governance. It does not replace the task contract presented in the previous article: that contract will then define the paths, references, validations, and stop conditions for the executable work.
 
-The four modes become clearer when they are applied to the same product. For the practical articles that follow, I use these public labels to standardize the taxonomy first outlined in the foundational article.
+For another request, the template can remain short:
 
-| Mode | Dominant profile | Minimum input | Minimum output |
-| --- | --- | --- | --- |
-| **Controlled Vibe Coding** | Local, visible, and reversible | Bounded request | Reviewed diff and targeted validation |
-| **Guided Coding** | Nontrivial but contained within a known product area | Short brief and plan | Tracking, recorded validations, and review |
-| **Structured Feature** | Cross-cutting or still ambiguous | Clarified brief, then a specification if needed | Bounded tasks, controls, and recorded results |
-| **Foundation Evolution** | Change to a shared primitive, rule, or piece of tooling | Impact proposal and identified owner | Separate change, compatibility analysis, broader validations, and dedicated review |
-
-### Controlled Vibe Coding: change the empty-state label
-
-The change is visible, local, and easy to reverse. It affects no contract, dependency, or shared behavior. A precise request, a reviewed diff, and targeted validation may be enough.
-
-The word “controlled” matters. This mode does not mean that conversation replaces repository rules. The agent remains bounded to the relevant area, reuses existing conventions, and exposes the actual result for review. If the change reveals a broader issue in the shared component, the task no longer fits this mode.
-
-### Guided Coding: add a local action using existing contracts
-
-Adding an action to the directory may touch several files, require finding an existing component, and call for a behavioral test. The result still remains within a known product area and does not modify the API contract.
-
-A short brief and a plan are proportionate inputs: expected behavior, files likely to be affected, conventions to reuse, and targeted validations. Keeping the work log outside the conversation makes the task easier to resume and review without imposing the full machinery of a Structured Feature.
-
-If the action ultimately requires a new API route, dependency, or permission, the profile changes. The initial plan does not give the agent authority to silently expand the task to accommodate that discovery.
-
-### Structured Feature: add server-side pagination
-
-Pagination connects the UI, the API, the response contract, loading states, and tests. Several decisions must be made consistently: contract shape, initial page, page size, boundary behavior, and compatibility with existing consumers.
-
-The work therefore calls for a clarified brief, task breakdown, explicit boundaries, recorded validation results, and a review summary. A full specification is not required by default: it becomes useful when open decisions cannot be resolved cleanly in the brief and plan.
-
-### Foundation Evolution: modify a shared primitive
-
-Now suppose pagination requires a change to the common router or to a UI primitive used elsewhere. The diff may be short, but the decision and its impact are not.
-
-This change must become a separate unit of work. Its starting point is no longer only the customer directory's need, but an impact proposal: affected consumers, compatibility, transition strategy, broader validations, and the decision owner. Foundation Evolution is not a blank check to modify shared files. On the contrary, it makes those modifications explicit and holds them to a higher standard.
-
-## Two paths, not four execution pipelines
-
-The four modes do not require four different systems. Two paths, with proportionate variants, are enough to put these decisions into practice.
-
-```text
-characterized request
-├── lightweight path
-│   ├── direct variant   → Controlled Vibe Coding
-│   └── tracked variant  → Guided Coding
-└── orchestrated path
-    ├── product work     → Structured Feature
-    └── shared work      → Foundation Evolution, handled separately
+```markdown
+Request and observable outcomes:
+Findings, assumptions, and non-goals:
+Selected mode and path:
+Initial scope:
+Minimum input and output:
+Approval role to involve:
+Reassess if:
 ```
-
-The **lightweight path** minimizes coordination cost. In its direct variant, the bounded request leads to the change, targeted validation, and then review of the diff. In its tracked variant, a short brief, a plan, and a persistent work log are added before review.
-
-The retained context remains proportionate to the task. If the agent maintains the log itself, the log helps people understand and resume the work; it does not become independent evidence.
-
-The **orchestrated path** separates responsibilities more clearly. The brief is clarified, the work is broken down, the scope is bounded, control and validation results are retained, and then a local review prepares the handoff to Git and CI. Foundation Evolution follows the same general sequence, but as a separate unit with a broader compatibility analysis.
-
-The selected path describes the minimum process expected. It does not assume a particular model or the interface through which the agent is invoked.
-
-## A completed decision record for pagination
-
-| Dimension | Observation | Characterization |
-| --- | --- | --- |
-| Scope | One coherent, bounded feature | Moderate |
-| Ambiguity | The outcome is clear; the exact contract shape still needs confirmation | Moderate |
-| Reversibility | No migration is planned, but rollback must be coordinated across the UI and API | Coordinated |
-| Surfaces and contracts | UI, internal API, tests, and documentation | Several surfaces and one internal API contract |
-| Required authority | Feature owner and API owner | Domain-level |
-
-The dominant factors are the work across multiple surfaces and the coordinated evolution of an internal contract. No trigger independently requires stronger control: the initial scope includes no migration, new dependency, public contract, sensitive data, or foundation change.
-
-The decision is therefore:
-
-- **initial mode:** Structured Feature;
-- **path:** orchestrated;
-- **minimum input:** clarified brief, acceptance criteria, and initial scope;
-- **minimum output:** plan and bounded tasks, recorded control and validation results, a reviewable diff, and human review;
-- **decision owners:** the feature owner together with the API owner;
-- **reassess if:** the solution requires a shared routing primitive, an incompatible contract, a migration, or a new dependency.
-
-The record does not prove that this decision is perfect. It makes the choice explicit, contestable, and changeable before the agent turns assumptions into code.
-
-## The mode is a starting point, not authorization
-
-An initial classification is a working hypothesis. Exploration may reveal a fact that changes the profile: a missing dependency, an external contract, a required migration, or an insufficient shared component.
-
-In that case, execution must pause. The agent may recommend reclassification, but it must not expand its own scope. The person leading the task, potentially with support from the workflow, must then:
-
-1. record the new fact and its impact;
-2. confirm or change the mode and path;
-3. identify the appropriate decision owner;
-4. redefine the scope and validations before resuming.
-
-For the customer directory, discovering that synchronizing the page number with the URL requires a change to the shared router does not retroactively make an out-of-scope change acceptable. Work on the product task stops; the team chooses a local solution or opens a separate Foundation Evolution effort.
-
-The ability to reclassify matters more than getting the taxonomy perfect at the outset. A useful decision model does not try to predict the entire implementation. It makes the events that require a new decision visible.
 
 ## Conclusion
 
-Choosing a mode means selecting the lightest process compatible with the dominant risk. Line count, model, and tool are not enough. Scope, ambiguity, reversibility, affected contracts, and required authority provide a stronger basis.
+Choosing a mode means preparing a proportionate execution brief. For the label, one area, a targeted test, and a diff are enough. For the local action, a brief and mini-plan make the work resumable. For pagination, multiple surfaces and a shared contract justify bounded tasks, recorded control results, and structured review. For the shared router, product work stops and Foundation Evolution is handled separately.
 
-The repository contract defines the rules of the terrain. The mode sets the level of governance. The path sets the steps and the facts that must be retained.
+The repository sets the rules of the terrain. The mode characterizes the change. The path organizes the work. And the record identifies the human role that must accept the decisions and residual risk.
 
-For customer-directory pagination, the decision model leads to a Structured Feature and an orchestrated path. The next article will follow that path end to end, from a clarified brief to local review, showing what each step produces and what it actually allows us to claim.
+Pagination is now classified as a Structured Feature, its path is selected, and its reassessment conditions are written down. [The next article starts from this decision and follows the feature end to end](../agentic-feature-end-to-end/index.md), from a clarified brief to local review.
 
 <div class="article-footer-contact">
   <p>To discuss this article or leave me a public message:</p>

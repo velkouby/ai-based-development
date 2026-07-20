@@ -4,12 +4,12 @@ author: "Vincent El Kouby-Benichou, Baracoda"
 company: "Baracoda"
 company_url: "https://baracoda.com"
 description: >-
-  Between a natural-language request and a pull request, a useful agentic path produces a chain of artifacts, checks, and local evidence. Let us follow a full-stack feature end to end.
+  Follow one customer-directory pagination feature through a clarified brief, three bounded tasks, a failed validation, a controlled retry, and a fact-based local review.
 ---
 
 # From Brief to Local Review: An Agentic Feature, End to End { .article-title }
 
-Between "add pagination to the customer directory" and a pull request, there should not be a black box called "the agent coded it." A useful agentic path turns the request into bounded tasks, observes the execution, runs checks, and prepares a review that separates facts from claims.
+At 9:12, “add server-side pagination” is still a request. At 10:00, five files have changed, one attempt has failed, a bounded retry has passed, and a local review is ready. Let us follow every transformation between those two moments.
 { .article-lead }
 
 <p class="article-meta">
@@ -17,267 +17,384 @@ Between "add pagination to the customer directory" and a pull request, there sho
   <a class="article-contact-link" href="https://www.linkedin.com/in/vincentelkoubybenichou/">LinkedIn</a>
 </p>
 
-In the [previous article](../agent-coding-modes/index.md), the example of server-side pagination for the customer directory was classified as a **Structured Feature**. It affects the API, the interface, a response contract, and several interface states. The chosen path is therefore orchestrated.
+In the [previous article](../agent-coding-modes/index.md), server-side pagination for the customer directory was classified as a **Structured Feature** following an **orchestrated path**. The page size is 25, an invalid page returns HTTP 404 with the code `pagination_page_invalide`, and URL synchronization remains a non-goal.
 
-That decision does not yet explain what happens between the brief and the review. In many workflows, this part remains confined to a conversation. By the end, the diff exists, but the chain of decisions that produced it has evaporated.
+Those decisions are now settled. This article starts from that record and follows the feature through planning, implementation, a failed validation, a retry, and local review.
 
-A durable workflow must produce more than a chat history. It must make it possible to reconstruct the execution without asking the agent to describe, after the fact, what it thinks it did.
+The point is not to reproduce one particular tool. It is to make the handoffs visible. At every stage, we will ask the same three questions:
 
-> The agent produces a proposal. The workflow establishes observable facts. A human decides whether those facts are sufficient.
+1. what enters the stage;
+2. what durable output it produces;
+3. what that output does—and does not—allow us to claim.
 
-A framework that implements this method must make planning, context preparation, task tracking, path checks, validations, attempts, and the review summary explicit. The artifacts presented here show how such a framework can make the path inspectable.
+> The agent proposes and modifies. The workflow observes and records. A human decides whether the resulting facts are sufficient.
 
-## Step 1: turn the request into a brief
+## 9:12 — Start from the Decision, Not from the Raw Request
 
-The raw request fits in one sentence:
+The raw request is still useful:
 
 > Add server-side pagination to the customer directory.
 
-It expresses an intention, but not yet an execution contract. It specifies neither the shape of the API response, nor the initial page, nor the interface states, nor what must remain out of scope. Leaving the agent to resolve these questions alone would turn silence into product and technical decisions.
+But it is no longer the only input. The decision record from the previous article adds the choices that the agent must not reinvent:
 
-Here is a teaching example of a clarified brief. It defines the outcome without imposing the entire implementation:
+```markdown
+Mode: Structured Feature
+Path: orchestrated
+
+Decisions:
+- first page: 1;
+- page size: 25 items;
+- invalid page: HTTP 404, code pagination_page_invalide;
+- page state: local to the feature.
+
+Non-goals:
+- synchronize the page with the URL;
+- modify a shared primitive;
+- add a dependency;
+- migrate or restructure data.
+
+Owners:
+- feature owner;
+- API owner.
+```
+
+This record does not say how to modify the code. It says which product and governance decisions have already been made. If URL synchronization becomes mandatory again, the feature must stop and return to the appropriate owner instead of silently changing `shared/routing/**`.
+
+## 9:20 — Turn the Decision into an Observable Brief
+
+The brief now translates those decisions into behavior that can be reviewed:
 
 ```markdown
 ## Objective
 
-Paginate the customer directory on the server and allow users
-to navigate between pages from the interface.
+Paginate the customer directory on the server and let users move
+between pages from the interface.
 
-## Included
+## Observable outcomes
 
-- evolve the API response to include the current page and the total result count;
-- load the first page when the directory opens;
-- preserve the loading, empty, and error states;
-- test boundary cases and page changes.
+- GET /api/customers?page=2 returns items, page, and total;
+- the directory loads page 1 when it opens;
+- Previous is disabled on page 1;
+- Next is disabled when the total has been reached;
+- loading, empty, and error remain distinct states;
+- an invalid page returns HTTP 404 with pagination_page_invalide.
 
-## Non-goals
+## Write scope
 
-- synchronize the page with the URL;
-- modify a shared primitive;
-- add a dependency;
-- migrate or restructure existing data.
+- backend/customers/**
+- frontend/customers/**
+
+## Read-only context
+
+- docs/customers/pagination.md
+- shared/ui/**
+- shared/state/**
+- shared/routing/**
 
 ## Stop if
 
-- the contract would become incompatible with an existing consumer;
-- a product decision remains open;
-- the solution requires a change to the shared foundation.
+- an existing consumer requires an incompatible contract;
+- a product or authorization decision remains open;
+- a shared primitive, dependency, or migration becomes necessary;
+- one of the non-goals cannot be respected.
 ```
 
-The brief does not try to predict every file. It stabilizes the intention, the observable criteria, and the decision authority. The non-goals matter as much as the objective: they prevent the most direct technical solution from silently redefining the request.
+The brief names behavior and boundaries, not every edit. It is precise enough to test, while still leaving the coding agent room to explore the authorized areas and plan the implementation details.
 
-At this stage, we know **what is expected**. We do not yet know **how to implement it within the repository**, or which tasks can be entrusted to the agent separately.
+At this point, we know **what must be true**. We still need executable units of work.
 
-## Step 2: compile an executable plan
+## 9:28 — Break the Feature into Three Bounded Tasks
 
-An agentic plan is not a list of vague verbs such as "do the backend," "do the frontend," and "add the tests." It must produce units that can be selected, executed, checked, and resumed.
+“Do the backend, then the frontend, then test everything” is not yet an executable plan. Each task needs an observable result, dependencies, writable paths, and a validation.
 
-For our example, the breakdown might look like this:
-
-| Task | Expected outcome | Depends on | Writable paths | Targeted validation |
+| Task | Observable result | Depends on | Writable files | Declared validation |
 | --- | --- | --- | --- | --- |
-| T-01 | Paginate the API response and test its pagination edge cases | — | `backend/customers/**` | Customer API tests |
-| T-02 | Adapt the client and interface while preserving the existing states | T-01 | `frontend/customers/**` | Directory tests |
-| T-03 | Review the consistency of the contract and its integration before the workflow's independent checks | T-01, T-02 | No additional product-code changes expected | Project tests and build |
+| T-01 — API contract | Return `items`, `page`, and `total`; cover page boundaries and the 404 convention | — | `backend/customers/api.py`<br>`backend/customers/tests/test_pagination.py` | `make test-back` |
+| T-02 — Interface | Send the requested page; preserve existing states; enforce Previous and Next boundaries | T-01 | `frontend/customers/customer-api.ts`<br>`frontend/customers/customer-list.tsx`<br>`frontend/customers/customer-list.test.tsx` | `make test-front` |
+| T-03 — Integration review | Compare the frontend consumer with the backend contract and confirm that no URL synchronization was introduced | T-01, T-02 | No additional product-code write expected | `make build-front` |
 
+This breakdown does several useful things at once:
 
-The plan adds what the brief should not carry: dependencies, writable paths, read-only references, validations, stop conditions, and evidence requirements. To become executable, it must contain a write-boundary matrix. The framework must also assign stable identifiers to tasks, check their dependencies, and validate their path policy before any execution.
+- T-02 cannot invent a contract before T-01 stabilizes it;
+- T-03 cannot hide new implementation work inside a vague “integration” task;
+- the five expected product files are visible before execution;
+- every task has a result that can be distinguished from “the agent says it is done.”
 
-An open question blocks the next step. It becomes an intervention to resolve; the answer is persisted and then passed to the next execution package. If it changes the breakdown, the scope, or another structural element, the plan must be recomputed before work resumes. The decision therefore does not disappear between planning and execution.
+The commands are **declared validations**. Their presence in the plan does not mean they have run. That fact can exist only after execution, with an exit code and captured output.
 
-At the end of this step, we know one possible execution path. We still have no code, and that is a good thing: a scope inconsistency costs less to correct in a plan than in a full-stack diff.
+## The Trace We Are About to Produce
 
-## The end-to-end trace
+The complete path now has a concrete timeline.
 
-The path can now be represented as a chain. Each link receives an input, produces an artifact, and adds a limited amount of knowledge.
+| Time | Transformation | Durable output |
+| --- | --- | --- |
+| 9:12 | Qualify the request | Decision record |
+| 9:20 | Clarify expected behavior | Feature brief |
+| 9:28 | Break down the work | Plan and T-01 to T-03 |
+| 9:34 | Compile executable context | Execution package for the task block |
+| 9:43 | Run the first attempt | Runner result, Git observations, and failed validation |
+| 9:48 | Prepare a bounded retry | Retry record linked to attempt 001 |
+| 9:54 | Run the second attempt | Passing targeted validations and final local evidence |
+| 10:00 | Assemble the facts | Local review summary |
 
 <figure class="article-diagram">
   <img src="agentic-feature-evidence-chain.png" alt="End-to-end chain across Human, Workflow, and Agent lanes, from a raw request to reviewable evidence." loading="lazy" />
-  <figcaption>Each link adds a limited fact; no single one proves that the feature is acceptable.</figcaption>
+  <figcaption>Each handoff adds one limited kind of information; no single stage proves that the feature should be merged.</figcaption>
 </figure>
 
-| Link | Input | Persisted output | What we can then claim |
-| --- | --- | --- | --- |
-| Qualification | Raw request | Decision record | The selected level of control is explicit |
-| Clarification | Request and human decisions | Brief | The intention, criteria, and non-goals are written down |
-| Planning | Brief and repository rules | Plan and bounded tasks | The work is broken down and the boundaries are declared |
-| Preparation | Brief, plan, contract, answers, and local state | Execution package | The runner receives a reconstructible execution brief |
-| Implementation | Execution package | Structured runner result and diff | The agent reports what it attempted; the code has changed |
-| Checks | Initial state, final state, and policies | Scope-check results | The observed paths comply with or violate the declared boundaries |
-| Validations | Planned commands and working tree | Exit codes and outputs | These commands produced these results locally |
-| Local evidence | Runner results, Git state, and check results | Attempt artifact | The execution becomes inspectable and resumable |
-| Local review | Brief, plan, tasks, and evidence | Review summary | The useful facts are assembled before Git and CI |
+## 9:34 — Compile One Coherent Task Block
 
-This table is the heart of the path. No single step "proves the feature." Each one only changes the nature of the information available.
-
-## Step 3: prepare what the runner receives
-
-The plan has just broken the feature down into precise tasks. Each task describes an expected outcome, its dependencies, its relevant context, its write boundaries, and its validations. These tasks are units of planning, control, and review; they do not necessarily map to the same number of separate runner sessions.
-
-When no blocking decision remains open, the workflow selects a **coherent block of tasks** whose dependencies can be honored during the same execution. It compiles this block into an execution package. For pagination, T-01, T-02, and T-03 form a coherent chain: evolve the backend contract, adapt the interface that consumes it, and then review their consistency before the workflow's independent checks.
+T-01, T-02, and T-03 share the same pagination contract and form one dependency chain. They can therefore be prepared as one coherent block for a single runner session:
 
 ```text
-feature plan
-  T-01 backend contract
-    -> T-02 frontend integration
-      -> T-03 consistency review
+T-01 backend contract
+  -> T-02 frontend consumer
+    -> T-03 consistency review
 
-coherent block: [T-01, T-02, T-03]
-  -> execution package loaded once
-  -> one runner session
-  -> one structured result for each task
+one shared context load
+one ordered task block
+one distinct result required for each task
 ```
 
-The package brings together two levels of context:
+The package combines two layers:
 
-- context shared across the block — brief, plan, human decisions, repository contract, and initial Git state;
-- task-specific context — expected outcome, dependencies, writable paths, read-only references, validations, and stop conditions.
+- **shared context:** brief, decisions, repository rules, write-boundary matrix, and starting Git state;
+- **task context:** expected outcome, dependencies, exact writable files, read-only references, validation, and stop conditions.
 
-The runner loads this package once and executes the block as a whole. It can therefore reason about the continuity of the change, move from the backend contract to its frontend consumer, and retain the same technical decisions throughout the execution. The workflow avoids reloading the brief, the rules, and the same references for every micro-task.
-
-This grouping reduces the number of separate runner sessions, amortizes the cost of preparing context, and allows the coding agent to use its planning capabilities on a coherent change spanning several files. Coding agents already know how to explore a codebase, sequence changes, and coordinate several surfaces when they receive a high-quality objective and context. The workflow therefore does not try to dictate every edit: it prepares a problem that is precise and bounded enough for the agent to organize the detailed implementation effectively.
-
-> The workflow plans the work at the task level. The agent plans the implementation inside the package.
-
-A package is therefore neither a single task nor necessarily the entire feature. A broader plan may produce several packages. The right package groups tasks that share an intention, dependencies, and context, without combining independent work into a diff that is difficult to control.
-
-A framework that adopts this model must compile the package and require a distinct result for each task. But structure must not be confused with relevance: a well-formed package can still contain too much context, omit a decisive reference, or compile insufficiently clarified human intent.
-
-We will open this package in the next article. For this end-to-end view, the key point is this: the runner does not receive only a prompt. It receives an ordered task block, its shared context, its task-specific constraints, and a starting state.
-
-## Step 4: separate the agent's result from the workflow's facts
-
-At the end of the package, the runner returns a structured result: overall status, summary, a result for each task, files it says it modified, questions, blockers, and warnings. The format is controlled. An incomplete response, or one that cannot be matched to the expected tasks, may cause the execution to fail before validations begin.
-
-In this teaching example, suppose the runner reports:
+Just before the runner starts, the local state is recorded:
 
 ```text
-package status: completed
-T-01: completed
-T-02: completed
-T-03: completed
-changed files: five files in customer-related code areas
-blockers: none
-open questions: none
+branch: feature/customer-pagination
+HEAD: 7a31c42
+staged files: none
+unstaged files: none
+untracked files: none
+observed at: 09:38
 ```
 
-This result is useful for tracking, but it remains an **agent declaration**. The workflow must not use the reported list as its sole source of truth. After the package has run, it separately inspects the state of the working tree and compares the observed files with the authorized envelope for the package as a whole.
+Starting from a clean tree will later make attribution easier: any observed product-code change appeared after this snapshot. It still does not prove which task or process wrote each line.
 
-Without intermediate snapshots between T-01, T-02, and T-03, Git can establish which files changed during execution of the package, but not which task produced each modification. The attribution to individual tasks comes from the runner's structured result and therefore remains declarative. If that attribution must be established independently, the workflow needs to add checkpoints between tasks or execute them in separate packages.
+Loading the shared context once avoids repeating the brief and repository rules for every micro-task. The workflow plans the block; the coding agent plans the detailed edits inside that block. The next article will open this package field by field.
 
-The distinction is essential: "the agent says it modified five files" and "the workflow observed five modified paths" are two different statements. If the lists diverge, the divergence itself must become a fact for review.
+## 9:43 — Attempt 001: Separate the Agent's Report from Git
 
-## Steps 5 and 6: check before validating
-
-In this model, the order of the gates is decisive: planned validations must be run only if the runner has finished, its execution trace exists, all expected results are present and complete, and the boundary and path-policy checks pass.
-
-The order matters. Running tests before inspecting the scope can produce a misleading green result: the code may work because the agent modified a primitive it was not allowed to touch.
-
-The attempt log might then record:
-
-| Check | Result | Legitimate interpretation |
-| --- | --- | --- |
-| Expected runner results | Present for all three tasks | The package's output contract is complete |
-| Files changed during execution | Five product-code paths | These five paths differ between the selected initial and final snapshots |
-| Package boundaries | Passed | No observed path falls outside the package's authorized envelope |
-| Customer API tests | Exit code 0 | This command succeeded in the local environment |
-| Directory tests | Exit code 0 | This command succeeded in the local environment |
-| Project build | Exit code 0 | The requested build completed successfully |
-| Global quality check | Not run in this execution | No conclusion can be drawn about this check |
-
-The final result must be reported just as prominently as the green results. In this model, the validations declared for the tasks are orchestrated after the scope checks, while the global quality profile remains a separate step that must be started explicitly. Until it has been run, presenting it as implicitly successful would be false.
-
-Path checks run after changes have been written and do not constitute a sandbox: they characterize a scope violation, not the general security of the process. The article about stopping will examine this limitation in detail.
-
-## Step 7: write local evidence
-
-After execution and checks, the workflow must retain an artifact for the package attempt. Here is a teaching example of a manifest:
+The runner completes its session and returns a structured declaration:
 
 ```yaml
-attempt:
-  id: "illustrative-run-01"
-  agent_result: "completed"
-  expected_tasks: [T-01, T-02, T-03]
-  received_results: [T-01, T-02, T-03]
-
-local_git:
-  initial_state: "snapshot"
-  final_state: "snapshot"
-  files_changed_during_execution: 5
-
-checks:
-  boundaries: "passed"
-  path_policy: "compliant"
-  targeted_validations: "3 of 3 passed"
-  global_quality: "not_run"
-
-limitations:
-  - "local evidence, not immutably bound to a commit"
-  - "test coverage not evaluated automatically"
-  - "business acceptance still requires a human"
+package_status: completed
+task_results:
+  - {id: T-01, status: completed}
+  - {id: T-02, status: completed}
+  - {id: T-03, status: completed}
+declared_changed_files:
+  - backend/customers/api.py
+  - backend/customers/tests/test_pagination.py
+  - frontend/customers/customer-api.ts
+  - frontend/customers/customer-list.tsx
+  - frontend/customers/customer-list.test.tsx
+open_questions: []
+blockers: []
 ```
 
-This manifest shows the information a framework should retain: the runner result, tracking information, local Git state, files changed during execution, boundary checks, validation results, failures, and a few basic metrics.
+This is useful, but it is still an **agent declaration**. The workflow then inspects the complete working tree independently. In this attempt, Git shows the same five files, all unstaged and none untracked.
 
-This evidence makes the attempt inspectable. It does not automatically make it attributable to a specific revision. Initial and final states help distinguish what changed during execution, but they do not replace commit identifiers for the base and head commits, a comprehensive snapshot of the index, or full environment identification. An already modified working tree remains a source of ambiguity that must be reported.
+| Observation | Result |
+| --- | --- |
+| Files declared by the agent | Five product files |
+| Files observed from Git | The same five product files |
+| Branch observed after the runner | `feature/customer-pagination` |
+| HEAD observed after the runner | `7a31c42`, unchanged; the diff is not committed |
+| Files outside `backend/customers/**` or `frontend/customers/**` | None |
+| Read-only paths modified | None |
+| Tooling, generated files, or workflow state modified by the runner | None |
+| Package boundary check | Passed |
 
-## Step 8: prepare the review without making the decision
+The agreement between the two lists is useful. It does not transform the agent's per-task attribution into an observed fact. Without intermediate snapshots, Git establishes what changed during the package, not whether T-01 or T-02 produced a particular line.
 
-The local review should bring together the brief, the executed plan, the tasks and their status, the observed files, the attempts, the validations, the risks, and the remaining questions. The framework must refuse to finalize if a task remains incomplete or if required checks fail.
+## 9:44 — Check the Scope Before Running Validations
 
-The summary must not flatten provenance, however. A statement such as "the tests pass" is too vague if it does not name the commands, where they ran, and the missing validations. Likewise, an agent-written summary can improve readability, but it must not replace the structured results from which it was derived.
-
-At this stage, a person can answer the following questions without reopening the chat:
-
-- what intention was clarified;
-- which tasks were planned, made executable, and then executed;
-- which areas were writable;
-- which paths were observed;
-- which commands were actually run;
-- which limitations and questions remain open.
-
-They must still review the diff, assess whether the choices are appropriate, compare the behavior with the acceptance criteria, and decide whether the residual risk is acceptable. Automation prepares the decision; it is not given the authority to make it.
-
-## The local review is not yet the PR
-
-The path described here deliberately stops before the commit, CI, and pull request. Local evidence concerns a working tree and an attempt. CI concerns a revision sent to a defined environment. The PR adds a discussion space, branch checks, and a merge decision.
-
-These layers must be linked, not conflated:
+The order of the gates matters:
 
 ```text
-local evidence
-  -> reviewed diff
-  -> identified commit
-  -> CI validations on that revision
-  -> pull request
-  -> human merge decision
+runner result complete
+  -> expected task results present
+    -> Git state inspected
+      -> write boundaries passed
+        -> declared validations may run
 ```
 
-The strongest **target** would explicitly link the attempt identity, base commit, head commit, index state, tool versions, local validations, CI results, and acceptance criteria. Until this information is actually produced and linked, that target must not be presented as achieved.
+Running tests first could produce a misleading green result if the feature worked only because the runner had modified `shared/routing/**`. Path checks happen after writing and do not create a sandbox, but they can prevent an out-of-scope result from being accepted or validated further.
 
-## Reproduce the protocol with your own tools
+Here, the five observed paths are authorized, so the workflow runs all three declared commands and records every result independently.
 
-You do not need to adopt a particular framework to implement the essentials of this chain. A team can start with versioned files and a few stable scripts:
+## 9:46 — One Red Validation Overrides “Completed”
 
-1. retain the raw request and write a brief with non-goals;
-2. break the work down into tasks with dependencies, path boundaries, and validations;
-3. record the Git state before handing the task to the agent;
-4. require a structured result without treating it as independent evidence;
-5. inspect the complete Git state: staged changes, unstaged changes, and untracked files;
-6. refuse to run or accept validations if the scope has been violated;
-7. record every command, its exit code, and what was not run;
-8. produce a summary that retains risks and questions;
-9. then link this trace to the commit and CI results.
+Attempt 001 produces this table:
 
-The first benefit is the ability to resume work, explain a stop, and challenge a conclusion using persistent artifacts.
+| Command | Exit code | Relevant result |
+| --- | ---: | --- |
+| `make test-back` | 0 | Pagination API tests pass |
+| `make test-front` | 1 | `CustomerList > disables Next on the last page`: expected disabled, received enabled |
+| `make build-front` | 0 | The frontend production build completes |
+| Global quality profile | Not run | No conclusion is available for this profile |
+
+The package was declared `completed`, the paths are compliant, and the build succeeds. The attempt still fails because one required validation returned a nonzero exit code.
+
+This is exactly why the layers must remain separate:
+
+- the agent says the three tasks are complete;
+- Git shows that the five authorized files changed;
+- two commands return 0;
+- one command returns 1;
+- the workflow records `needs_retry`;
+- no human has accepted the behavior.
+
+A summary that collapses this into “implementation completed” would be false. A summary that says “the feature is broken” would also go too far: one local test exposed one concrete defect in this attempt.
+
+## 9:48 — Compile a Bounded Retry
+
+The failing output points to one behavior: the interface does not disable **Next** on the last page. The retry does not reopen the whole feature.
+
+```yaml
+resume_from: attempt-001
+reason: validation_failure
+failing_validation: make test-front
+failure: "Expected Next to be disabled on the last page; received enabled."
+authorized_focus:
+  - frontend/customers/customer-list.tsx
+unchanged_boundaries:
+  writable:
+    - backend/customers/**
+    - frontend/customers/**
+  read_only:
+    - shared/ui/**
+    - shared/state/**
+    - shared/routing/**
+rerun:
+  - make test-back
+  - make test-front
+  - make build-front
+```
+
+The agent corrects the boundary calculation to use the current page, page size, and `total`, rather than merely checking whether the current response contains items. During attempt 002, Git observes a new change only in `frontend/customers/customer-list.tsx`; the final working tree still contains the same five product files.
+
+All boundaries are checked again. Then all declared validations are rerun:
+
+| Command | Attempt 001 | Attempt 002 |
+| --- | ---: | ---: |
+| `make test-back` | 0 | 0 |
+| `make test-front` | 1 | 0 |
+| `make build-front` | 0 | 0 |
+| Global quality profile | Not run | Not run |
+
+The retry does not erase the failed attempt. Attempt 001 explains why the work resumed; attempt 002 records what changed and which commands now pass. Keeping both is what makes the path reconstructible.
+
+## 9:54 — Write Evidence for the Attempt, Not a Success Slogan
+
+The resulting local artifact can be compact:
+
+```yaml
+feature: customer-pagination
+base:
+  branch: feature/customer-pagination
+  commit: 7a31c42
+  working_tree: clean
+
+attempts:
+  - id: attempt-001
+    agent_status: completed
+    path_policy: passed
+    validations: failed
+    stop_reason: validation_failure
+  - id: attempt-002
+    agent_status: completed
+    path_policy: passed
+    validations: passed
+
+final_observation:
+  branch: feature/customer-pagination
+  head: 7a31c42
+  head_changed_since_start: false
+  changed_files: 5
+  staged_files: 0
+  untracked_files: 0
+  targeted_validations: "3 of 3 passed on attempt-002"
+  global_quality: not_run
+
+limits:
+  - "Local working-tree evidence, not yet bound to a head commit."
+  - "No conclusion about the global quality profile."
+  - "Business acceptance and merge decision remain human."
+```
+
+This artifact supports precise statements: the observed final paths are within scope; the three targeted commands returned 0 on attempt 002; the first attempt failed for a recorded reason. It does not establish sufficient coverage, product correctness, or readiness to merge.
+
+## 10:00 — Prepare a Review Without Making the Decision
+
+The local review now assembles the facts without flattening their provenance:
+
+```markdown
+## Scope
+Five observed product files; no read-only or forbidden path modified.
+
+## Execution
+Attempt 001 failed on the last-page Next-button behavior.
+Attempt 002 applied a bounded frontend correction.
+
+## Validations
+- make test-back: passed on attempt 002;
+- make test-front: passed on attempt 002;
+- make build-front: passed on attempt 002;
+- global quality profile: not run.
+
+## Still requires human review
+- contract shape and compatibility with known consumers;
+- behavior against the acceptance criteria;
+- relevance of the tests and residual edge cases;
+- decision to commit, open a PR, or request more work.
+```
+
+A reviewer can now understand the path without reopening the agent conversation. They still need to inspect the diff, evaluate the implementation choices, and decide whether the missing global check is acceptable at this stage.
+
+## Local Review Is Not Yet a Pull Request
+
+The path deliberately stops before commit and CI:
+
+```text
+local attempts and evidence
+  -> human-reviewed diff
+  -> identified commit
+  -> CI results on that commit
+  -> pull request discussion
+  -> merge decision
+```
+
+The local artifact is tied to a branch, a base commit, and a mutable working tree. CI will add a defined environment and a revision identity. Neither layer replaces human acceptance.
+
+## Reproduce the Same Path with Simple Tools
+
+The essential protocol does not require a complete orchestration platform. A team can begin with versioned files and stable scripts:
+
+1. retain the request and the decision record;
+2. write a brief with observable outcomes and non-goals;
+3. create tasks with dependencies, writable paths, and validations;
+4. record the complete Git state before execution;
+5. give the agent one coherent, bounded task block;
+6. require structured results without treating them as observed facts;
+7. compare the final Git state with the authorized paths;
+8. run and record every declared validation only after the scope check;
+9. preserve failed attempts and compile bounded retries;
+10. prepare a review that exposes passed, failed, and missing checks separately.
+
+The first gain is not autonomy. It is the ability to explain exactly where the feature is, why it stopped, and what must happen next.
 
 ## Conclusion
 
-An end-to-end agentic feature is not a longer conversation. It is a sequence of transformations: the request becomes a brief, the brief becomes a plan, the plan becomes an execution brief, the runner produces a proposal, the workflow observes the scope and validations, and then local evidence feeds the review.
+Our pagination feature did not travel directly from prompt to green tests. The decision became a brief, the brief became three tasks, the tasks became one execution package, and the first implementation became a failed but useful attempt. A bounded retry then produced three passing targeted validations and a reviewable five-file diff.
 
-For customer-directory pagination, this path makes the proposal reconstructible before Git and CI. It does not yet prove sufficient coverage, business correctness, or whether the change should be merged. Those decisions remain human.
+The resulting local evidence is stronger than an agent summary because it keeps declarations, Git observations, command results, and missing checks separate. It is still not a merge decision.
 
-The next step is to open the black box immediately before the runner: [**what the agent actually receives, and how to build a useful execution brief**](../agent-execution-package/index.md).
+We can now stop the timeline at 9:34 and open the object handed to the runner: [**the execution package, its shared context, task cards, boundaries, and output contract**](../agent-execution-package/index.md).
 
 <div class="article-footer-contact">
   <p>To discuss this article or leave me a public message:</p>
