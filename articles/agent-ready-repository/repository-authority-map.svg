@@ -43,8 +43,8 @@
     <circle cx="151" cy="442" r="25" fill="#ffffff" stroke="#2f6fdd" stroke-width="3"/>
     <path d="M134 442c10-14 24-14 34 0-10 14-24 14-34 0Z" fill="none" stroke="#2f6fdd" stroke-width="3"/>
     <circle cx="151" cy="442" r="5" fill="#2f6fdd"/>
-    <text x="192" y="432" font-family="Noto Sans, sans-serif" font-size="28" font-weight="700" fill="#07162d">Shared foundation</text>
-    <text x="192" y="468" font-family="Noto Sans, sans-serif" font-size="24" fill="#07162d">UI primitives, shared contracts</text>
+    <text x="192" y="432" font-family="Noto Sans, sans-serif" font-size="28" font-weight="700" fill="#07162d">Shared layers</text>
+    <text x="192" y="468" font-family="Noto Sans, sans-serif" font-size="24" fill="#07162d">Reusable UI, platform contracts</text>
 
     <rect x="100" y="515" width="500" height="105" rx="18" fill="#f7f9fc" stroke="#d9e1ec" stroke-width="2"/>
     <rect x="100" y="515" width="10" height="105" rx="5" fill="#7a4fd3"/>
@@ -101,7 +101,7 @@
     <circle cx="1040" cy="305" r="23" fill="#ffffff" stroke="#1f9d66" stroke-width="3"/>
     <path d="M1029 306l7 7 15-17" fill="none" stroke="#1f9d66" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
     <text x="1080" y="313" font-family="Noto Sans, sans-serif" font-size="28" font-weight="700" fill="#07162d">WRITE</text>
-    <text x="1040" y="354" font-family="Noto Sans, sans-serif" font-size="24" fill="#07162d">app/customers/** · api/customers/**</text>
+    <text x="1040" y="354" font-family="Noto Sans, sans-serif" font-size="20" fill="#07162d">backend/customers/** · frontend/customers/**</text>
     <text x="1040" y="385" font-family="Noto Sans, sans-serif" font-size="24" fill="#07162d">Only inside the declared task scope</text>
 
     <rect x="1000" y="438" width="500" height="135" rx="20" fill="#f7f9fc" stroke="#2f6fdd" stroke-width="3"/>
@@ -109,7 +109,7 @@
     <path d="M1025 478c9-13 21-13 30 0-9 13-21 13-30 0Z" fill="none" stroke="#2f6fdd" stroke-width="3"/>
     <circle cx="1040" cy="478" r="5" fill="#2f6fdd"/>
     <text x="1080" y="486" font-family="Noto Sans, sans-serif" font-size="28" font-weight="700" fill="#07162d">READ-ONLY</text>
-    <text x="1040" y="527" font-family="Noto Sans, sans-serif" font-size="24" fill="#07162d">shared/ui/** · platform/routing/**</text>
+    <text x="1040" y="527" font-family="Noto Sans, sans-serif" font-size="24" fill="#07162d">shared/ui/** · shared/routing/**</text>
     <text x="1040" y="558" font-family="Noto Sans, sans-serif" font-size="24" fill="#07162d">Context is available; edits are not</text>
 
     <rect x="1000" y="610" width="500" height="135" rx="20" fill="#f7f9fc" stroke="#f47b20" stroke-width="3"/>
