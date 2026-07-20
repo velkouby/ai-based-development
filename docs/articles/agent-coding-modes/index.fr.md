@@ -4,12 +4,12 @@ author: "Vincent El Kouby-Benichou, Baracoda"
 company: "Baracoda"
 company_url: "https://baracoda.com"
 description: >-
-  Une correction locale, une fonctionnalité de bout en bout et une évolution du socle n'appellent pas le même niveau de contrôle. Voici comment choisir un dispositif proportionné au risque du changement.
+  Quatre situations concrètes sur le même annuaire clients montrent comment choisir un niveau de contrôle, un parcours et des conditions d'arrêt proportionnés au risque réel du changement.
 ---
 
 # Quatre modes, deux parcours : choisir le bon niveau de contrôle { .article-title }
 
-Une correction locale, une fonctionnalité de bout en bout et une évolution du socle ne justifient ni le même contexte, ni les mêmes validations, ni la même autorité de décision. Le bon niveau de contrôle dépend du profil de risque du changement, pas du nombre de lignes ni de l'outil qui les produit.
+Un libellé à corriger, une action locale, une pagination de bout en bout et la découverte d'une primitive partagée à modifier ne doivent pas produire le même ordre de mission. Partons de ces quatre situations concrètes pour choisir, à chaque fois, le contexte, les validations et l'autorité réellement nécessaires.
 { .article-lead }
 
 <p class="article-meta">
@@ -17,221 +17,289 @@ Une correction locale, une fonctionnalité de bout en bout et une évolution du 
   <a class="article-contact-link" href="https://www.linkedin.com/in/vincentelkoubybenichou/">LinkedIn</a>
 </p>
 
-Un [repository agent-ready](../agent-ready-repository/index.md) indique où l'agent peut agir, quelles règles il doit respecter et dans quelles situations il doit s'arrêter. Il ne dit pas encore combien de structure mérite chaque demande.
+Dans [l'article précédent](../agent-ready-repository/index.md), nous avons préparé le terrain et projeté la forme d'un ordre de mission ainsi que du rapport attendu. Revenons maintenant au moment qui précède leur compilation : les règles, les zones et les commandes sont connues, mais un repository agent-ready ne choisit pas à lui seul la quantité de structure nécessaire pour chaque demande.
 
-Corriger le libellé de l'état vide, ajouter une action locale, paginer l'annuaire clients de bout en bout et modifier une primitive partagée sont quatre changements de nature différente. Leur appliquer exactement le même parcours serait une erreur dans les deux sens : trop peu de contrôle rend le changement fragile ; trop de contrôle transforme une correction locale en cérémonie.
+Imaginons que quatre situations se présentent au cours de la même matinée sur l'annuaire clients :
 
-Le nombre de lignes aide peu à trancher. Une modification de quelques caractères dans une règle d'autorisation peut affecter tous les utilisateurs. À l'inverse, une adaptation visuelle répartie sur plusieurs fichiers peut rester locale, visible et facile à annuler. La taille du diff Git ne dit ni qui doit décider, ni ce que le changement engage.
+1. remplacer « Aucun résultat » par « Aucun client ne correspond à ces filtres » ;
+2. ajouter une action « Réinitialiser les filtres » avec les mécanismes existants ;
+3. ajouter une pagination serveur dans l'API et l'interface ;
+4. découvrir, pendant l'étude de la pagination, que sa synchronisation dans l'URL exigerait une évolution du routeur partagé.
 
-Le texte fondateur, [Du vibe coding au développement agentique vérifiable](../ai-agent-based-coding-best-practices/index.md), distinguait déjà quatre modes de développement avec agents. Ici, ils deviennent une grille de décision concrète.
+Un bon agent de code est probablement capable de modifier les quatre zones. Ce n'est pas la bonne question. Il faut décider ce que nous l'autorisons à décider, le contexte que nous lui fournissons, les faits que nous voulons relire et les découvertes qui doivent interrompre le travail.
 
-> Le bon niveau de contrôle n'est ni le maximum systématique, ni le minimum choisi par défaut. C'est le dispositif le plus léger qui rende le risque et l'autorité de décision visibles.
+Le texte fondateur, [Du vibe coding au développement agentique vérifiable](../ai-agent-based-coding-best-practices/index.md), distinguait quatre modes de développement avec agents. Nous allons maintenant les appliquer à ces situations concrètes.
 
-## Mode, parcours et outil ne répondent pas à la même question
+> Le bon niveau de contrôle est le dispositif le plus léger qui rende le risque, le périmètre et l'autorité de décision visibles.
 
-Avant de choisir, il faut séparer trois notions.
+## Une matinée, quatre situations sur le même annuaire
 
-- Le **mode** qualifie le changement et le niveau de gouvernance qu'il exige.
-- Le **parcours** organise le travail : entrée, étapes, artefacts, contrôles et relecture.
-- L'**outil** exécute tout ou partie du parcours.
+Une première lecture donne déjà quatre traitements différents.
 
-Ces distinctions empêchent de transformer une méthode éditoriale en documentation de logiciel. Les quatre modes présentés ici ne sont ni des valeurs de configuration, ni les états d'une machine interne. Une équipe peut les appliquer avec des fichiers Markdown, des scripts, une plateforme maison ou une combinaison d'outils existants.
-
-> Le mode qualifie le changement. Le parcours organise le travail. L'outil reste un détail d'implémentation.
-
-Les modes ne forment pas non plus une échelle de maturité. Une fonctionnalité structurée n'est pas « meilleure » qu'une correction locale contrôlée. Elle répond simplement à un autre profil. L'évolution du socle est encore différente : elle exprime aussi une question de responsabilité. Dès qu'une primitive, une règle ou un élément d'outillage partagé doit changer, cette catégorie prend le dessus, même si le diff attendu paraît minuscule.
-
-## Cinq dimensions pour qualifier le changement
-
-La décision peut commencer par cinq questions. Elles ne servent pas à calculer une note ; elles rendent le risque discutable.
-
-| Dimension | Question à poser | Profil léger | Signal de contrôle supplémentaire |
+| Demande ou découverte | Fait dominant observé | Mode de départ | Parcours |
 | --- | --- | --- | --- |
-| Portée | Le changement reste-t-il dans une zone produit connue ? | Un comportement local, des chemins évidents | Plusieurs couches, domaines ou zones partagées |
-| Ambiguïté | Le résultat attendu et les choix structurants sont-ils déjà arrêtés ? | Résultat observable, solution contrainte par les conventions existantes | Décision produit, technique ou architecturale encore ouverte |
-| Réversibilité | Une annulation dans Git suffit-elle réellement pour supprimer l'effet ? | Pas de donnée durable ni d'utilisateur déjà dépendant du changement | Migration, effet externe ou retour coordonné nécessaire |
-| Surfaces et contrats | Combien d'interfaces doivent évoluer ensemble ? | Un module, sans contrat partagé modifié | Interface, API, données, infrastructure ou clients multiples |
-| Autorité | Qui peut accepter les décisions induites par le changement ? | Auteur et responsable du module | Produit, plateforme, sécurité, architecture ou partenaire externe |
+| Corriger le libellé de l'état vide | Changement local, visible et réversible | **Vibe coding contrôlé** | Léger, direct |
+| Ajouter « Réinitialiser les filtres » | Plusieurs étapes, mais une seule zone produit et des contrats existants | **Codage guidé** | Léger, suivi |
+| Ajouter la pagination serveur | API, interface, contrat interne et tests doivent évoluer ensemble | **Fonctionnalité structurée** | Orchestré |
+| La synchronisation URL exige le routeur partagé | Primitive commune et consommateurs multiples | **Évolution du socle**, si ce besoin est retenu | Orchestré, dans un travail séparé |
 
-La portée et les surfaces affectées semblent proches, mais elles ne décrivent pas la même chose. La portée mesure l'étendue du travail dans le repository. Les surfaces et contrats mesurent le couplage : une petite modification peut rester dans un seul fichier tout en changeant un contrat consommé par plusieurs systèmes.
+Cette table donne le résultat. Voyons maintenant ce que chaque décision change réellement pour l'agent.
 
-La réversibilité doit, elle aussi, être évaluée sur l'effet réel, pas seulement sur Git. Annuler une révision Git est simple. Récupérer des données migrées, retirer une réponse d'API déjà consommée ou annuler un message envoyé à un système externe peut ne pas l'être.
+### Situation 1 : corriger le libellé de l'état vide
 
-Enfin, l'autorité ne mesure pas la difficulté technique. Elle répond à une autre question : la personne qui demande ou implémente le changement a-t-elle le droit d'accepter les conséquences ? Si l'acceptation exige l'accord du responsable de la sécurité, du propriétaire d'une API ou de l'équipe plateforme, le parcours doit rendre cette décision visible.
+La demande est précise : lorsque des filtres ne renvoient aucun client, l'interface doit afficher « Aucun client ne correspond à ces filtres ».
 
-## Les signaux qui fixent un minimum de contrôle
+Dans notre repository d'exemple, l'état vide et son test se trouvent dans `frontend/customers/**`. L'ordre de mission peut tenir en quelques lignes :
 
-Avant même de comparer les cinq dimensions, certains signaux empêchent de retenir un mode léger sans décision explicite :
+```markdown
+Objectif : modifier le texte de l'état vide filtré.
+Écriture autorisée : frontend/customers/**.
+Contexte : réutiliser la traduction locale à la fonctionnalité et le test existant.
+Validation : lancer le test ciblé de l'état vide, puis relire le diff.
+Arrêter si : le texte provient d'un fichier généré ou si une primitive partagée doit changer.
+```
 
-- sécurité, authentification ou autorisations ;
-- données sensibles ou obligations réglementaires ;
-- migration, suppression de données ou opération destructive ;
-- nouvelle dépendance ou nouveau service d'infrastructure ;
-- contrat public, externe ou difficile à faire évoluer ;
-- socle partagé, outillage ou règle commune ;
-- effet externe difficilement réversible.
+L'agent localise la source, modifie le libellé et son test, lance la validation ciblée, puis présente le diff. Il n'a pas besoin d'un plan full-stack pour suivre cette séquence.
 
-Ces signaux ne prescrivent pas tous le même mode. Un changement d'autorisation dans une fonctionnalité produit n'est pas nécessairement une évolution du socle. Il exige une décision explicite d'un responsable habilité et peut justifier un parcours orchestré.
+Le mot **contrôlé** reste essentiel. L'agent ne reçoit pas « corrige ça comme tu veux » : il reçoit une zone, une convention à réutiliser, une validation et une limite. Si le test ciblé réussit, nous savons seulement que ce test a réussi dans l'environnement local et que le diff est disponible pour relecture. Nous ne prétendons pas avoir validé toute l'application.
 
-Il ne faut donc pas additionner des points et faire une moyenne. Quatre indicateurs de faible risque n'annulent pas une migration de données ou une décision de sécurité. La dimension la plus contraignante fixe le niveau minimal de contrôle.
+### Situation 2 : ajouter « Réinitialiser les filtres »
 
-La règle de lecture tient en quatre étapes :
+Cette fois, un clic doit remettre les filtres à leur valeur initiale et recharger l'annuaire. Le bouton du design system, la fonction de remise à zéro et le chargement de l'annuaire existent déjà.
 
-1. repérer les signaux qui imposent un contrôle renforcé ;
-2. qualifier les cinq dimensions ;
-3. choisir le mode compatible avec le risque dominant ;
-4. consigner le décideur et les faits qui obligeraient à réévaluer ce choix.
+La demande reste locale, mais elle exige plusieurs choix d'intégration. Un brief court les fixe avant le code :
+
+```markdown
+Comportement attendu :
+- dans l'état vide, afficher « Réinitialiser les filtres » quand au moins un filtre est actif ;
+- au clic, vider les filtres et recharger l'annuaire ;
+- conserver les états loading, empty et error existants.
+
+Réutiliser :
+- le composant Button existant ;
+- la fonction resetFilters() existante ;
+- le mécanisme actuel de rechargement.
+
+Non-objectifs :
+- créer une nouvelle route d'API ;
+- modifier `shared/state/**` ou le composant `Button` partagé.
+
+Arrêter si : une autorisation, une dépendance ou une primitive partagée devient nécessaire.
+```
+
+Le mini-plan peut alors être très concret :
+
+1. relier l'action existante à l'état vide de la fonctionnalité ;
+2. ajouter un test vérifiant que le clic vide les filtres et relance le chargement ;
+3. lancer les tests de la fonctionnalité et relire le diff.
+
+Un suivi léger — brief, plan, checklist et court journal d'exécution — permet de reprendre le travail et de voir ce qui a été validé. Ce journal est utile, mais il reste écrit par l'agent : ce n'est pas une preuve indépendante.
+
+Nous sommes en **codage guidé**. La tâche est non triviale, mais son résultat, ses chemins probables et les conventions à réutiliser sont connus. Si l'exploration révèle qu'il faut créer une route d'API, la demande ne s'élargit pas silencieusement : le travail s'arrête et doit être reclassé.
+
+### Situation 3 : ajouter la pagination serveur
+
+La phrase « ajouter la pagination serveur » masque plusieurs décisions coordonnées :
+
+- l'API doit recevoir les paramètres de pagination prévus par les conventions du projet ;
+- sa réponse doit fournir les éléments, la page courante et le nombre total de résultats ;
+- l'interface doit charger la première page et permettre de naviguer ;
+- les états `loading`, `empty` et `error` doivent continuer à fonctionner ;
+- la taille par défaut et le comportement d'une page invalide doivent réutiliser une convention existante ou être décidés avant l'exécution ;
+- le changement du contrat doit rester compatible avec ses consommateurs actuels.
+
+Dans notre cas pédagogique, la convention existe déjà : la taille est fixée à 25 éléments et une page invalide renvoie HTTP 404 avec le code `pagination_page_invalide`. Ces choix rejoignent le brief ; l'agent n'a pas à les réinventer pendant l'implémentation.
+
+Avant de coder, il faut donc rendre les décisions de contrat explicites et identifier leur propriétaire. Même sans compiler encore le plan, les surfaces à coordonner sont visibles :
+
+| Surface | Changement attendu | Dépendance à respecter |
+| --- | --- | --- |
+| API clients — `backend/customers/**` | Paginer la réponse et couvrir les bornes | Le contrat retenu et ses consommateurs connus |
+| Interface de l'annuaire — `frontend/customers/**` | Consommer les métadonnées et afficher la navigation | Le même contrat, sans l'inventer côté interface |
+| Intégration | Vérifier la cohérence des deux côtés et les états existants | Backend et frontend terminés |
+
+Le prochain article transformera cette carte en plan exécutable. À ce stade, elle suffit à montrer pourquoi un brief unique suivi d'une modification libre serait fragile. Le parcours devra conserver le brief, le plan, les frontières d'écriture, les décisions humaines, les validations et les résultats observés. Un agent pourra alors recevoir un contexte préparé pour exécuter un bloc de tâches cohérent, au lieu de reconstruire la mission depuis tout l'historique du projet.
+
+Nous sommes dans une **fonctionnalité structurée** et un **parcours orchestré**. La difficulté ne vient pas nécessairement du volume de code ; elle vient du couplage entre plusieurs surfaces et de la décision de contrat qu'elles partagent.
+
+### Découverte 4 : la synchronisation URL exige le routeur partagé
+
+Supposons enfin que l'équipe veuille rendre la page partageable avec une URL comme `/customers?page=3`. L'exploration montre que le routeur commun ne sait pas encore gérer ce cas et que `shared/routing/**` est une zone protégée pour la tâche produit.
+
+La bonne sortie de l'agent n'est pas une modification opportuniste du routeur. C'est un arrêt exploitable :
+
+```markdown
+Constat : la synchronisation exige une capacité absente du routeur partagé.
+Limite : shared/routing/** est hors du périmètre d'écriture de la fonctionnalité ; il reste consultable en lecture seule.
+
+Options :
+1. conserver la page dans l'état local et livrer sans URL partageable ;
+2. ouvrir une évolution séparée du routeur, avec étude des consommateurs.
+
+Décision attendue : choisir si la synchronisation URL est requise pour cette livraison.
+```
+
+Le workflow peut constater qu'un diff a franchi `shared/routing/**`, mais ce contrôle intervient après l'écriture. Le meilleur résultat est donc que l'agent applique la condition d'arrêt dès qu'il comprend la dépendance. Aucun contrôle mécanique ne déduit à lui seul toutes les nécessités architecturales.
+
+Si l'équipe choisit la seconde option, l'entrée du nouveau travail doit recenser les consommateurs du routeur, la compatibilité attendue, la transition, le retour arrière, les validations élargies et le responsable habilité à accepter l'impact.
+
+C'est une **évolution du socle**. Elle suit un parcours orchestré, mais dans une unité de travail séparée. Le besoin produit explique pourquoi la primitive doit évoluer ; il n'autorise pas à modifier silencieusement toutes les fondations nécessaires.
+
+## Qualifier concrètement la pagination
+
+Les quatre exemples montrent le résultat. Pour rendre la décision reproductible, revenons à la pagination et appliquons la grille dans l'ordre.
+
+### Porte 1 : chercher ce qui interdit un départ léger
+
+Certains faits imposent un minimum de contrôle avant toute appréciation générale.
+
+| Signal à vérifier | Ce que montre le ticket de pagination | Conséquence |
+| --- | --- | --- |
+| Sécurité, autorisations ou données sensibles | Aucun nouveau droit ni nouvel usage de données sensibles | Pas d'escalade sur ce point |
+| Migration ou suppression de données | Aucune migration prévue | Pas d'escalade sur ce point |
+| Nouvelle dépendance ou infrastructure | Explicitement hors périmètre | Arrêter si elle devient nécessaire |
+| Contrat public ou externe | Contrat d'API interne, avec consommateurs à inventorier | Accord du propriétaire de l'API |
+| Socle ou règle commune | Aucun changement partagé prévu | Arrêter si le routeur ou une primitive commune doit évoluer |
+| Effet externe difficilement réversible | Aucun effet externe prévu | Pas d'escalade sur ce point |
+
+Aucun signal ne transforme ici la pagination en travail de sécurité, de migration ou de socle. En revanche, le contrat interne empêche de traiter la demande comme une correction locale.
+
+### Porte 2 : répondre à cinq questions observables
+
+Les cinq dimensions ne produisent pas une note. Elles obligent à écrire ce que nous savons réellement.
+
+| Question | Où regarder | Réponse pour la pagination |
+| --- | --- | --- |
+| **Portée :** quelles zones doivent changer ? | Arborescence, propriétaires et zones de responsabilité du repository | Backend clients, frontend clients et tests associés |
+| **Ambiguïté :** peut-on écrire les critères d'acceptation sans inventer une décision ? | Demande, conventions et questions encore ouvertes | Résultat produit clair ; forme exacte du contrat à confirmer |
+| **Réversibilité :** un retour Git supprime-t-il tout l'effet ? | Données persistantes, consommateurs et effets externes | Pas de donnée migrée, mais API et interface doivent revenir ensemble |
+| **Surfaces et contrats :** qui consomme ce qui change ? | Appels API, types partagés, clients et tests | Interface et API interne couplées par un contrat commun |
+| **Autorité :** qui peut accepter les conséquences ? | Propriétaires du module et du contrat | Responsable de la fonctionnalité et propriétaire de l'API |
+
+Le risque dominant est maintenant visible : plusieurs surfaces doivent évoluer autour d'un contrat interne commun. Cela suffit pour retenir une **fonctionnalité structurée**, même sans migration, dépendance ou contrat public.
 
 <figure class="article-diagram">
   <img src="../../../articles/agent-coding-modes/control-level-decision-flow.png" alt="Schéma de décision reliant la demande, les signaux d'escalade, cinq dimensions non notées, le risque dominant, le mode et le parcours, puis l'autorité de décision." loading="lazy" />
-  <figcaption>Le risque dominant fixe le contrôle minimal ; les autres dimensions affinent la décision.</figcaption>
+  <figcaption>Le risque dominant fixe le contrôle minimal ; les autres dimensions précisent le périmètre, les validations et l'autorité.</figcaption>
 </figure>
 
-## La fiche de décision
+## Mode, parcours et outil : trois questions différentes
 
-La décision doit pouvoir être relue sans rouvrir la conversation. Une fiche courte suffit si elle consigne le raisonnement et l'autorité.
+Les exemples permettent maintenant de distinguer ces trois notions sans théorie supplémentaire.
 
-L'exemple suivant est un support de décision destiné aux humains et indépendant de tout outil. Il ne s'agit ni d'une configuration, ni de l'ordre de mission envoyé à l'agent.
+- Le **mode** explique pourquoi le changement exige ce niveau de gouvernance : local, guidé, structuré ou partagé.
+- Le **parcours** décrit ce qui va réellement se passer : entrées, étapes, suivi, contrôles, validations et relecture.
+- L'**outil** exécute tout ou partie du parcours : fichiers Markdown, scripts, agent de code ou plateforme d'orchestration.
+
+Le mode ne dépend donc pas de l'outil choisi. Changer de modèle ou d'interface ne transforme pas une migration en correction locale. À l'inverse, une équipe n'a pas besoin d'un orchestrateur complet pour relire correctement un petit diff.
+
+## Deux parcours, vus comme des séquences de travail
+
+Les quatre modes n'exigent pas quatre chaînes d'exécution. Deux parcours, avec des variantes proportionnées, suffisent.
+
+| Cas | Séquence concrète | Ce qui reste à relire |
+| --- | --- | --- |
+| **Léger, direct** — vibe coding contrôlé | Demande bornée → règles locales → modification → test ciblé → diff | Le diff, la commande lancée et son résultat |
+| **Léger, suivi** — codage guidé | Brief court → mini-plan → checklist → modification → validations déclarées → journal → diff | Le plan suivi, les écarts, les validations et le diff |
+| **Orchestré, produit** — fonctionnalité structurée | Décision → brief clarifié → tâches bornées → contexte d'exécution → modifications → contrôles → validations déclarées → diff → revue locale | Les décisions, frontières, résultats par tâche, l'état des validations déclarées et les preuves locales |
+| **Orchestré, partagé** — évolution du socle | Proposition d'impact → responsable identifié → travail séparé → modification → compatibilité → validations élargies → revue dédiée | Les consommateurs affectés, la transition et le rôle d'approbation |
+
+Dans le parcours léger, l'agent peut maintenir lui-même le suivi. Celui-ci aide à reprendre et à relire le travail, mais il ne devient pas une attestation indépendante.
+
+Dans le parcours orchestré, le workflow sépare davantage les rôles : l'agent propose et modifie ; le workflow contrôle les frontières, la présence et la forme des sorties ainsi que les validations déclarées ; l'humain décide si ces faits suffisent. L'absence de validation déclarée, comme toute validation déclarée mais non exécutée, doit rester visible. Les contrôles de chemins restent des contrôles après écriture, pas un sandbox.
+
+## Trois cas qui trompent souvent
+
+Le nombre de lignes reste un mauvais raccourci. Ces trois contre-exemples le montrent.
+
+| Impression initiale | Fait dominant | Décision plus juste |
+| --- | --- | --- |
+| « Ce n'est qu'une condition d'autorisation sur trois lignes. » | Elle change qui peut voir ou modifier des données | Fonctionnalité structurée et décision de sécurité explicite ; évolution du socle si la règle est partagée |
+| « Le renommage touche quarante fichiers, donc il faut tout orchestrer. » | Transformation mécanique dans une seule zone, sans contrat public ni donnée persistante | Codage guidé, parcours léger suivi, validations ciblées et diff mécanique relisible |
+| « Il suffit d'ajouter un bouton Exporter en CSV. » | L'exploration révèle qu'aucune route d'export ni règle d'autorisation n'existe | Arrêt du travail guidé ; reclassification en fonctionnalité structurée avec décision produit et sécurité |
+
+Une petite modification peut donc exiger une autorité forte. Un grand diff peut rester réversible et peu ambigu. Ce qui compte est l'effet du changement, pas son volume apparent dans Git.
+
+## Le mode est une hypothèse révisable
+
+La classification de départ n'est jamais une autorisation d'élargir le périmètre. L'exploration peut révéler une dépendance, un contrat externe, une migration ou une primitive partagée absente du ticket initial.
+
+La quatrième situation illustre ce principe : la synchronisation dans l'URL exige `shared/routing/**`, déclaré hors du périmètre d'écriture. La tâche produit doit alors produire trois choses :
+
+1. **le fait nouveau :** le routeur partagé ne couvre pas le besoin ;
+2. **les options :** livrer la pagination avec un état local, ou ouvrir une évolution du socle ;
+3. **la décision de reprise :** nouveau périmètre, nouveau responsable et nouvelles validations, ou maintien du non-objectif.
+
+Pour la suite de la série, la décision est de conserver la synchronisation de l'URL comme **non-objectif**. La pagination peut continuer sans modifier le routeur. Une éventuelle évolution du socle restera un travail distinct.
+
+Cette reclassification maîtrisée compte davantage qu'une taxonomie parfaite dès le départ. Une bonne grille n'essaie pas de prédire tout le code. Elle rend visibles les faits qui exigent une nouvelle décision.
+
+## La fiche que l'article suivant va réellement recevoir
+
+La décision peut maintenant être relue sans rouvrir la conversation. Pour la pagination, la fiche finale ressemble à ceci :
 
 ```markdown
-# Fiche de décision
+# Décision — Pagination de l'annuaire clients
 
-Demande :
-Résultat observable :
-Périmètre initial :
+Demande : ajouter une pagination serveur à l'annuaire clients.
 
-| Dimension | Observation | Niveau |
-| --- | --- | --- |
-| Portée | | faible / modérée / élevée |
-| Ambiguïté | | faible / modérée / élevée |
-| Réversibilité | | simple / coordonnée / difficile |
-| Surfaces et contrats | | une / plusieurs / partagés ou externes |
-| Autorité nécessaire | | module / domaine / produit, plateforme ou sécurité |
+Résultats observables :
+- l'API renvoie les éléments, la page courante et le nombre total ;
+- l'annuaire charge la première page à l'ouverture ;
+- l'utilisateur peut avancer et revenir sans dépasser les limites ;
+- les états loading, empty et error restent distincts.
 
-Signaux d'escalade :
-- [ ] sécurité, autorisations ou données sensibles
-- [ ] migration ou opération destructive
-- [ ] nouvelle dépendance ou infrastructure
-- [ ] contrat public ou externe
-- [ ] socle, outillage ou règle commune
-- [ ] effet externe difficilement réversible
+Constats de qualification et hypothèses de périmètre :
+- écritures attendues dans backend/customers/** et frontend/customers/** ;
+- contrat d'API interne à faire évoluer de manière coordonnée ;
+- taille de page fixée à 25 par la convention existante ;
+- page invalide traitée par une réponse HTTP 404 avec le code `pagination_page_invalide` ;
+- aucun effet externe à annuler, mais un retour coordonné de l'API
+  et de l'interface en cas d'abandon.
+
+Non-objectifs :
+- synchroniser la page dans l'URL ;
+- modifier le routeur ou une autre primitive partagée ;
+- ajouter une dépendance ;
+- migrer ou restructurer les données.
 
 Décision :
-- Mode de départ :
-- Parcours :
-- Justification :
-- Entrée minimale :
-- Sortie minimale :
-- Décideur(s) ou rôle d'approbation :
-- Réévaluer si :
+- mode : fonctionnalité structurée ;
+- parcours : orchestré ;
+- rôles à solliciter : responsable de la fonctionnalité et propriétaire de l'API ;
+- entrée minimale : brief clarifié, critères d'acceptation et non-objectifs ;
+- sortie minimale : tâches bornées, contrôles, résultats des validations
+  déclarées, diff relisible et revue humaine.
+
+Réévaluer si :
+- une décision produit reste ouverte avant l'exécution ;
+- un consommateur exige un contrat incompatible ;
+- l'implémentation ne peut respecter l'un des non-objectifs.
 ```
 
-Cette fiche intervient avant le contrat de tâche présenté dans l'article précédent. La fiche choisit le niveau de gouvernance ; le contrat borne ensuite l'exécution. Dans la fiche, le périmètre reste exprimé en surfaces et en responsabilités ; les chemins précis appartiennent au contrat de tâche. Décider comment travailler n'est pas encore dire précisément où l'agent peut écrire.
+Dans un autre repository, la taille de page ou le traitement d'une page invalide peuvent ne pas être définis. Ils deviennent alors des questions du brief : l'exécution attend leur résolution au lieu de transformer un silence en décision produit.
 
-## Quatre variations d'un même annuaire clients
+Cette fiche choisit le niveau de gouvernance. Elle ne remplace pas le contrat de tâche présenté dans l'article précédent : le contrat précisera ensuite les chemins, références, validations et conditions d'arrêt du travail exécutable.
 
-Les quatre modes deviennent plus clairs lorsqu'ils s'appliquent au même produit. Pour la suite pratique, je retiens ces libellés publics, qui francisent et stabilisent la taxonomie esquissée dans le texte fondateur.
+Pour une autre demande, le modèle peut rester court :
 
-| Mode | Profil dominant | Entrée minimale | Sortie minimale |
-| --- | --- | --- | --- |
-| **Vibe coding contrôlé** | Local, visible et réversible | Demande bornée | Diff relu et validation ciblée |
-| **Codage guidé** | Non trivial, mais contenu dans une zone produit connue | Brief court et plan | Suivi, validations consignées et relecture |
-| **Fonctionnalité structurée** | Transversale ou encore ambiguë | Brief clarifié, puis spécification si nécessaire | Tâches bornées, contrôles et résultats consignés |
-| **Évolution du socle** | Modification d'une primitive, d'une règle ou d'un outillage commun | Proposition d'impact et responsable identifié | Changement séparé, compatibilité, validations élargies et revue dédiée |
-
-### Vibe coding contrôlé : corriger le libellé de l'état vide
-
-Le besoin est visible, local et facilement réversible. Il ne modifie aucun contrat, aucune dépendance ni aucun comportement partagé. Une demande précise, un diff relu et une validation ciblée peuvent suffire.
-
-Le mot « contrôlé » est essentiel. Ce mode ne signifie pas que la conversation remplace les règles du repository. L'agent reste borné à la zone concernée, réutilise les conventions existantes et montre le résultat réel. Si le changement révèle un problème plus large dans le composant partagé, la tâche sort de ce mode.
-
-### Codage guidé : ajouter une action locale avec les contrats existants
-
-Ajouter une action dans l'annuaire peut toucher plusieurs fichiers, nécessiter de retrouver un composant existant et demander un test de comportement. Le résultat reste toutefois contenu dans une zone produit connue et ne modifie pas le contrat de l'API.
-
-Un brief court et un plan constituent alors une entrée proportionnée : comportement attendu, fichiers probablement concernés, conventions à réutiliser et validations ciblées. Le suivi conservé hors de la conversation facilite la reprise et la relecture sans imposer toute la mécanique d'une fonctionnalité structurée.
-
-Si l'action nécessite finalement une nouvelle route d'API, une dépendance ou une autorisation supplémentaire, le profil change. Le plan initial ne donne pas à l'agent l'autorité d'absorber silencieusement cette découverte.
-
-### Fonctionnalité structurée : ajouter la pagination serveur
-
-La pagination relie l'interface, l'API, le contrat de réponse, les états de chargement et les tests. Plusieurs décisions doivent être prises de manière cohérente : forme du contrat, page initiale, taille des pages, comportement aux limites et compatibilité avec les consommateurs existants.
-
-Le travail mérite donc un brief clarifié, un découpage en tâches, des frontières explicites, des résultats de validation consignés et une synthèse de revue. Une spécification complète n'est pas automatique : elle devient utile si les décisions ouvertes ne peuvent pas être résolues proprement dans le brief et le plan.
-
-### Évolution du socle : modifier une primitive partagée
-
-Supposons enfin que la pagination exige de changer le routeur commun ou une primitive d'interface utilisée ailleurs. Le diff peut être court, mais la décision et la portée de l'impact ne le sont pas.
-
-Ce changement doit devenir une unité de travail séparée. Son entrée n'est plus seulement le besoin de l'annuaire clients, mais une proposition d'impact : consommateurs affectés, compatibilité, stratégie de transition, validations élargies et responsable de la décision. Une évolution du socle ne donne pas carte blanche sur les fichiers partagés ; elle rend au contraire leur modification explicite et plus exigeante.
-
-## Deux parcours, pas quatre chaînes d'exécution
-
-Les quatre modes n'exigent pas quatre systèmes différents. Deux parcours, avec des variantes proportionnées, suffisent à mettre ces décisions en œuvre.
-
-```text
-demande qualifiée
-├── parcours léger
-│   ├── variante directe  → vibe coding contrôlé
-│   └── variante suivie   → codage guidé
-└── parcours orchestré
-    ├── travail produit   → fonctionnalité structurée
-    └── travail partagé   → évolution du socle, traitée séparément
+```markdown
+Demande et résultats observables :
+Constats, hypothèses et non-objectifs :
+Mode et parcours retenus :
+Périmètre initial :
+Entrée et sortie minimales :
+Rôle d'approbation à solliciter :
+Réévaluer si :
 ```
-
-Le **parcours léger** minimise le coût de coordination. Dans sa variante directe, la demande bornée mène à la modification, à une validation ciblée puis à la relecture du diff. Dans sa variante suivie, un brief court, un plan et un journal persistant sont ajoutés avant la relecture.
-
-Cette mémoire reste proportionnée à la tâche. Si l'agent tient lui-même le journal, celui-ci aide à comprendre et reprendre le travail ; il ne devient pas pour autant une attestation indépendante.
-
-Le **parcours orchestré** sépare davantage les rôles. Le brief est clarifié, le travail est découpé, le périmètre est borné, les résultats de contrôle et de validation sont conservés, puis une revue locale prépare le passage vers Git et la CI. L'évolution du socle suit la même séquence générale, mais dans une unité distincte et avec une analyse de compatibilité plus large.
-
-Le parcours choisi décrit le dispositif minimal attendu. Il ne préjuge ni du modèle utilisé, ni de l'interface à partir de laquelle l'agent est appelé.
-
-## Fiche remplie pour la pagination
-
-| Dimension | Observation | Qualification |
-| --- | --- | --- |
-| Portée | Une fonctionnalité cohérente et bornée | Modérée |
-| Ambiguïté | Le résultat est clair ; la forme exacte du contrat reste à confirmer | Modérée |
-| Réversibilité | Pas de migration prévue, mais l'annulation doit être coordonnée entre l'interface et l'API | Coordonnée |
-| Surfaces et contrats | Interface, API interne, tests et documentation | Plusieurs surfaces et un contrat d'API interne |
-| Autorité nécessaire | Responsable de la fonctionnalité et propriétaire de l'API | Domaine |
-
-Les facteurs dominants sont le travail sur plusieurs surfaces et l'évolution coordonnée d'un contrat interne. Aucun signal imposant à lui seul un contrôle renforcé n'est identifié : le périmètre initial ne prévoit ni migration, ni nouvelle dépendance, ni contrat public, ni donnée sensible, ni modification du socle.
-
-La décision devient donc :
-
-- **mode de départ :** fonctionnalité structurée ;
-- **parcours :** orchestré ;
-- **entrée minimale :** brief clarifié, critères d'acceptation et périmètre initial ;
-- **sortie minimale :** plan et tâches bornées, résultats de contrôle et de validation consignés, diff relisible et revue humaine ;
-- **décideurs :** responsable de la fonctionnalité avec le propriétaire de l'API ;
-- **réévaluer si :** la solution exige une primitive de routage partagée, un contrat incompatible, une migration ou une nouvelle dépendance.
-
-La fiche ne prouve pas que cette décision est parfaite. Elle rend le choix explicite, contestable et modifiable avant que l'agent ne transforme les hypothèses en code.
-
-## Le mode est un point de départ, pas une autorisation
-
-Une classification initiale est une hypothèse de travail. L'exploration peut révéler un fait qui change le profil : dépendance manquante, contrat externe, migration nécessaire ou composant partagé insuffisant.
-
-Dans ce cas, l'exécution doit être suspendue. L'agent peut recommander une reclassification, mais il ne doit pas élargir seul son périmètre. La personne qui pilote la tâche, éventuellement aidée par le workflow, doit ensuite :
-
-1. consigner le nouveau fait et son impact ;
-2. confirmer ou modifier le mode et le parcours ;
-3. identifier le décideur compétent ;
-4. redéfinir le périmètre et les validations avant la reprise.
-
-Pour l'annuaire clients, découvrir que la synchronisation de la page dans l'URL exige une modification du routeur partagé ne transforme pas rétroactivement la sortie de périmètre en changement acceptable. La tâche produit s'arrête ; l'équipe choisit une solution locale ou ouvre une évolution du socle séparée.
-
-Cette capacité à reclasser compte davantage qu'une taxonomie parfaite dès le départ. Une grille utile n'essaie pas de prédire toute l'implémentation. Elle rend visibles les événements qui exigent une nouvelle décision.
 
 ## Conclusion
 
-Choisir un mode revient à choisir le dispositif le plus léger qui reste compatible avec le risque dominant. Le nombre de lignes, le modèle ou l'outil ne suffisent pas. La portée, l'ambiguïté, la réversibilité, les contrats affectés et l'autorité nécessaire donnent une base plus solide.
+Choisir un mode revient à préparer un ordre de mission proportionné. Pour le libellé, une zone, un test ciblé et un diff suffisent. Pour l'action locale, un brief et un mini-plan rendent le travail reprenable. Pour la pagination, plusieurs surfaces et un contrat commun justifient des tâches bornées, des contrôles persistants et une revue structurée. Pour le routeur partagé, le travail produit s'arrête et l'évolution du socle est traitée séparément.
 
-Le contrat du repository fixe les règles du terrain. Le mode fixe le niveau de gouvernance. Le parcours fixe les étapes et les faits qui devront être conservés.
+Le repository fixe les règles du terrain. Le mode qualifie le changement. Le parcours organise le travail. Et la fiche désigne le rôle humain qui doit accepter les décisions et le risque résiduel.
 
-Pour la pagination de l'annuaire clients, la grille conduit à une fonctionnalité structurée et à un parcours orchestré. [Le prochain article suit ce parcours de bout en bout](../agentic-feature-end-to-end/index.md) : du brief clarifié à la revue locale, en montrant ce que chaque étape produit et ce qu'elle permet réellement d'affirmer.
+La pagination est maintenant classée comme fonctionnalité structurée, son parcours est choisi et ses conditions de réévaluation sont écrites. [Le prochain article part de cette décision et suit la feature de bout en bout](../agentic-feature-end-to-end/index.md), du brief clarifié à la revue locale.
 
 <div class="article-footer-contact">
   <p>Pour discuter de cet article ou me laisser un message public :</p>

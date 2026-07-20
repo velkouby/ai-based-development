@@ -105,11 +105,11 @@ objective: >-
 
 scope:
   writable:
-    - "app/customers/**"
-    - "api/customers/**"
+    - "backend/customers/**"
+    - "frontend/customers/**"
   read_only:
     - "shared/ui/**"
-    - "platform/routing/**"
+    - "shared/routing/**"
   out_of_scope:
     - "tooling/**"
     - "generated/**"
