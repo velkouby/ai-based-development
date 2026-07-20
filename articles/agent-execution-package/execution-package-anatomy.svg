@@ -119,14 +119,15 @@
   <line class="divider" x1="1182" y1="408" x2="1480" y2="408"/>
 
   <text class="text guard-title" x="1182" y="449">READ-ONLY REFERENCES</text>
-  <text class="text guard-text" x="1182" y="484">Shared UI · contracts</text>
+  <text class="text guard-text" x="1182" y="484">UI · state · routing</text>
 
-  <text class="text guard-title" x="1182" y="535" fill="#f47b20">FORBIDDEN PATHS</text>
-  <text class="text guard-text" x="1182" y="570">Routing · tooling</text>
+  <text class="text guard-title" x="1182" y="520" fill="#f47b20">FORBIDDEN PATHS</text>
+  <text class="text guard-text" x="1182" y="552">Tooling · generated</text>
+  <text class="text guard-text" x="1182" y="580">Workflow state</text>
 
-  <text class="text guard-title" x="1182" y="621" fill="#f47b20">STOP IF</text>
-  <text class="text guard-text" x="1182" y="656">Incompatible contract</text>
-  <text class="text guard-text" x="1182" y="687">or new dependency</text>
+  <text class="text guard-title" x="1182" y="615" fill="#f47b20">STOP IF</text>
+  <text class="text guard-text" x="1182" y="647">Incompatible contract</text>
+  <text class="text guard-text" x="1182" y="678">or new dependency</text>
 
   <!-- Output contract -->
   <rect x="88" y="756" width="1424" height="94" rx="24" fill="#07162d"/>

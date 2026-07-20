@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="Un code de retour nul n'est pas un verdict sur une feature. Voici comment lire une preuve locale, rendre ses lacunes visibles et préparer son raccord à Git, à la CI et à la décision humaine.">
+        <meta name="description" content="Trois commandes vertes ne valident pas une feature à elles seules. Ouvrons deux tentatives concrètes, leur état Git et leur manifeste pour voir ce que la preuve locale permet réellement d'affirmer.">
       
       
         <meta name="author" content="Vincent El Kouby-Benichou, Baracoda">
@@ -407,10 +407,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#vert-nest-pas-une-propriete-du-code" class="md-nav__link">
+  <a href="#partir-dun-etat-identifiable" class="md-nav__link">
     <span class="md-ellipsis">
       
-        « Vert » n'est pas une propriété du code
+        Partir d'un état identifiable
       
     </span>
   </a>
@@ -418,10 +418,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#quatre-sources-de-verite-a-separer" class="md-nav__link">
+  <a href="#tentative-001-deux-commandes-vertes-un-comportement-rouge" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Quatre sources de vérité à séparer
+        Tentative 001 : deux commandes vertes, un comportement rouge
       
     </span>
   </a>
@@ -429,10 +429,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#ouvrir-la-preuve-locale" class="md-nav__link">
+  <a href="#tentative-002-corriger-un-fichier-puis-revalider-lensemble" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Ouvrir la preuve locale
+        Tentative 002 : corriger un fichier, puis revalider l'ensemble
       
     </span>
   </a>
@@ -440,10 +440,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#ce-quun-framework-peut-etablir-localement" class="md-nav__link">
+  <a href="#ce-que-git-observe-reellement" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Ce qu'un framework peut établir localement
+        Ce que Git observe réellement
       
     </span>
   </a>
@@ -451,10 +451,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#une-commande-ne-vaut-quavec-son-perimetre" class="md-nav__link">
+  <a href="#controler-les-chemins-fichier-par-fichier" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Une commande ne vaut qu'avec son périmètre
+        Contrôler les chemins fichier par fichier
       
     </span>
   </a>
@@ -462,10 +462,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#relier-les-criteres-dacceptation-aux-validations" class="md-nav__link">
+  <a href="#ouvrir-le-manifeste-de-la-tentative-002" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Relier les critères d'acceptation aux validations
+        Ouvrir le manifeste de la tentative 002
       
     </span>
   </a>
@@ -473,10 +473,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#les-lacunes-doivent-etre-des-donnees" class="md-nav__link">
+  <a href="#relier-chaque-critere-a-un-controle" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Les lacunes doivent être des données
+        Relier chaque critère à un contrôle
       
     </span>
   </a>
@@ -484,10 +484,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#de-la-preuve-locale-a-la-preuve-liee-a-une-revision" class="md-nav__link">
+  <a href="#ce-que-lon-peut-affirmer-et-rien-de-plus" class="md-nav__link">
     <span class="md-ellipsis">
       
-        De la preuve locale à la preuve liée à une révision
+        Ce que l'on peut affirmer — et rien de plus
       
     </span>
   </a>
@@ -495,10 +495,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#le-manifeste-cible" class="md-nav__link">
+  <a href="#le-rapport-de-revue-final" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Le manifeste cible
+        Le rapport de revue final
       
     </span>
   </a>
@@ -506,21 +506,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#ce-que-la-ci-ajoute-et-ce-quelle-najoute-pas" class="md-nav__link">
+  <a href="#de-la-copie-de-travail-au-commit-et-a-la-ci" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Ce que la CI ajoute — et ce qu'elle n'ajoute pas
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#une-checklist-de-revue-qui-resiste-au-vert" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Une checklist de revue qui résiste au vert
+        De la copie de travail au commit et à la CI
       
     </span>
   </a>
@@ -559,370 +548,383 @@
 
 
 <h1 class="article-title" id="les-tests-passent-que-prouve-le-workflow">« Les tests passent » : que prouve le workflow ?<a class="headerlink" href="#les-tests-passent-que-prouve-le-workflow" title="Permanent link">&para;</a></h1>
-<p class="article-lead">Un test vert est un fait utile. Ce n'est pas encore une conclusion sur la feature. Pour savoir ce qu'il prouve, il faut connaître la commande exécutée, son périmètre, la révision concernée, l'environnement utilisé et tout ce qui n'a pas été vérifié.</p>
+<p class="article-lead">Trois commandes retournent <code>0</code> sur la deuxième tentative. Cinq fichiers sont modifiés, tous dans le périmètre. Pourtant, la conclusion exacte n'est pas « feature validée » : un état local identifié a franchi des contrôles précis, après une première tentative rouge que le workflow a conservée.</p>
 <p class="article-meta">
   <span>Par <span class="article-author">Vincent El Kouby-Benichou</span>, <a class="article-company-link" href="https://baracoda.com">Baracoda</a></span>
   <a class="article-contact-link" href="https://www.linkedin.com/in/vincentelkoubybenichou/">LinkedIn</a>
 </p>
 
-<p>Dans <a href="../agent-task-stop-and-resume/">l'article précédent</a>, une variante pédagogique autour de la synchronisation URL servait à étudier l'arrêt et la reprise. Pour analyser la preuve sans mélanger ce scénario avec l'exécution principale, revenons ici à la pagination initiale décrite dans la <a href="../agentic-feature-end-to-end/">trace de bout en bout</a>, sans l'extension URL. Supposons que ses tâches soient terminées, que les fichiers observés restent dans le périmètre autorisé et que toutes les commandes lancées retournent <code>0</code>.</p>
-<p>Peut-on écrire « la pagination de l'annuaire clients est validée » ?</p>
-<p>Pas encore. On peut affirmer quelque chose de plus précis : dans un contexte local donné, certaines commandes se sont terminées sans erreur sur l'état de travail observé. Cette phrase paraît moins spectaculaire. Elle est surtout beaucoup plus utile à la personne qui doit relire le changement.</p>
-<p>Un framework appliquant ces principes peut conserver une partie de ces faits : tentatives, fichiers détectés, contrôles de périmètre, commandes exécutées, codes de retour et synthèse de revue. Cela ne transforme pas pour autant l'artefact local qu'il produit en attestation complète d'une pull request.</p>
+<p>Dans <a href="../agent-task-stop-and-resume/">l'article précédent</a>, nous avons suivi l'échec frontend de la tentative 001 jusqu'à la correction bornée de la tentative 002. Nous avons aussi vu pourquoi une synchronisation URL sous <code>shared/routing/**</code> imposerait un autre arrêt. Restons maintenant sur le parcours de réparation locale réussi, dont le paquet n'écrit que dans <code>backend/customers/**</code> et <code>frontend/customers/**</code>.</p>
+<p>Le runner vient d'achever une deuxième tentative. Avant de résumer son résultat par « les tests passent », ouvrons l'état Git, les commandes et le manifeste que la personne chargée de la revue recevra réellement.</p>
+<p>Le point à démontrer est simple : un résultat vert devient utile lorsqu'on peut répondre à cinq questions.</p>
+<ol>
+<li>Sur quel état du code la commande a-t-elle tourné ?</li>
+<li>Qu'a-t-elle réellement exécuté ?</li>
+<li>Quel résultat observable a-t-elle produit ?</li>
+<li>Quelle partie du changement ce résultat couvre-t-il ?</li>
+<li>Qu'est-ce qui reste non exécuté, inconnu ou soumis à une décision humaine ?</li>
+</ol>
 <blockquote>
-<p>La couleur d'un contrôle résume un résultat. La preuve doit permettre d'en reconstruire la portée.</p>
+<p>Le vert résume le résultat d'une commande. La preuve conserve l'état, la portée, l'historique et les lacunes nécessaires pour l'interpréter.</p>
 </blockquote>
+<h2 id="partir-dun-etat-identifiable">Partir d'un état identifiable<a class="headerlink" href="#partir-dun-etat-identifiable" title="Permanent link">&para;</a></h2>
+<p>Avant la première tentative, le workflow relève la branche, la révision de départ et l'état de la copie de travail :</p>
+<div class="highlight"><pre><span></span><code><span class="gp">$ </span>git<span class="w"> </span>branch<span class="w"> </span>--show-current
+<span class="go">feature/customer-pagination</span>
+
+<span class="gp">$ </span>git<span class="w"> </span>rev-parse<span class="w"> </span>--short<span class="w"> </span>HEAD
+<span class="go">7a31c42</span>
+
+<span class="gp">$ </span>git<span class="w"> </span>status<span class="w"> </span>--short<span class="w"> </span>--untracked-files<span class="o">=</span>all
+</code></pre></div>
+<p>La dernière commande ne produit aucune ligne. Dans cette observation, la copie de travail, l'index Git et la liste des fichiers non suivis sont vides. Le paquet commence donc sur la branche <code>feature/customer-pagination</code>, depuis le commit <code>7a31c42</code>, sans modification locale détectée.</p>
+<p>Cette capture ne garantit pas que le repository restera propre. Elle fixe seulement le point de comparaison avant que le runner exécute T-01, T-02 et T-03 : faire évoluer le contrat backend, adapter l'annuaire frontend, puis relire leur cohérence.</p>
+<p>Le runner charge le paquet, modifie les cinq fichiers attendus et déclare les trois tâches terminées. Cette déclaration déclenche les contrôles ; elle ne les remplace pas.</p>
+<h2 id="tentative-001-deux-commandes-vertes-un-comportement-rouge">Tentative 001 : deux commandes vertes, un comportement rouge<a class="headerlink" href="#tentative-001-deux-commandes-vertes-un-comportement-rouge" title="Permanent link">&para;</a></h2>
+<p>Le contrôle de chemins passe : les fichiers observés appartiennent tous aux zones produit autorisées. Le workflow lance alors les trois validations ciblées inscrites dans l'ordre de mission.</p>
+<div class="highlight"><pre><span></span><code>Tentative 001
+
+Contrôle de chemins
+  statut : passed
+
+$ make test-back
+  code de retour : 0
+
+$ make test-front
+  FAIL CustomerList &gt; disables Next on the last page
+  attendu : disabled
+  reçu    : enabled
+  code de retour : 1
+
+$ make build-front
+  code de retour : 0
+
+Qualité globale
+  statut : not_run
+
+Statut de la tentative
+  needs_retry
+</code></pre></div>
+<p>Cette combinaison est riche d'enseignements. Le backend passe. Le frontend compile. Pourtant, un comportement observable reste faux : sur la dernière page, le bouton « Suivant » est encore actif.</p>
+<p>Le build vert n'annule pas le test rouge. Ces commandes ne posent pas la même question. <code>make build-front</code> établit que le frontend demandé peut être construit dans cet environnement ; il ne vérifie pas que la navigation respecte les bornes de pagination.</p>
+<p>La tentative passe donc à <code>needs_retry</code>. Le workflow conserve le nom du test, le résultat attendu, le résultat reçu et les deux autres commandes vertes. Il ne remplace pas l'ensemble par un vague « les tests échouent » et ne marque pas non plus la feature comme terminée parce que deux contrôles sur trois ont réussi.</p>
+<h2 id="tentative-002-corriger-un-fichier-puis-revalider-lensemble">Tentative 002 : corriger un fichier, puis revalider l'ensemble<a class="headerlink" href="#tentative-002-corriger-un-fichier-puis-revalider-lensemble" title="Permanent link">&para;</a></h2>
+<p>Le diagnostic ne demande ni nouvelle décision produit, ni dépendance, ni extension du périmètre. La correction peut rester dans le composant qui porte le comportement :</p>
+<div class="highlight"><pre><span></span><code>fichier changé pendant la tentative 002
+  frontend/customers/customer-list.tsx
+</code></pre></div>
+<p>La tentative 002 reçoit l'échec précédent, la même autorité d'écriture et les mêmes validations. Après la correction, le workflow contrôle de nouveau les chemins puis relance les trois commandes prévues pour le paquet :</p>
+<div class="highlight"><pre><span></span><code>Tentative 002
+
+Contrôle de chemins
+  statut : passed
+
+$ make test-back
+  code de retour : 0
+
+$ make test-front
+  code de retour : 0
+
+$ make build-front
+  code de retour : 0
+
+Qualité globale
+  statut : not_run
+
+Statut de la tentative
+  completed
+</code></pre></div>
+<p>Relancer les trois commandes produit ici une preuve cohérente sur l'état final du paquet. Une autre politique pourrait sélectionner un sous-ensemble justifié par l'impact de la correction ; dans ce parcours, le contrat demande les trois validations et elles sont donc toutes rejouées.</p>
+<p>Le dernier vert ne réécrit pas l'histoire. La tentative 001 reste visible avec son échec, et la tentative 002 montre la correction bornée qui a permis d'obtenir le nouveau résultat.</p>
 <figure class="article-diagram">
-  <img src="../../../articles/local-proof-agent-workflow/local-proof-context.png" alt="Un contrôle PASSED avec un code de retour nul est entouré de la révision, de l'environnement, de la commande, du périmètre, de l'instant, des sorties et des limites connues, tandis que les états non exécuté et inconnu restent visibles." loading="lazy" />
-  <figcaption>Un contrôle vert n'est interprétable qu'avec son contexte, sa portée et ses limites.</figcaption>
+  <img src="../../../articles/local-proof-agent-workflow/local-proof-context.png" alt="Deux tentatives de pagination sont reliées : la première conserve l'échec du test frontend, la deuxième passe trois commandes ciblées après une correction bornée. Le HEAD courant, les cinq chemins observés, la qualité globale non exécutée et l'absence de commit de résultat restent visibles." loading="lazy" />
+  <figcaption>Le résultat vert de la tentative 002 n'est interprétable qu'avec son état Git, son périmètre, la tentative rouge précédente et les contrôles absents.</figcaption>
 </figure>
 
-<h2 id="vert-nest-pas-une-propriete-du-code">« Vert » n'est pas une propriété du code<a class="headerlink" href="#vert-nest-pas-une-propriete-du-code" title="Permanent link">&para;</a></h2>
-<p>Dire qu'un test passe omet presque toujours le complément de la phrase : quel test, lancé où, quand, sur quoi et avec quelles hypothèses ?</p>
-<p>Un résultat de validation peut être représenté comme un tuple :</p>
-<div class="highlight"><pre><span></span><code>résultat = (
-  révision ou état de travail,
-  environnement,
-  commande,
-  périmètre couvert,
-  instant,
-  code de retour,
-  sortie utile,
-  limites connues
-)
+<h2 id="ce-que-git-observe-reellement">Ce que Git observe réellement<a class="headerlink" href="#ce-que-git-observe-reellement" title="Permanent link">&para;</a></h2>
+<p>À la fin de la tentative 001, le workflow a conservé les mêmes observations Git que celles qu'il va maintenant relever à nouveau. À la fin de la tentative 002, la copie de travail contient encore le diff complet de la fonctionnalité. Le runner n'a changé qu'un fichier pendant cette seconde tentative, mais les quatre autres modifications produites pendant la première sont toujours présentes.</p>
+<div class="highlight"><pre><span></span><code><span class="gp">$ </span>git<span class="w"> </span>branch<span class="w"> </span>--show-current
+<span class="go">feature/customer-pagination</span>
+
+<span class="gp">$ </span>git<span class="w"> </span>rev-parse<span class="w"> </span>--short<span class="w"> </span>HEAD
+<span class="go">7a31c42</span>
+
+<span class="gp">$ </span>git<span class="w"> </span>diff<span class="w"> </span>--name-only
+<span class="go">backend/customers/api.py</span>
+<span class="go">backend/customers/tests/test_pagination.py</span>
+<span class="go">frontend/customers/customer-api.ts</span>
+<span class="go">frontend/customers/customer-list.tsx</span>
+<span class="go">frontend/customers/customer-list.test.tsx</span>
+
+<span class="gp">$ </span>git<span class="w"> </span>diff<span class="w"> </span>--cached<span class="w"> </span>--name-only
+
+<span class="gp">$ </span>git<span class="w"> </span>ls-files<span class="w"> </span>--others<span class="w"> </span>--exclude-standard
 </code></pre></div>
-<p>Retirer l'un de ces éléments ne rend pas nécessairement le résultat faux. Cela réduit ce qu'une autre personne peut en conclure.</p>
-<p>Une commande de tests unitaires backend qui retourne <code>0</code> établit que les cas présents dans cette suite n'ont pas échoué dans cet environnement. Elle ne démontre pas que l'interface sait consommer le nouveau contrat. Un contrôle de types frontend ne démontre pas que les boutons de pagination se comportent correctement. Un build réussi ne démontre pas que les états <code>loading</code>, <code>empty</code> et <code>error</code> sont lisibles pour un utilisateur.</p>
-<p>Même une suite end-to-end ne « prouve pas la feature » au sens absolu. Elle exerce les parcours qu'elle contient, avec les données et l'environnement qu'on lui fournit. Sa valeur peut être élevée ; sa portée reste bornée.</p>
-<p>La bonne question n'est donc pas :</p>
-<blockquote>
-<p>Les tests sont-ils verts ?</p>
-</blockquote>
-<p>Mais :</p>
-<blockquote>
-<p>Quelles hypothèses le vert permet-il d'écarter, et lesquelles restent ouvertes ?</p>
-</blockquote>
-<h2 id="quatre-sources-de-verite-a-separer">Quatre sources de vérité à séparer<a class="headerlink" href="#quatre-sources-de-verite-a-separer" title="Permanent link">&para;</a></h2>
-<p>Une exécution agentique mélange facilement plusieurs catégories d'informations. Pour la revue, elles doivent rester distinctes.</p>
+<p>Les deux premières commandes confirment que le runner est resté sur la branche de départ et que <code>HEAD</code> vaut toujours <code>7a31c42</code>. <code>git diff --name-only</code> compare la copie de travail à l'index ; comme l'index ne contient aucun changement et pointe toujours vers ce même <code>HEAD</code>, les cinq chemins composent aussi le diff depuis le commit de départ. La dernière commande ne trouve aucun fichier non suivi.</p>
+<p>Le rapprochement entre les captures permet deux affirmations distinctes :</p>
+<ul>
+<li>entre le départ propre et l'état final, cinq fichiers sont apparus dans le diff de la fonctionnalité ;</li>
+<li>entre le début et la fin de la tentative 002, seul <code>frontend/customers/customer-list.tsx</code> a changé.</li>
+</ul>
+<p>Cette distinction évite d'attribuer toute la feature à la tentative de réparation. Elle évite aussi de confondre la liste déclarée par l'agent avec la liste observée par Git. Sans checkpoints intermédiaires entre T-01, T-02 et T-03, Git ne permet toujours pas de prouver quelle tâche a produit chaque ligne.</p>
+<h2 id="controler-les-chemins-fichier-par-fichier">Contrôler les chemins fichier par fichier<a class="headerlink" href="#controler-les-chemins-fichier-par-fichier" title="Permanent link">&para;</a></h2>
+<p>L'ordre de mission autorise l'écriture dans <code>backend/customers/**</code> et <code>frontend/customers/**</code>. Les couches partagées restent en lecture seule ; le tooling, les fichiers générés et l'état du workflow sont interdits.</p>
 <table>
 <thead>
 <tr>
-<th>Source</th>
-<th>Exemple</th>
-<th>Ce que l'on peut affirmer</th>
-<th>Limite principale</th>
+<th>Chemin observé</th>
+<th>Règle correspondante</th>
+<th>Conclusion</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><strong>Déclaration de l'agent</strong></td>
-<td>« J'ai ajouté la pagination et les tests passent »</td>
-<td>L'agent rapporte avoir terminé et décrit son résultat</td>
-<td>La déclaration n'est pas un contrôle indépendant</td>
+<td><code>backend/customers/api.py</code></td>
+<td><code>backend/customers/**</code></td>
+<td>Écriture autorisée</td>
 </tr>
 <tr>
-<td><strong>Observation du workflow</strong></td>
-<td>Une commande a retourné <code>0</code> entre deux horodatages</td>
-<td>Cette commande s'est achevée sans erreur détectée par son code de retour</td>
-<td>Le workflow ne sait pas, par défaut, si la commande est suffisante</td>
+<td><code>backend/customers/tests/test_pagination.py</code></td>
+<td><code>backend/customers/**</code></td>
+<td>Écriture autorisée</td>
 </tr>
 <tr>
-<td><strong>État rapporté par Git</strong></td>
-<td>Des chemins sont modifiés dans le working tree</td>
-<td>Git voit ces différences au moment de l'inspection</td>
-<td>Sans base et tête identifiées, l'attribution à une révision reste incomplète</td>
+<td><code>frontend/customers/customer-api.ts</code></td>
+<td><code>frontend/customers/**</code></td>
+<td>Écriture autorisée</td>
 </tr>
 <tr>
-<td><strong>Décision humaine</strong></td>
-<td>« Ces contrôles suffisent pour proposer le merge »</td>
-<td>Une personne autorisée accepte le niveau de risque résiduel</td>
-<td>La décision dépend de la qualité des faits mis à sa disposition</td>
+<td><code>frontend/customers/customer-list.tsx</code></td>
+<td><code>frontend/customers/**</code></td>
+<td>Écriture autorisée</td>
+</tr>
+<tr>
+<td><code>frontend/customers/customer-list.test.tsx</code></td>
+<td><code>frontend/customers/**</code></td>
+<td>Écriture autorisée</td>
 </tr>
 </tbody>
 </table>
-<p>Ces quatre sources peuvent être cohérentes sans être interchangeables. L'agent peut rapporter un fichier modifié ; le workflow peut observer une autre liste dans Git. En cas de divergence, la différence elle-même devient un fait à examiner.</p>
-<p>De même, un outil peut enregistrer « terminé » parce que toutes les commandes déclarées ont réussi. Ce statut ne dit pas si une validation importante a été oubliée. L'absence d'une commande n'a pas de code de retour rouge.</p>
-<blockquote>
-<p>Une validation omise ne doit jamais apparaître comme un contrôle réussi. Elle doit apparaître comme une information absente, un choix explicite ou un risque résiduel.</p>
-</blockquote>
-<h2 id="ouvrir-la-preuve-locale">Ouvrir la preuve locale<a class="headerlink" href="#ouvrir-la-preuve-locale" title="Permanent link">&para;</a></h2>
-<p>Pour le fil rouge de la pagination, imaginons l'artefact local suivant. Ses noms de champs et ses valeurs sont pédagogiques : ils illustrent une manière possible, pour un framework, de conserver les faits utiles à la revue.</p>
-<div class="highlight"><pre><span></span><code><span class="nt">tentative</span><span class="p">:</span>
-<span class="w">  </span><span class="nt">identifiant</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">run-002</span>
-<span class="w">  </span><span class="nt">creee_a</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2026-07-17T09:42:18Z</span>
+<p>Aucun chemin observé ne touche <code>shared/ui/**</code>, <code>shared/state/**</code>, <code>shared/routing/**</code>, <code>tooling/**</code>, <code>generated/**</code> ou <code>workflow-state/**</code>. Le statut <code>passed</code> signifie donc : <strong>tous les chemins inclus dans cette observation correspondent à une zone modifiable du paquet</strong>.</p>
+<p>Il ne signifie pas que le processus était techniquement incapable d'écrire ailleurs. Le contrôle intervient après l'écriture ; ce n'est pas un sandbox. Il ne détecte pas non plus une erreur métier située dans un chemin autorisé — précisément ce que le test frontend de la tentative 001 a révélé.</p>
+<h2 id="ouvrir-le-manifeste-de-la-tentative-002">Ouvrir le manifeste de la tentative 002<a class="headerlink" href="#ouvrir-le-manifeste-de-la-tentative-002" title="Permanent link">&para;</a></h2>
+<p>Le manifeste rassemble les faits nécessaires pour reconstruire le dernier résultat sans effacer la tentative précédente :</p>
+<div class="highlight"><pre><span></span><code><span class="nt">evidence</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">attempt</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;002&quot;</span>
+<span class="w">    </span><span class="nt">previous_attempt</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;001&quot;</span>
+<span class="w">    </span><span class="nt">status</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">completed</span>
+<span class="w">    </span><span class="nt">source</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">local</span>
 
-<span class="nt">agent</span><span class="p">:</span>
-<span class="w">  </span><span class="nt">resultat_declare</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">completed</span>
-<span class="w">  </span><span class="nt">resume</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">&gt;-</span>
-<span class="w">    </span><span class="no">Contrat de pagination ajouté côté API et intégré dans l&#39;annuaire.</span>
+<span class="w">  </span><span class="nt">revision</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">branch</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">feature/customer-pagination</span>
+<span class="w">    </span><span class="nt">base_commit</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">7a31c42</span>
+<span class="w">    </span><span class="nt">current_head</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">7a31c42</span>
+<span class="w">    </span><span class="nt">result_commit</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">null</span>
+<span class="w">    </span><span class="nt">feature_started_clean</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">    </span><span class="nt">mutable_working_tree</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
 
-<span class="nt">git_observe</span><span class="p">:</span>
-<span class="w">  </span><span class="nt">avant</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">fichiers_deja_modifies</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span>
-<span class="w">  </span><span class="nt">apres</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">fichiers_modifies</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">git</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">carried_from_attempt_001</span><span class="p">:</span>
 <span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">backend/customers/api.py</span>
 <span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">backend/customers/tests/test_pagination.py</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">frontend/customers/customer-api.ts</span>
 <span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">frontend/customers/customer-list.tsx</span>
 <span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">frontend/customers/customer-list.test.tsx</span>
-<span class="w">  </span><span class="nt">modifies_pendant_la_tentative</span><span class="p">:</span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">backend/customers/api.py</span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">backend/customers/tests/test_pagination.py</span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">frontend/customers/customer-list.tsx</span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">frontend/customers/customer-list.test.tsx</span>
+<span class="w">    </span><span class="nt">changed_during_attempt_002</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">frontend/customers/customer-list.tsx</span>
+<span class="w">    </span><span class="nt">final_modified_files</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">backend/customers/api.py</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">backend/customers/tests/test_pagination.py</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">frontend/customers/customer-api.ts</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">frontend/customers/customer-list.tsx</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">frontend/customers/customer-list.test.tsx</span>
+<span class="w">    </span><span class="nt">staged_files</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span>
+<span class="w">    </span><span class="nt">untracked_files</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span>
 
-<span class="nt">frontieres</span><span class="p">:</span>
-<span class="w">  </span><span class="nt">statut</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">passed</span>
-<span class="w">  </span><span class="nt">violations</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span>
+<span class="w">  </span><span class="nt">path_policy</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">status</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">passed</span>
+<span class="w">    </span><span class="nt">violations</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span>
 
-<span class="nt">validations</span><span class="p">:</span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">commande</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">backend-tests customers</span>
-<span class="w">    </span><span class="nt">code_de_retour</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0</span>
-<span class="w">    </span><span class="nt">debut</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2026-07-17T09:43:02Z</span>
-<span class="w">    </span><span class="nt">fin</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2026-07-17T09:43:07Z</span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">commande</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">frontend-tests customer-list</span>
-<span class="w">    </span><span class="nt">code_de_retour</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0</span>
-<span class="w">    </span><span class="nt">debut</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2026-07-17T09:43:07Z</span>
-<span class="w">    </span><span class="nt">fin</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2026-07-17T09:43:13Z</span>
+<span class="w">  </span><span class="nt">validations</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">command</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">make test-back</span>
+<span class="w">      </span><span class="nt">exit_code</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0</span>
+<span class="w">      </span><span class="nt">status</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">passed</span>
+<span class="w">      </span><span class="nt">criteria</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">AC-1</span><span class="p p-Indicator">]</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">command</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">make test-front</span>
+<span class="w">      </span><span class="nt">exit_code</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0</span>
+<span class="w">      </span><span class="nt">status</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">passed</span>
+<span class="w">      </span><span class="nt">criteria</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">AC-2</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">AC-3</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">AC-4</span><span class="p p-Indicator">]</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">command</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">make build-front</span>
+<span class="w">      </span><span class="nt">exit_code</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0</span>
+<span class="w">      </span><span class="nt">status</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">passed</span>
+<span class="w">      </span><span class="nt">criteria</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span>
 
-<span class="nt">qualite_globale</span><span class="p">:</span>
-<span class="w">  </span><span class="nt">statut</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">non_executee</span>
+<span class="w">  </span><span class="nt">global_quality</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">status</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">not_run</span>
+
+<span class="w">  </span><span class="nt">previous_attempt</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;001&quot;</span>
+<span class="w">    </span><span class="nt">status</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">needs_retry</span>
+<span class="w">    </span><span class="nt">failed_command</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">make test-front</span>
+<span class="w">    </span><span class="nt">failure</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Next</span><span class="nv"> </span><span class="s">remained</span><span class="nv"> </span><span class="s">enabled</span><span class="nv"> </span><span class="s">on</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">last</span><span class="nv"> </span><span class="s">page&quot;</span>
+
+<span class="w">  </span><span class="nt">agent_declaration</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">status</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">completed</span>
+<span class="w">    </span><span class="nt">open_questions</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span>
+
+<span class="w">  </span><span class="nt">human_review</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">status</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pending</span>
 </code></pre></div>
-<p>Les chemins et commandes sont illustratifs. L'extrait permet néanmoins de poser des questions concrètes :</p>
-<ul>
-<li>les fichiers présents avant l'exécution étaient-ils réellement absents, ou seulement mal capturés ?</li>
-<li>la liste finale inclut-elle les modifications indexées, non indexées et non suivies ?</li>
-<li>les commandes ont-elles été choisies depuis le contrat du repository, depuis le plan ou par l'agent ?</li>
-<li>leur sortie complète est-elle conservée ailleurs, ou seulement un extrait ?</li>
-<li>pourquoi le contrôle de qualité global n'a-t-il pas été lancé ?</li>
-<li>quel critère d'acceptation chaque commande exerce-t-elle ?</li>
-<li>sur quel commit cette tentative peut-elle être rejouée ?</li>
-</ul>
-<p>Une preuve utile ne fait pas disparaître ces questions. Elle les rend visibles assez tôt pour que la revue puisse les traiter.</p>
-<h2 id="ce-quun-framework-peut-etablir-localement">Ce qu'un framework peut établir localement<a class="headerlink" href="#ce-quun-framework-peut-etablir-localement" title="Permanent link">&para;</a></h2>
-<p>Pour rendre la preuve locale inspectable, une implémentation peut :</p>
-<ul>
-<li>attribuer à chaque tentative un identifiant, un horaire et un lien vers son résultat détaillé ;</li>
-<li>inspecter l'état Git avant et après le passage du runner ;</li>
-<li>calculer les fichiers dont le contenu a changé pendant l'exécution afin de ne pas confondre automatiquement tout le working tree avec le travail de l'agent ;</li>
-<li>confronter les chemins observés aux frontières déclarées ;</li>
-<li>ne lancer les validations configurées qu'après certains contrôles structurels ;</li>
-<li>conserver, pour chaque commande, son code de retour, ses horaires et une portion de ses sorties standard et d'erreur ;</li>
-<li>garder les tentatives précédentes lorsqu'une correction puis une nouvelle validation sont nécessaires ;</li>
-<li>rassembler les fichiers, contrôles, risques et questions restantes dans une synthèse qui prépare la revue.</li>
-</ul>
-<p>Avec ces capacités, le workflow peut défendre une affirmation précise : une partie significative de l'exécution locale est inspectable.</p>
-<p>Ce dispositif ne permet pas pour autant d'affirmer que :</p>
-<ul>
-<li>la capture Git couvre nécessairement tous les états possibles de l'index et du working tree ;</li>
-<li>l'état initial était propre ou accepté explicitement ;</li>
-<li>l'artefact désigne un commit de base et un commit de tête immuables ;</li>
-<li>les versions du système, du runtime, des dépendances et des outils sont toutes enregistrées ;</li>
-<li>les commandes lancées couvrent chaque critère d'acceptation ;</li>
-<li>la CI a répété les contrôles dans un environnement isolé ;</li>
-<li>la sortie conservée est exhaustive ;</li>
-<li>le comportement métier est correct.</li>
-</ul>
-<p>Ces lacunes ne disqualifient pas la preuve locale. Elles empêchent simplement de lui attribuer une portée qu'elle n'a pas.</p>
-<h2 id="une-commande-ne-vaut-quavec-son-perimetre">Une commande ne vaut qu'avec son périmètre<a class="headerlink" href="#une-commande-ne-vaut-quavec-son-perimetre" title="Permanent link">&para;</a></h2>
-<p>Pour la pagination, les validations peuvent être classées par la question à laquelle elles répondent.</p>
-<table>
-<thead>
-<tr>
-<th>Contrôle</th>
-<th>Question effectivement testée</th>
-<th>Ce qu'il ne couvre pas à lui seul</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Tests unitaires backend</td>
-<td>Le calcul des limites et des métadonnées respecte-t-il les cas codés ?</td>
-<td>Sérialisation réelle, base de données, consommateurs</td>
-</tr>
-<tr>
-<td>Test d'intégration de l'API</td>
-<td>La route renvoie-t-elle le contrat attendu avec les données de test ?</td>
-<td>Rendu de l'interface et compatibilité de tous les clients</td>
-</tr>
-<tr>
-<td>Contrôle de types frontend</td>
-<td>L'interface et ses appels respectent-ils les types connus à la compilation ?</td>
-<td>Comportement à l'exécution et qualité visuelle</td>
-</tr>
-<tr>
-<td>Tests du composant</td>
-<td>Les actions « précédent » et « suivant » ainsi que les états codés réagissent-ils aux scénarios de test ?</td>
-<td>Navigation complète, réseau réel, accessibilité exhaustive</td>
-</tr>
-<tr>
-<td>Test end-to-end</td>
-<td>Le parcours représenté fonctionne-t-il dans l'environnement de test ?</td>
-<td>Cas absents du scénario, charge, production</td>
-</tr>
-<tr>
-<td>Revue visuelle</td>
-<td>Les principaux états paraissent-ils corrects avec les données observées ?</td>
-<td>Régression automatisée et comportements non parcourus</td>
-</tr>
-</tbody>
-</table>
-<p>Cette table évite deux dérives opposées. La première consiste à exiger mécaniquement toutes les validations possibles. La seconde consiste à prendre quelques contrôles verts comme une couverture implicite de toute la feature.</p>
-<p>Le niveau de validation doit rester proportionné au <a href="../agent-coding-modes/">mode choisi pour le changement</a>. Une fonctionnalité structurée full-stack demande une combinaison de contrôles sur ses surfaces et ses contrats. Elle ne demande pas nécessairement de tester tout le monorepo à chaque tentative locale. En revanche, ce qui n'est pas lancé doit être reporté vers une étape identifiée ou assumé comme risque.</p>
-<h2 id="relier-les-criteres-dacceptation-aux-validations">Relier les critères d'acceptation aux validations<a class="headerlink" href="#relier-les-criteres-dacceptation-aux-validations" title="Permanent link">&para;</a></h2>
-<p>Le brief de la pagination peut contenir quatre critères observables :</p>
+<p>Plusieurs séparations sont volontaires. <code>agent_declaration</code> rapporte ce que le runner dit avoir terminé ; <code>git</code>, <code>path_policy</code> et <code>validations</code> contiennent des observations du workflow. <code>previous_attempt</code> conserve le rouge qui explique la reprise. <code>human_review</code> reste <code>pending</code>, même lorsque toutes les validations ciblées sont vertes.</p>
+<p>Deux valeurs empêchent surtout une conclusion trop large. <code>global_quality: not_run</code> indique que le profil de qualité global n'a pas été lancé. <code>result_commit: null</code> indique que ce manifeste décrit encore une copie de travail mutable, pas un commit contenant exactement le changement revu. <code>current_head: 7a31c42</code> consigne le vrai <code>HEAD</code> Git : c'est la base sous le diff non commité, pas une identité de ce diff.</p>
+<h2 id="relier-chaque-critere-a-un-controle">Relier chaque critère à un contrôle<a class="headerlink" href="#relier-chaque-critere-a-un-controle" title="Permanent link">&para;</a></h2>
+<p>Une commande ne couvre pas une feature « en général ». Le plan doit indiquer la question qu'elle est censée exercer, puis la revue doit vérifier que les tests présents correspondent réellement à cette intention.</p>
 <table>
 <thead>
 <tr>
 <th>Critère d'acceptation</th>
-<th>Validation prévue</th>
-<th>Source du résultat</th>
-<th>Lacune ou complément humain</th>
+<th>Contrôle prévu</th>
+<th>Résultat observé en tentative 002</th>
+<th>Ce qui reste à relire</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>L'API renvoie les éléments, la page courante et le nombre total de résultats</td>
-<td>Tests unitaires et test d'intégration API</td>
-<td>Workflow local, puis CI</td>
-<td>Vérifier la compatibilité avec les consommateurs existants</td>
+<td><strong>AC-1.</strong> L'API renvoie les éléments, la page courante et le total ; une page invalide répond HTTP 404 avec le code <code>pagination_page_invalide</code></td>
+<td><code>make test-back</code></td>
+<td>Code de retour <code>0</code></td>
+<td>Les cas présents dans la suite et la compatibilité des consommateurs connus</td>
 </tr>
 <tr>
-<td>L'utilisateur peut avancer et revenir sans dépasser les limites</td>
-<td>Tests de composant et parcours end-to-end</td>
-<td>Workflow local ou CI selon l'environnement</td>
-<td>Vérifier le comportement clavier et le focus</td>
+<td><strong>AC-2.</strong> L'utilisateur avance et revient sans dépasser la première ou la dernière page</td>
+<td><code>make test-front</code></td>
+<td>Code de retour <code>0</code> ; la borne haute avait échoué en tentative 001</td>
+<td>La fidélité du scénario de test à l'interaction attendue</td>
 </tr>
 <tr>
-<td>Les états <code>loading</code>, <code>empty</code> et <code>error</code> restent distincts</td>
-<td>Tests de composant</td>
-<td>Workflow local</td>
-<td>Revue visuelle sur des données représentatives</td>
+<td><strong>AC-3.</strong> Les états <code>loading</code>, <code>empty</code> et <code>error</code> restent distincts</td>
+<td><code>make test-front</code></td>
+<td>Code de retour <code>0</code></td>
+<td>Le rendu visuel, le clavier et l'accessibilité</td>
 </tr>
 <tr>
-<td>L'annuaire charge la première page à l'ouverture</td>
-<td>Test de composant ciblé</td>
-<td>Workflow local</td>
-<td>Confirmer la valeur par défaut dans le brief et le contrat</td>
+<td><strong>AC-4.</strong> L'annuaire charge la première page à l'ouverture</td>
+<td><code>make test-front</code></td>
+<td>Code de retour <code>0</code></td>
+<td>La cohérence de la valeur par défaut avec le brief</td>
+</tr>
+<tr>
+<td>Le frontend doit rester constructible</td>
+<td><code>make build-front</code></td>
+<td>Code de retour <code>0</code></td>
+<td>Ce contrôle structurel ne juge pas le comportement produit</td>
 </tr>
 </tbody>
 </table>
-<p>Cette matrice ne garantit pas que les tests sont bons. Elle permet de voir qu'un critère ne possède aucune validation, qu'un test prétend couvrir trop de choses ou qu'une décision produit se cache derrière un scénario technique.</p>
-<p>Elle révèle aussi la place de la revue manuelle. « Revue manuelle effectuée » n'est ni honteux ni équivalent à <code>passed</code>. Une preuve correcte enregistre qui a vérifié quoi, sur quelle version et avec quel résultat. Si cette information n'est pas disponible, le statut doit rester « à faire » ou « inconnu ».</p>
-<h2 id="les-lacunes-doivent-etre-des-donnees">Les lacunes doivent être des données<a class="headerlink" href="#les-lacunes-doivent-etre-des-donnees" title="Permanent link">&para;</a></h2>
-<p>Une interface de workflow est tentée de ne montrer que le vert et le rouge. La preuve a besoin d'au moins deux états supplémentaires : <strong>non exécuté</strong> et <strong>inconnu</strong>.</p>
-<ul>
-<li><strong>Non exécuté</strong> signifie que le contrôle était identifié mais n'a pas été lancé. La raison peut être légitime : environnement indisponible, coût, contrôle reporté à la CI ou validation manuelle prévue.</li>
-<li><strong>Inconnu</strong> signifie que l'information nécessaire pour conclure n'a pas été capturée. Par exemple, l'état initial de l'index ou la version exacte d'un outil.</li>
-<li><strong>Tronqué</strong> doit être explicite lorsque seule une portion de la sortie est conservée. Le code de retour reste disponible, mais l'analyse détaillée peut demander l'artefact complet.</li>
-<li><strong>Instable</strong> indique qu'un contrôle a échoué puis réussi sans cause comprise. Le dernier vert n'efface pas la tentative précédente.</li>
-</ul>
-<p>Une exécution peut donc être globalement acceptable tout en contenant des lacunes. Le rôle du manifeste n'est pas de tout transformer en échec. Il est de permettre à la personne qui relit de distinguer une absence prévue d'une absence invisible.</p>
-<h2 id="de-la-preuve-locale-a-la-preuve-liee-a-une-revision">De la preuve locale à la preuve liée à une révision<a class="headerlink" href="#de-la-preuve-locale-a-la-preuve-liee-a-une-revision" title="Permanent link">&para;</a></h2>
-<p>La <a href="../agentic-feature-end-to-end/">trace de bout en bout</a> prépare le passage à Git ; elle ne le remplace pas. Tant que la preuve décrit un working tree mutable, une autre modification peut être ajoutée, retirée ou indexée après sa production.</p>
-<p>Pour rattacher les résultats à une proposition de changement, il faut au minimum identifier :</p>
-<ul>
-<li>le commit de base depuis lequel le travail a commencé ;</li>
-<li>le commit de tête qui contient exactement le changement revu ;</li>
-<li>la branche ou la référence de la pull request ;</li>
-<li>l'état du working tree et de l'index au moment pertinent ;</li>
-<li>la source du résultat : poste local, environnement éphémère ou CI ;</li>
-<li>les versions essentielles de l'environnement ;</li>
-<li>les artefacts ou journaux permettant de retrouver les sorties.</li>
-</ul>
-<p>Git fournit alors une identité de contenu et un diff stable entre deux révisions. La CI peut exécuter les contrôles sur la tête de la pull request, dans un environnement décrit par le pipeline. Aucun des deux ne décide que la couverture est suffisante. Ils rendent le lien entre une révision et des résultats beaucoup plus solide.</p>
-<p>Il reste aussi un problème de temporalité. Si un correctif est ajouté après un passage vert, la validation précédente ne s'applique pas automatiquement au nouveau commit. Une interface de revue devrait rendre ce décalage visible plutôt que conserver un badge vert détaché de sa révision.</p>
-<h2 id="le-manifeste-cible">Le manifeste cible<a class="headerlink" href="#le-manifeste-cible" title="Permanent link">&para;</a></h2>
-<p>L'exemple suivant est une <strong>cible de conception</strong> : un manifeste possible pour passer d'un résultat local inspectable à une provenance liée à la révision. Il reste une proposition de structure ; chaque champ devrait être alimenté par une observation réelle et vérifiable pour soutenir la conclusion associée.</p>
-<div class="highlight"><pre><span></span><code><span class="nt">preuve</span><span class="p">:</span>
-<span class="w">  </span><span class="nt">execution</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">identifiant</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">stable-run-id</span>
-<span class="w">    </span><span class="nt">tentative</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span>
-<span class="w">    </span><span class="nt">source</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">local</span><span class="w">  </span><span class="c1"># local | ci</span>
-<span class="w">    </span><span class="nt">debut</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2026-07-17T09:42:18Z</span>
-<span class="w">    </span><span class="nt">fin</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2026-07-17T09:43:19Z</span>
+<p>La colonne « contrôle prévu » vient du plan. La colonne « résultat observé » vient de l'exécution. Les confondre ferait croire que le simple nom d'une commande garantit sa couverture. Pour renforcer le lien, le manifeste peut conserver les identifiants de tests pertinents ou des sorties consultables ; la revue reste chargée de vérifier que cette association est crédible.</p>
+<h2 id="ce-que-lon-peut-affirmer-et-rien-de-plus">Ce que l'on peut affirmer — et rien de plus<a class="headerlink" href="#ce-que-lon-peut-affirmer-et-rien-de-plus" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Élément de preuve</th>
+<th>Affirmation légitime</th>
+<th>Affirmation non soutenue</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Départ propre et inspection Git finale</td>
+<td>Ces cinq chemins composent le diff local observé depuis <code>7a31c42</code></td>
+<td>Chaque ligne est attribuable indépendamment à une tâche précise</td>
+</tr>
+<tr>
+<td>Politique de chemins <code>passed</code></td>
+<td>Tous les chemins observés correspondent à une règle d'écriture</td>
+<td>Le processus ne pouvait pas écrire ailleurs</td>
+</tr>
+<tr>
+<td><code>make test-back</code> retourne <code>0</code></td>
+<td>Cette commande backend a réussi sur l'état local final</td>
+<td>L'API est correcte dans tous les environnements</td>
+</tr>
+<tr>
+<td><code>make test-front</code> retourne <code>0</code> en tentative 002</td>
+<td>Les scénarios frontend présents ont réussi après la correction</td>
+<td>Tous les navigateurs, états visuels et usages accessibles sont corrects</td>
+</tr>
+<tr>
+<td><code>make build-front</code> retourne <code>0</code></td>
+<td>Le build demandé s'est terminé avec succès</td>
+<td>La fonctionnalité est utilisable ou acceptable</td>
+</tr>
+<tr>
+<td><code>global_quality: not_run</code></td>
+<td>Aucun résultat de qualité globale n'existe pour cette tentative</td>
+<td>La qualité globale a implicitement réussi</td>
+</tr>
+<tr>
+<td><code>result_commit: null</code></td>
+<td>Aucun commit ne contient encore exactement le diff validé localement</td>
+<td>Les mêmes résultats s'appliquent déjà à une révision de pull request</td>
+</tr>
+</tbody>
+</table>
+<p>Les lacunes doivent rester des données. <strong>Non exécuté</strong> signifie qu'un contrôle identifié n'a pas tourné. <strong>Inconnu</strong> signifie qu'une information nécessaire — par exemple une version d'outil non capturée — manque. <strong>Tronqué</strong> doit apparaître si seule une partie d'une sortie est conservée. <strong>Instable</strong> doit rester visible lorsqu'un contrôle passe après un échec sans cause comprise.</p>
+<p>Notre test frontend n'est pas classé instable : une cause précise a été observée, un fichier a été corrigé et une nouvelle tentative a été enregistrée. Cela ne prouve pas que le diagnostic était exhaustif ; cela rend au moins le raisonnement vérifiable et réfutable.</p>
+<h2 id="le-rapport-de-revue-final">Le rapport de revue final<a class="headerlink" href="#le-rapport-de-revue-final" title="Permanent link">&para;</a></h2>
+<p>Le manifeste est adapté aux outils. La personne qui relit a besoin d'une synthèse plus directe, sans perte de provenance :</p>
+<div class="highlight"><pre><span></span><code><span class="gh"># Revue locale — pagination de l&#39;annuaire clients</span>
 
-<span class="w">  </span><span class="nt">revision</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">commit_base</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">abc123</span>
-<span class="w">    </span><span class="nt">commit_tete</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">def456</span>
-<span class="w">    </span><span class="nt">branche</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">feature/customer-pagination</span>
-<span class="w">    </span><span class="nt">working_tree_propre_avant</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
-<span class="w">    </span><span class="nt">index_propre_avant</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+Point de départ :
+<span class="k">-</span><span class="w"> </span>branche : feature/customer-pagination
+<span class="k">-</span><span class="w"> </span>commit de base : 7a31c42
+<span class="k">-</span><span class="w"> </span>copie de travail propre avant la tentative 001
 
-<span class="w">  </span><span class="nt">changements</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">fichiers_observes</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span>
-<span class="w">    </span><span class="nt">fichiers_autorises</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span>
-<span class="w">    </span><span class="nt">violations</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span>
+Exécution :
+<span class="k">-</span><span class="w"> </span>tentative 001 : needs_retry
+<span class="k">-</span><span class="w"> </span>tentative 002 : completed
+<span class="k">-</span><span class="w"> </span>correction bornée : frontend/customers/customer-list.tsx
 
-<span class="w">  </span><span class="nt">environnement</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">systeme</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">linux</span>
-<span class="w">    </span><span class="nt">runtime</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">version-identifiee</span>
-<span class="w">    </span><span class="nt">dependances</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">lockfile-identifie</span>
+Changement observé :
+<span class="k">-</span><span class="w"> </span>5 fichiers modifiés
+<span class="k">-</span><span class="w"> </span>0 fichier indexé
+<span class="k">-</span><span class="w"> </span>0 fichier non suivi
+<span class="k">-</span><span class="w"> </span>politique de chemins : passed
 
-<span class="w">  </span><span class="nt">validations</span><span class="p">:</span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">identifiant</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">backend-pagination</span>
-<span class="w">      </span><span class="nt">commande</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">commande-stable-du-repository</span>
-<span class="w">      </span><span class="nt">statut</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">passed</span>
-<span class="w">      </span><span class="nt">code_de_retour</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0</span>
-<span class="w">      </span><span class="nt">revision_validee</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">def456</span>
-<span class="w">      </span><span class="nt">index_au_moment_du_controle</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">propre</span>
-<span class="w">      </span><span class="nt">copie_de_travail_au_moment_du_controle</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">propre</span>
-<span class="w">      </span><span class="nt">criteres</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">AC-1</span><span class="p p-Indicator">]</span>
-<span class="w">      </span><span class="nt">sortie</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">artifact://validation/backend-pagination</span>
+Validations ciblées sur la tentative 002 :
+<span class="k">-</span><span class="w"> </span>make test-back : passed
+<span class="k">-</span><span class="w"> </span>make test-front : passed
+<span class="k">-</span><span class="w"> </span>make build-front : passed
 
-<span class="w">  </span><span class="nt">controles_non_executes</span><span class="p">:</span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">identifiant</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">end-to-end</span>
-<span class="w">      </span><span class="nt">raison</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">reporte_a_la_ci</span>
-<span class="w">      </span><span class="nt">risque</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">integration_navigateur_non_verifiee_localement</span>
+Non exécuté :
+<span class="k">-</span><span class="w"> </span>profil de qualité global
+<span class="k">-</span><span class="w"> </span>CI
+<span class="k">-</span><span class="w"> </span>revue humaine visuelle et d&#39;accessibilité
 
-<span class="w">  </span><span class="nt">declarations_agent</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">resultat</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">completed</span>
-
-<span class="w">  </span><span class="nt">revue_humaine</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">statut</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pending</span>
-<span class="w">    </span><span class="nt">risques_residuels</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span>
+Décision :
+<span class="k">-</span><span class="w"> </span>prêt pour la revue locale du diff
+<span class="k">-</span><span class="w"> </span>pas encore rattaché à un commit de résultat
+<span class="k">-</span><span class="w"> </span>pas encore approuvé pour le merge
 </code></pre></div>
-<p>Quelques détails comptent :</p>
-<ul>
-<li><code>passed</code>, <code>non_executed</code> et <code>unknown</code> sont distincts ;</li>
-<li>la déclaration de l'agent reste séparée des observations du workflow ;</li>
-<li>la matrice critères-validations est lisible sans interpréter le nom des commandes ;</li>
-<li>le risque d'une validation reportée ne disparaît pas ;</li>
-<li>la revue humaine reste <code>pending</code> même lorsque toutes les commandes sont vertes.</li>
-</ul>
-<p>Le manifeste peut être plus court pour une correction locale et plus riche pour une évolution du socle. Sa fonction ne change pas : exposer la provenance, la portée et les lacunes avant la décision.</p>
-<h2 id="ce-que-la-ci-ajoute-et-ce-quelle-najoute-pas">Ce que la CI ajoute — et ce qu'elle n'ajoute pas<a class="headerlink" href="#ce-que-la-ci-ajoute-et-ce-quelle-najoute-pas" title="Permanent link">&para;</a></h2>
-<p>La CI apporte trois propriétés importantes : une exécution rattachée à une révision, un environnement davantage reproductible et une visibilité partagée par l'équipe. Elle peut aussi imposer une matrice de versions, conserver des artefacts et empêcher le merge lorsque certains contrôles échouent.</p>
-<p>Elle ne corrige pas automatiquement un mauvais choix de validations. Un pipeline peut être parfaitement vert tout en ignorant un critère d'acceptation. Il peut aussi réussir sur une commande devenue trop permissive ou sur une suite qui n'exerce pas le nouveau comportement.</p>
-<p>Le workflow local et la CI ne sont donc pas concurrents :</p>
-<div class="highlight"><pre><span></span><code>preuve locale
-  -&gt; prépare la relecture et détecte tôt les problèmes
-  -&gt; se rattache à un commit
-  -&gt; la CI répète ou complète les contrôles sur cette révision
-  -&gt; la PR rassemble diff, résultats, décisions et risques
-  -&gt; un humain accepte, demande une reprise ou refuse
+<p>Cette synthèse ne dit pas « la pagination est validée ». Elle dit pourquoi le diff peut maintenant être relu, quelles validations ciblées ont réussi, quel échec a précédé ce résultat et quelles portes restent fermées.</p>
+<h2 id="de-la-copie-de-travail-au-commit-et-a-la-ci">De la copie de travail au commit et à la CI<a class="headerlink" href="#de-la-copie-de-travail-au-commit-et-a-la-ci" title="Permanent link">&para;</a></h2>
+<p>La preuve locale s'arrête sur <code>current_head: 7a31c42</code> et <code>result_commit: null</code>. Tant que le changement reste dans une copie de travail, un fichier peut encore être modifié après les commandes vertes. Le résultat de la tentative 002 ne s'applique pas automatiquement à ce nouvel état.</p>
+<p>Le passage de relais attendu est donc explicite :</p>
+<div class="highlight"><pre><span></span><code>tentative 002 sur une copie de travail mutable
+  -&gt; revue humaine du diff local
+  -&gt; création d&#39;un commit contenant exactement ce diff
+  -&gt; validations CI sur ce commit de tête
+  -&gt; pull request réunissant diff, résultats, lacunes et décisions
+  -&gt; acceptation, demande de reprise ou refus par un humain
 </code></pre></div>
-<p>Le meilleur passage de relais n'est pas « tout était vert chez moi ». C'est un manifeste de preuve qui indique quels contrôles peuvent être rejoués, lesquels sont réservés à la CI et quelles vérifications restent humaines.</p>
-<h2 id="une-checklist-de-revue-qui-resiste-au-vert">Une checklist de revue qui résiste au vert<a class="headerlink" href="#une-checklist-de-revue-qui-resiste-au-vert" title="Permanent link">&para;</a></h2>
-<p>Avant d'accepter la phrase « les tests passent », la personne qui relit peut poser dix questions :</p>
-<ol>
-<li>La révision exacte ou l'état de travail contrôlé est-il identifiable ?</li>
-<li>L'état initial était-il propre, ou ses modifications préexistantes sont-elles connues ?</li>
-<li>Les commandes réellement exécutées sont-elles visibles ?</li>
-<li>Leurs codes de retour, horaires et sorties utiles sont-ils disponibles ?</li>
-<li>Leur périmètre correspond-il aux surfaces modifiées ?</li>
-<li>Chaque critère d'acceptation possède-t-il un contrôle ou une décision explicite ?</li>
-<li>Les validations non exécutées et inconnues sont-elles visibles ?</li>
-<li>Une tentative rouge, une reprise ou un résultat instable a-t-il été conservé ?</li>
-<li>La CI a-t-elle contrôlé le commit actuellement proposé ?</li>
-<li>Qui possède l'autorité pour accepter le risque résiduel ?</li>
-</ol>
-<p>Si les réponses sont accessibles sans rouvrir la conversation avec l'agent, le workflow a déjà gagné en valeur. Si elles sont reliées à la révision et aux artefacts de CI, la pull request devient réellement plus facile à contester et à accepter.</p>
+<p>Git fournit alors une identité de contenu. La CI exécute des contrôles sur cette identité dans un environnement décrit par le pipeline. Aucun des deux ne décide que les commandes sont suffisantes, que les critères sont correctement couverts ou que le risque résiduel est acceptable.</p>
+<p>Si un correctif est ajouté après le commit validé, le lien doit être recalculé : nouveau commit de tête, nouveaux résultats. Une interface fiable rend un vert devenu obsolète visible au lieu de le laisser attaché à la pull request comme s'il concernait encore son dernier état.</p>
 <h2 id="conclusion">Conclusion<a class="headerlink" href="#conclusion" title="Permanent link">&para;</a></h2>
-<p>« Les tests passent » n'est ni inutile ni suffisant. C'est le début d'une démonstration : une ou plusieurs commandes se sont terminées sans erreur dans un contexte donné.</p>
-<p>La preuve locale rend ce contexte inspectable. Git rattache le changement à des révisions. La CI rejoue ou complète les contrôles sur une tête identifiée. La matrice critères-validations montre la couverture attendue. La revue humaine décide enfin si les faits et les lacunes sont compatibles avec le risque.</p>
-<p>Un framework appliquant ces principes peut déjà rendre cette première étape substantiellement plus utile. Le manifeste cible montre comment la relier ensuite à une révision, sans faire passer une intention de conception pour une garantie effectivement obtenue.</p>
-<p>Une question demeure alors : combien de décisions peut-on raisonnablement stabiliser dans un brief avant que ses zones floues ne deviennent plus coûteuses que la rédaction d'une spécification ? Ce sera le sujet du prochain article : <strong>Quand le brief ne suffit plus : introduire une spec sans bureaucratie</strong>.</p>
+<p>Dans cet exemple, « les tests passent » peut être remplacé par une phrase vérifiable : sur la tentative 002, depuis le commit de base <code>7a31c42</code>, les cinq fichiers observés restent dans le périmètre autorisé et les commandes <code>make test-back</code>, <code>make test-front</code> et <code>make build-front</code> retournent <code>0</code>. La qualité globale n'a pas été exécutée, aucun commit de résultat ne contient encore le diff et la revue humaine reste en attente.</p>
+<p>Cette formulation est moins triomphale. Elle est aussi beaucoup plus exploitable.</p>
+<p>Elle referme le parcours ouvert au début de cette série : <a href="../ai-agent-based-coding-best-practices/">la vue d'ensemble pose le workflow complet</a>, <a href="../agent-ready-repository/">le repository rend les règles visibles</a>, <a href="../agent-coding-modes/">le mode détermine le niveau de contrôle</a>, <a href="../agentic-feature-end-to-end/">la feature suit un parcours de bout en bout</a>, le plan devient <a href="../agent-execution-package/">un ordre de mission</a>, le runner propose une modification, <a href="../agent-task-stop-and-resume/">les arrêts restent traçables</a>, et la preuve locale prépare enfin Git, la CI et la décision humaine sans se substituer à eux.</p>
+<p>Un workflow agentique fiable ne promet pas que l'agent aura toujours raison. Il rend possible une question plus utile : <strong>sur quels faits précis acceptons-nous ce changement, et quels risques décidons-nous encore d'assumer ?</strong></p>
 <div class="article-footer-contact">
   <p>Pour discuter de cet article ou me laisser un message public :</p>
   <a class="article-contact-link" href="https://github.com/velkouby/ai-based-development/issues/new?template=contact.yml">Message sur GitHub</a>

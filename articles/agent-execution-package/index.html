@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="An agent should not receive a super-prompt, but an execution package compiled from the brief, the plan, repository rules, human decisions, and the starting Git state. Here is how to build one without losing the provenance or authority of each piece of information.">
+        <meta name="description" content="Using customer-directory pagination, we open the execution package sent to the runner: shared context, task block, boundaries, Git state, and output contract.">
       
       
         <meta name="author" content="Vincent El Kouby-Benichou, Baracoda">
@@ -407,10 +407,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#why-this-is-not-a-super-prompt" class="md-nav__link">
+  <a href="#934-am-a-three-line-prompt-is-not-enough" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Why this is not a super-prompt
+        9:34 a.m.: A Three-Line Prompt Is Not Enough
       
     </span>
   </a>
@@ -418,10 +418,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#four-sources-four-forms-of-authority" class="md-nav__link">
+  <a href="#935-am-selecting-a-coherent-task-block" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Four sources, four forms of authority
+        9:35 a.m.: Selecting a Coherent Task Block
       
     </span>
   </a>
@@ -429,10 +429,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#compiling-the-execution-brief" class="md-nav__link">
+  <a href="#936-am-loading-shared-context-once" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Compiling the execution brief
+        9:36 a.m.: Loading Shared Context Once
       
     </span>
   </a>
@@ -440,10 +440,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#a-teaching-execution-package-for-pagination" class="md-nav__link">
+  <a href="#937-am-opening-the-three-task-cards" class="md-nav__link">
     <span class="md-ellipsis">
       
-        A teaching execution package for pagination
+        9:37 a.m.: Opening the Three Task Cards
       
     </span>
   </a>
@@ -451,10 +451,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#provenance-must-be-inspectable" class="md-nav__link">
+  <a href="#938-am-recording-the-starting-git-state" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Provenance must be inspectable
+        9:38 a.m.: Recording the Starting Git State
       
     </span>
   </a>
@@ -462,10 +462,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#the-starting-git-state-is-an-input-not-final-evidence" class="md-nav__link">
+  <a href="#939-am-rendering-the-execution-brief-for-the-runner" class="md-nav__link">
     <span class="md-ellipsis">
       
-        The starting Git state is an input, not final evidence
+        9:39 a.m.: Rendering the Execution Brief for the Runner
       
     </span>
   </a>
@@ -473,10 +473,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#a-structured-package-can-still-contain-too-much-context" class="md-nav__link">
+  <a href="#tracing-every-decision-back-to-its-source" class="md-nav__link">
     <span class="md-ellipsis">
       
-        A structured package can still contain too much context
+        Tracing Every Decision Back to Its Source
       
     </span>
   </a>
@@ -484,10 +484,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#what-the-execution-brief-actually-changes" class="md-nav__link">
+  <a href="#what-this-package-enablesand-what-it-does-not" class="md-nav__link">
     <span class="md-ellipsis">
       
-        What the execution brief actually changes
+        What This Package Enables—and What It Does Not
       
     </span>
   </a>
@@ -495,10 +495,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#audit-your-own-execution-package" class="md-nav__link">
+  <a href="#checking-the-package-before-starting-the-attempt" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Audit your own execution package
+        Checking the Package Before Starting the Attempt
       
     </span>
   </a>
@@ -537,254 +537,340 @@
 
 
 <h1 class="article-title" id="what-the-agent-actually-receives-anatomy-of-an-execution-brief">What the Agent Actually Receives: Anatomy of an Execution Brief<a class="headerlink" href="#what-the-agent-actually-receives-anatomy-of-an-execution-brief" title="Permanent link">&para;</a></h1>
-<p class="article-lead">An agent does not need a super-prompt that summarizes the entire project. It needs a bounded execution brief: a compilation of the expected outcome, executable tasks, repository rules, human decisions, validations, and local state at the moment the work begins.</p>
+<p class="article-lead">It is 9:34 a.m. The pagination brief has been approved, all three tasks are ready, and the runner has not started yet. Let us open exactly what it will receive to execute the whole block without loading the same context three times.</p>
 <p class="article-meta">
   <span>By <span class="article-author">Vincent El Kouby-Benichou</span>, <a class="article-company-link" href="https://baracoda.com">Baracoda</a></span>
   <a class="article-contact-link" href="https://www.linkedin.com/in/vincentelkoubybenichou/">LinkedIn</a>
 </p>
 
-<p>In <a href="../agentic-feature-end-to-end/">the previous article</a>, we followed a Structured Feature from its brief to local review. Between planning and implementation was a short but decisive step in the timeline: building the package sent to the agent runner.</p>
-<p>The question appears simple: <strong>what does the agent actually receive when it is time to code?</strong> The answer should be neither "the entire repository," nor "the entire conversation," nor "a highly detailed prompt." Those approaches blend intent, rules, and observed facts into prose whose origins become difficult to reconstruct.</p>
-<p>A framework that implements this principle must assemble several sources before handing a task block to the agent: the brief, the plan, selected tasks, the repository contract, recorded decisions, context references, validations, and a view of the starting Git state. The example below shows what this execution brief should contain to preserve provenance, the authority of each piece of information, and the starting state.</p>
+<p>In <a href="../agentic-feature-end-to-end/">the previous article</a>, we followed server-side pagination for the customer directory from the brief to local review. An execution package appeared between the plan and the runner. Let us now pause the timeline just before coding and open that package piece by piece.</p>
+<p>The plan contains three tasks: evolve the API, adapt the interface, and then check their consistency. Page numbering starts at <code>1</code>, the page size is <code>25</code>, an invalid page returns HTTP 404 with the code <code>pagination_page_invalide</code>, and URL synchronization remains a non-goal.</p>
+<p>At this point, every required decision has been made. The remaining job is to transform this information into a unit the runner can execute without reconstructing the mission's authority from the conversation and the entire repository.</p>
 <blockquote>
-<p>The execution package is not prose designed to persuade the agent to work well. It is the execution brief that tells the agent what to accomplish, where its constraints come from, and where its authority ends.</p>
+<p>An execution package is not a longer prompt. It is an ordered block of tasks with shared context, task-specific boundaries, and an observable starting state.</p>
 </blockquote>
-<h2 id="why-this-is-not-a-super-prompt">Why this is not a super-prompt<a class="headerlink" href="#why-this-is-not-a-super-prompt" title="Permanent link">&para;</a></h2>
-<p>A prompt gives instructions to a model. An execution package describes a unit of work for a system: an ordered task block, its shared context, and its task-specific constraints.</p>
-<p>A super-prompt may contain an objective, rules, and excerpts from documentation. But once everything is merged into prose, the roles become blurred: a list of files may be mistaken for write authorization, a planning suggestion for a repository rule, or an old decision for a current fact.</p>
-<p>An execution package preserves these distinctions. It can be transported to the runner in a structured form, then partially rendered as text for the model. The transport format is not the point. What matters is that, before and after the runner session, the workflow can:</p>
-<ul>
-<li>identify the source of every important constraint;</li>
-<li>select the tasks that are actually executable;</li>
-<li>distinguish writable paths from read-only references;</li>
-<li>identify a human decision that has already been made;</li>
-<li>record the local state from which execution begins;</li>
-<li>compare the result with the declared boundaries;</li>
-<li>preserve the expected validations independently of what the agent claims to have run.</li>
-</ul>
-<p>This structure does not create system-level permissions. Writing "read-only" in a package does not remove the process's write access. The package describes the authority granted; a sandbox can enforce it before the fact, or a diff check can detect a violation afterward. The workflow must always state which mechanism is in place.</p>
-<h2 id="four-sources-four-forms-of-authority">Four sources, four forms of authority<a class="headerlink" href="#four-sources-four-forms-of-authority" title="Permanent link">&para;</a></h2>
-<p>The execution package for customer-directory pagination is compiled from four families of sources.</p>
+<h2 id="934-am-a-three-line-prompt-is-not-enough">9:34 a.m.: A Three-Line Prompt Is Not Enough<a class="headerlink" href="#934-am-a-three-line-prompt-is-not-enough" title="Permanent link">&para;</a></h2>
+<p>We could send the agent this:</p>
+<div class="highlight"><pre><span></span><code>Add server-side pagination to the customer directory.
+Update the backend, frontend, and tests.
+Follow the repository conventions.
+</code></pre></div>
+<p>The instruction sounds reasonable. Yet the agent still has to guess almost everything that governs its work.</p>
 <table>
 <thead>
 <tr>
-<th>Source</th>
-<th>What it contributes</th>
-<th>Primary authority</th>
-<th>What it cannot decide</th>
+<th>Question during execution</th>
+<th>What those three lines do not say</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>Human</td>
-<td>Objective, non-goals, acceptance criteria, answers, and decisions</td>
-<td>Product intent and reserved decisions</td>
-<td>The facts actually present in the code or Git</td>
+<td>Which page should load first?</td>
+<td>Page <code>1</code></td>
 </tr>
 <tr>
-<td>Repository</td>
-<td>Architecture, ownership, stable boundaries, and standard commands</td>
-<td>Technical rules and policies that apply to the project</td>
-<td>The product outcome expected from this package, unless it is already contractual</td>
+<td>How many items should be requested?</td>
+<td><code>25</code></td>
 </tr>
 <tr>
-<td>Planning</td>
-<td>Decomposition, dependencies, relevant context, and per-task validations</td>
-<td>Operational ordering derived from the intent and rules</td>
-<td>Broaden the brief or bypass a repository policy</td>
+<td>What happens for an invalid page?</td>
+<td>Return HTTP 404 with <code>pagination_page_invalide</code></td>
 </tr>
 <tr>
-<td>Runtime</td>
-<td>Selected tasks, current attempt, observed Git state, and tracking location</td>
-<td>Facts about the current execution</td>
-<td>Invent intent or approve business risk</td>
+<td>Should the page appear in the URL?</td>
+<td>No; it remains in local state for this release</td>
+</tr>
+<tr>
+<td>Which files are writable?</td>
+<td>The customer areas in the backend and frontend, with a boundary specific to each task</td>
+</tr>
+<tr>
+<td>May shared components evolve?</td>
+<td>No; they may be inspected, but changing them requires separate work</td>
+</tr>
+<tr>
+<td>Which commands count?</td>
+<td><code>make test-back</code>, <code>make test-front</code>, and <code>make build-front</code></td>
+</tr>
+<tr>
+<td>What must be returned at the end?</td>
+<td>A separate result for T-01, T-02, and T-03, including declared files, commands, questions, and blockers</td>
 </tr>
 </tbody>
 </table>
-<p>This is not a single hierarchy in which one source always overrides the others. Authority depends on the subject.</p>
-<p>Humans have authority over the outcome to achieve. The repository has authority over ownership of code areas. The plan orders the work without being allowed to rewrite either of those contracts. The runtime has authority over what it observes now, but a Git fact does not say whether a change is desirable.</p>
-<p>This separation makes conflicts manageable. If the plan places a protected directory among the writable paths, the workflow must not present that inconsistency as valid authorization. If the brief requests behavior that depends on an unresolved product decision, the plan must not turn that gap into an implicit technical choice. In both cases, compiling the execution brief should fail or produce an explicit stop.</p>
-<blockquote>
-<p>Provenance says where information came from. Authority says what decisions the information is authoritative for. Both must survive compilation.</p>
-</blockquote>
-<h2 id="compiling-the-execution-brief">Compiling the execution brief<a class="headerlink" href="#compiling-the-execution-brief" title="Permanent link">&para;</a></h2>
-<p>The compilation can be represented without depending on any particular tool:</p>
-<div class="highlight"><pre><span></span><code>brief and human decisions ─┐
-                           │
-repository contract ───────┼─&gt; selection and resolution ─&gt; execution package ─&gt; agent runner
-                           │
-plan, tasks, dependencies ─┤
-                           │
-observed Git state ─────────┘
+<p>Adding these answers to one large paragraph would solve only part of the problem. Their roles would remain ambiguous: a reference to inspect could look like write authorization, a planning suggestion like a product decision, and an expected validation like a command that has already run.</p>
+<p>The package keeps these categories separate so that the runner knows what to do and the workflow knows what to check afterward.</p>
+<h2 id="935-am-selecting-a-coherent-task-block">9:35 a.m.: Selecting a Coherent Task Block<a class="headerlink" href="#935-am-selecting-a-coherent-task-block" title="Permanent link">&para;</a></h2>
+<p>The feature plan contains this chain:</p>
+<div class="highlight"><pre><span></span><code>T-01 · backend contract
+  -&gt; T-02 · frontend integration
+    -&gt; T-03 · consistency check
 </code></pre></div>
-<p>The word "compilation" is not decorative. Like a compiler, this step transforms several inputs with different roles into a narrower executable representation. It can also reject an inconsistent input.</p>
-<p>For a Structured Feature, the workflow must perform at least five operations.</p>
-<p>First, it selects a block of tasks that can run in sequence. The first task is ready at the start of the session; later tasks become executable as the preceding tasks in the block finish. An open decision or a dependency outside the block continues to prevent execution.</p>
-<p>Second, it preserves the boundaries defined for each task and constructs the package's allowed write envelope. Grouping three tasks does not grant the agent general authorization across the repository: the observed diff must remain within the controlled union of those boundaries.</p>
-<p>Third, it attaches decisions that have already been made. If the first page number and initial page size have been decided, the agent should neither ask those questions again nor choose different values.</p>
-<p>Fourth, it selects context shared by the package, followed by references specific to each task. The brief, stable rules, and shared decisions are loaded only once.</p>
-<p>Finally, it records an observation of the starting state, with its known coverage, so that a pre-existing modification is not attributed to the runner.</p>
-<h2 id="a-teaching-execution-package-for-pagination">A teaching execution package for pagination<a class="headerlink" href="#a-teaching-execution-package-for-pagination" title="Permanent link">&para;</a></h2>
-<p>Here is a teaching execution brief for the same feature used in the previous articles. The paths and values are illustrative. The representation favors readability; its transport format may vary across tools.</p>
-<figure class="article-diagram">
-  <img src="execution-package-anatomy.png" alt="Exploded view of an execution package with shared context, three ordered tasks, boundaries, stop conditions, and an output contract." loading="lazy" />
-  <figcaption>Context is shared, but dependencies and boundaries remain specific to each task.</figcaption>
-</figure>
+<p>T-02 depends on the contract produced by T-01. T-03 becomes relevant only after both changes. The three tasks also share the same objective, pagination decisions, and general boundaries. They therefore form a <strong>coherent block</strong> that the runner can execute in one session.</p>
+<div class="highlight"><pre><span></span><code>complete plan
+  -&gt; select [T-01, T-02, T-03]
+  -&gt; add shared context and per-task contracts
+  -&gt; customer-pagination-01 package
+  -&gt; one runner session
+  -&gt; one result per task
+</code></pre></div>
+<p>Grouping them does not flatten the tasks. T-02 still depends on T-01; if T-01 uncovers an incompatibility with an existing consumer, the runner must stop the package before reporting T-02 or T-03 as complete.</p>
+<p>Nor does the grouping grant access to the whole feature by default. A shared-router evolution does not join this block: URL synchronization is a non-goal, <code>shared/routing/**</code> is read-only, and changing its public interface would involve another owner, other consumers, and different validations.</p>
+<blockquote>
+<p>The workflow plans work at the task level. The coding agent plans the detailed modifications within the block.</p>
+</blockquote>
+<h2 id="936-am-loading-shared-context-once">9:36 a.m.: Loading Shared Context Once<a class="headerlink" href="#936-am-loading-shared-context-once" title="Permanent link">&para;</a></h2>
+<p>In an implementation, the shared part of the package can look like this:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">package</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;customer-pagination-01&quot;</span>
+<span class="w">  </span><span class="nt">attempt</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;001&quot;</span>
+<span class="w">  </span><span class="nt">block</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">T-01</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">T-02</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">T-03</span><span class="p p-Indicator">]</span>
 
-<div class="highlight"><pre><span></span><code><span class="c1"># Teaching example.</span>
-<span class="nt">package</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">objective</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">&gt;-</span>
 <span class="w">    </span><span class="no">Add server-side pagination to the customer directory and allow users</span>
-<span class="w">    </span><span class="no">to move between pages from the interface.</span>
-<span class="w">  </span><span class="nt">non_goals</span><span class="p">:</span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;Add</span><span class="nv"> </span><span class="s">persistent</span><span class="nv"> </span><span class="s">filters&quot;</span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;Modify</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">router</span><span class="nv"> </span><span class="s">or</span><span class="nv"> </span><span class="s">shared</span><span class="nv"> </span><span class="s">interface</span><span class="nv"> </span><span class="s">primitives&quot;</span>
+<span class="w">    </span><span class="no">to change pages from the interface.</span>
+
 <span class="w">  </span><span class="nt">acceptance_criteria</span><span class="p">:</span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;The</span><span class="nv"> </span><span class="s">API</span><span class="nv"> </span><span class="s">returns</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">items,</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">current</span><span class="nv"> </span><span class="s">page,</span><span class="nv"> </span><span class="s">and</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">total</span><span class="nv"> </span><span class="s">result</span><span class="nv"> </span><span class="s">count.&quot;</span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;The</span><span class="nv"> </span><span class="s">interface</span><span class="nv"> </span><span class="s">preserves</span><span class="nv"> </span><span class="s">its</span><span class="nv"> </span><span class="s">loading,</span><span class="nv"> </span><span class="s">empty,</span><span class="nv"> </span><span class="s">and</span><span class="nv"> </span><span class="s">error</span><span class="nv"> </span><span class="s">states.&quot;</span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;A</span><span class="nv"> </span><span class="s">pagination</span><span class="nv"> </span><span class="s">action</span><span class="nv"> </span><span class="s">loads</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">requested</span><span class="nv"> </span><span class="s">page.&quot;</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;The</span><span class="nv"> </span><span class="s">API</span><span class="nv"> </span><span class="s">returns</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">items,</span><span class="nv"> </span><span class="s">current</span><span class="nv"> </span><span class="s">page,</span><span class="nv"> </span><span class="s">and</span><span class="nv"> </span><span class="s">total</span><span class="nv"> </span><span class="s">result</span><span class="nv"> </span><span class="s">count.&quot;</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;The</span><span class="nv"> </span><span class="s">directory</span><span class="nv"> </span><span class="s">loads</span><span class="nv"> </span><span class="s">page</span><span class="nv"> </span><span class="s">1</span><span class="nv"> </span><span class="s">when</span><span class="nv"> </span><span class="s">it</span><span class="nv"> </span><span class="s">opens.&quot;</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;Previous</span><span class="nv"> </span><span class="s">and</span><span class="nv"> </span><span class="s">Next</span><span class="nv"> </span><span class="s">actions</span><span class="nv"> </span><span class="s">respect</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">boundaries.&quot;</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;The</span><span class="nv"> </span><span class="s">loading,</span><span class="nv"> </span><span class="s">empty,</span><span class="nv"> </span><span class="s">and</span><span class="nv"> </span><span class="s">error</span><span class="nv"> </span><span class="s">states</span><span class="nv"> </span><span class="s">remain</span><span class="nv"> </span><span class="s">distinct.&quot;</span>
 
-<span class="w">  </span><span class="nt">tasks</span><span class="p">:</span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">T-01</span>
-<span class="w">      </span><span class="nt">outcome</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Extend</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">response</span><span class="nv"> </span><span class="s">and</span><span class="nv"> </span><span class="s">cover</span><span class="nv"> </span><span class="s">pagination</span><span class="nv"> </span><span class="s">edge</span><span class="nv"> </span><span class="s">cases.&quot;</span>
-<span class="w">      </span><span class="nt">depends_on</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span>
-<span class="w">      </span><span class="nt">writable</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;backend/customers/**&quot;</span><span class="p p-Indicator">]</span>
-<span class="w">      </span><span class="nt">read_only_references</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;frontend/customers/**&quot;</span><span class="p p-Indicator">]</span>
-<span class="w">      </span><span class="nt">validations</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;Targeted</span><span class="nv"> </span><span class="s">pagination</span><span class="nv"> </span><span class="s">contract</span><span class="nv"> </span><span class="s">tests&quot;</span><span class="p p-Indicator">]</span>
+<span class="w">  </span><span class="nt">decisions</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">first_page</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+<span class="w">    </span><span class="nt">page_size</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">25</span>
+<span class="w">    </span><span class="nt">invalid_page</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">http_status</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">404</span>
+<span class="w">      </span><span class="nt">code</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;pagination_page_invalide&quot;</span>
+<span class="w">    </span><span class="nt">page_storage</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;local</span><span class="nv"> </span><span class="s">state&quot;</span>
 
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">T-02</span>
-<span class="w">      </span><span class="nt">outcome</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Consume</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">contract</span><span class="nv"> </span><span class="s">and</span><span class="nv"> </span><span class="s">render</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">page</span><span class="nv"> </span><span class="s">controls.&quot;</span>
-<span class="w">      </span><span class="nt">depends_on</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">T-01</span><span class="p p-Indicator">]</span>
-<span class="w">      </span><span class="nt">writable</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;frontend/customers/**&quot;</span><span class="p p-Indicator">]</span>
-<span class="w">      </span><span class="nt">read_only_references</span><span class="p">:</span>
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;backend/customers/contracts.*&quot;</span>
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;shared/ui/**&quot;</span>
-<span class="w">      </span><span class="nt">validations</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;Customer-directory</span><span class="nv"> </span><span class="s">behavior</span><span class="nv"> </span><span class="s">tests&quot;</span><span class="p p-Indicator">]</span>
+<span class="w">  </span><span class="nt">non_goals</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;Synchronize</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">page</span><span class="nv"> </span><span class="s">with</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">URL.&quot;</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;Modify</span><span class="nv"> </span><span class="s">a</span><span class="nv"> </span><span class="s">shared</span><span class="nv"> </span><span class="s">primitive.&quot;</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;Add</span><span class="nv"> </span><span class="s">a</span><span class="nv"> </span><span class="s">dependency.&quot;</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;Migrate</span><span class="nv"> </span><span class="s">or</span><span class="nv"> </span><span class="s">restructure</span><span class="nv"> </span><span class="s">data.&quot;</span>
 
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">T-03</span>
-<span class="w">      </span><span class="nt">outcome</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Review</span><span class="nv"> </span><span class="s">consistency</span><span class="nv"> </span><span class="s">between</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">contract</span><span class="nv"> </span><span class="s">and</span><span class="nv"> </span><span class="s">its</span><span class="nv"> </span><span class="s">integration.&quot;</span>
-<span class="w">      </span><span class="nt">depends_on</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">T-01</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">T-02</span><span class="p p-Indicator">]</span>
-<span class="w">      </span><span class="nt">writable</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span>
-<span class="w">      </span><span class="nt">read_only_references</span><span class="p">:</span>
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;backend/customers/**&quot;</span>
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;frontend/customers/**&quot;</span>
-<span class="w">      </span><span class="nt">validations</span><span class="p">:</span>
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;Pagination</span><span class="nv"> </span><span class="s">integration</span><span class="nv"> </span><span class="s">tests&quot;</span>
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;Project</span><span class="nv"> </span><span class="s">build&quot;</span>
+<span class="w">  </span><span class="nt">shared_references</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;docs/customers/pagination.md&quot;</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;agent-docs/architecture.md&quot;</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;agent-docs/write-boundaries.md&quot;</span>
 
-<span class="w">  </span><span class="nt">human_decisions</span><span class="p">:</span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;The</span><span class="nv"> </span><span class="s">first</span><span class="nv"> </span><span class="s">page</span><span class="nv"> </span><span class="s">is</span><span class="nv"> </span><span class="s">numbered</span><span class="nv"> </span><span class="s">1.&quot;</span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;The</span><span class="nv"> </span><span class="s">default</span><span class="nv"> </span><span class="s">page</span><span class="nv"> </span><span class="s">size</span><span class="nv"> </span><span class="s">is</span><span class="nv"> </span><span class="s">25</span><span class="nv"> </span><span class="s">items.&quot;</span>
+<span class="w">  </span><span class="nt">writable_envelope</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;backend/customers/**&quot;</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;frontend/customers/**&quot;</span>
 
-<span class="w">  </span><span class="nt">forbidden_for_entire_package</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">read_only</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;docs/customers/pagination.md&quot;</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;shared/ui/**&quot;</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;shared/state/**&quot;</span>
 <span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;shared/routing/**&quot;</span>
+
+<span class="w">  </span><span class="nt">forbidden</span><span class="p">:</span>
 <span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;tooling/**&quot;</span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;orchestration/**&quot;</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;generated/**&quot;</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;workflow-state/**&quot;</span>
 
 <span class="w">  </span><span class="nt">stop_if</span><span class="p">:</span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;The</span><span class="nv"> </span><span class="s">contract</span><span class="nv"> </span><span class="s">must</span><span class="nv"> </span><span class="s">become</span><span class="nv"> </span><span class="s">incompatible</span><span class="nv"> </span><span class="s">with</span><span class="nv"> </span><span class="s">an</span><span class="nv"> </span><span class="s">existing</span><span class="nv"> </span><span class="s">consumer.&quot;</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;A</span><span class="nv"> </span><span class="s">product</span><span class="nv"> </span><span class="s">decision</span><span class="nv"> </span><span class="s">remains</span><span class="nv"> </span><span class="s">open.&quot;</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;The</span><span class="nv"> </span><span class="s">contract</span><span class="nv"> </span><span class="s">becomes</span><span class="nv"> </span><span class="s">incompatible</span><span class="nv"> </span><span class="s">with</span><span class="nv"> </span><span class="s">an</span><span class="nv"> </span><span class="s">existing</span><span class="nv"> </span><span class="s">consumer.&quot;</span>
 <span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;A</span><span class="nv"> </span><span class="s">new</span><span class="nv"> </span><span class="s">dependency</span><span class="nv"> </span><span class="s">is</span><span class="nv"> </span><span class="s">required.&quot;</span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;The</span><span class="nv"> </span><span class="s">solution</span><span class="nv"> </span><span class="s">requires</span><span class="nv"> </span><span class="s">a</span><span class="nv"> </span><span class="s">change</span><span class="nv"> </span><span class="s">to</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">shared</span><span class="nv"> </span><span class="s">foundation.&quot;</span>
-
-<span class="w">  </span><span class="nt">git_start</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">repository_detected</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
-<span class="w">    </span><span class="nt">expected_branch</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;&lt;working</span><span class="nv"> </span><span class="s">branch&gt;&quot;</span>
-<span class="w">    </span><span class="nt">observed_local_state</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;&lt;status</span><span class="nv"> </span><span class="s">recorded</span><span class="nv"> </span><span class="s">before</span><span class="nv"> </span><span class="s">execution&gt;&quot;</span>
-<span class="w">    </span><span class="nt">base_revision</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;not</span><span class="nv"> </span><span class="s">immutably</span><span class="nv"> </span><span class="s">linked</span><span class="nv"> </span><span class="s">in</span><span class="nv"> </span><span class="s">this</span><span class="nv"> </span><span class="s">excerpt&quot;</span>
-<span class="w">    </span><span class="nt">index_coverage</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;to</span><span class="nv"> </span><span class="s">be</span><span class="nv"> </span><span class="s">confirmed&quot;</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;The</span><span class="nv"> </span><span class="s">solution</span><span class="nv"> </span><span class="s">requires</span><span class="nv"> </span><span class="s">changing</span><span class="nv"> </span><span class="s">a</span><span class="nv"> </span><span class="s">shared</span><span class="nv"> </span><span class="s">area.&quot;</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;A</span><span class="nv"> </span><span class="s">validation</span><span class="nv"> </span><span class="s">requires</span><span class="nv"> </span><span class="s">expanding</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">scope</span><span class="nv"> </span><span class="s">or</span><span class="nv"> </span><span class="s">environment.&quot;</span>
 </code></pre></div>
-<p>In a real system, the package or its associated manifest should link the objective and criteria to the human-authored brief, the task block to the plan, each boundary to the repository contract, decisions to the preserved answers, and the Git state to a runtime observation.</p>
-<p>All three tasks appear in the same package, but they do not become a flat list. T-02 depends on T-01; T-03 depends on both earlier tasks. The runner receives this ordering, executes the block in a single session, and returns a separate result for each task. If T-01 reveals an incompatibility or a missing decision, the package must stop before reporting T-02 and T-03 as complete.</p>
-<p>This grouping avoids loading the same brief, contract, and decisions three times. It also allows the agent to preserve consistency between the shape of the backend response, its use in the frontend, and the broader validations. For a larger feature, the plan can naturally produce several coherent packages instead of one oversized batch.</p>
-<p>Per-task boundaries remain useful for preparing the execution brief and interpreting the runner's report. However, if the workflow takes only one Git snapshot before and one after the session, the independent observation applies at the package level: it shows which paths changed within the overall allowed envelope. Attributing one particular file to T-01 or T-02 remains a runner declaration unless intermediate checkpoints are added.</p>
-<p>Context references are not writable paths either. They explain where to find a contract or pattern. The write boundary remains separate. This distinction prevents a file recommended for reading from being interpreted as an invitation to modify it.</p>
-<p>Finally, validations belong to the execution brief, not to the agent's final report. Their presence means, "these checks are expected." It does not mean that they were run. The workflow must separately record the commands that were actually executed, their results, and any missing validations.</p>
-<h2 id="provenance-must-be-inspectable">Provenance must be inspectable<a class="headerlink" href="#provenance-must-be-inspectable" title="Permanent link">&para;</a></h2>
-<p>Provenance can be made useful without imposing a complex schema. For each decisive piece of information, four attributes are often enough:</p>
+<p>Shared context is loaded once because it governs the entire block. It does not replace each task's contract. The writable envelope describes the maximum union of areas for the package; it does not mean that T-01 may edit the frontend or that T-02 may rewrite the backend.</p>
+<p>The package does not contain all project documentation either. It carries the short decisions the agent will need continuously and points to the precise documents worth inspecting. Payment rules, future tasks, and the full chat history do not help paginate the directory, so they stay outside the context.</p>
+<figure class="article-diagram">
+  <img src="execution-package-anatomy.png" alt="Exploded view of the pagination execution package with shared context, three ordered tasks, read-only references, forbidden paths, stop conditions, and an output contract." loading="lazy" />
+  <figcaption>Context travels once; outcomes, dependencies, and boundaries remain attached to each task.</figcaption>
+</figure>
+
+<h2 id="937-am-opening-the-three-task-cards">9:37 a.m.: Opening the Three Task Cards<a class="headerlink" href="#937-am-opening-the-three-task-cards" title="Permanent link">&para;</a></h2>
+<p>The runner next receives the expected outcome, dependencies, paths, and validation specific to each task.</p>
+<div class="highlight"><pre><span></span><code><span class="nt">tasks</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">T-01</span>
+<span class="w">    </span><span class="nt">outcome</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;GET</span><span class="nv"> </span><span class="s">/api/customers?page=2</span><span class="nv"> </span><span class="s">returns</span><span class="nv"> </span><span class="s">items,</span><span class="nv"> </span><span class="s">page,</span><span class="nv"> </span><span class="s">and</span><span class="nv"> </span><span class="s">total.&quot;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;An</span><span class="nv"> </span><span class="s">invalid</span><span class="nv"> </span><span class="s">page</span><span class="nv"> </span><span class="s">returns</span><span class="nv"> </span><span class="s">HTTP</span><span class="nv"> </span><span class="s">404</span><span class="nv"> </span><span class="s">with</span><span class="nv"> </span><span class="s">pagination_page_invalide.&quot;</span>
+<span class="w">    </span><span class="nt">depends_on</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span>
+<span class="w">    </span><span class="nt">writable</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;backend/customers/api.py&quot;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;backend/customers/tests/test_pagination.py&quot;</span>
+<span class="w">    </span><span class="nt">read_only_references</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;docs/customers/pagination.md&quot;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;frontend/customers/customer-api.ts&quot;</span>
+<span class="w">    </span><span class="nt">expected_validation</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;make</span><span class="nv"> </span><span class="s">test-back&quot;</span>
+<span class="w">    </span><span class="nt">stop_if</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;The</span><span class="nv"> </span><span class="s">required</span><span class="nv"> </span><span class="s">contract</span><span class="nv"> </span><span class="s">would</span><span class="nv"> </span><span class="s">be</span><span class="nv"> </span><span class="s">incompatible</span><span class="nv"> </span><span class="s">with</span><span class="nv"> </span><span class="s">an</span><span class="nv"> </span><span class="s">existing</span><span class="nv"> </span><span class="s">consumer.&quot;</span>
+
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">T-02</span>
+<span class="w">    </span><span class="nt">outcome</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;customer-api.ts</span><span class="nv"> </span><span class="s">sends</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">requested</span><span class="nv"> </span><span class="s">page.&quot;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;The</span><span class="nv"> </span><span class="s">directory</span><span class="nv"> </span><span class="s">loads</span><span class="nv"> </span><span class="s">page</span><span class="nv"> </span><span class="s">1</span><span class="nv"> </span><span class="s">when</span><span class="nv"> </span><span class="s">it</span><span class="nv"> </span><span class="s">opens.&quot;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;Previous</span><span class="nv"> </span><span class="s">is</span><span class="nv"> </span><span class="s">disabled</span><span class="nv"> </span><span class="s">on</span><span class="nv"> </span><span class="s">page</span><span class="nv"> </span><span class="s">1.&quot;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;Next</span><span class="nv"> </span><span class="s">is</span><span class="nv"> </span><span class="s">disabled</span><span class="nv"> </span><span class="s">when</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">total</span><span class="nv"> </span><span class="s">has</span><span class="nv"> </span><span class="s">been</span><span class="nv"> </span><span class="s">reached.&quot;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;The</span><span class="nv"> </span><span class="s">loading,</span><span class="nv"> </span><span class="s">empty,</span><span class="nv"> </span><span class="s">and</span><span class="nv"> </span><span class="s">error</span><span class="nv"> </span><span class="s">states</span><span class="nv"> </span><span class="s">remain</span><span class="nv"> </span><span class="s">covered.&quot;</span>
+<span class="w">    </span><span class="nt">depends_on</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">T-01</span><span class="p p-Indicator">]</span>
+<span class="w">    </span><span class="nt">writable</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;frontend/customers/customer-api.ts&quot;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;frontend/customers/customer-list.tsx&quot;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;frontend/customers/customer-list.test.tsx&quot;</span>
+<span class="w">    </span><span class="nt">read_only_references</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;backend/customers/api.py&quot;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;shared/ui/**&quot;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;shared/state/**&quot;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;shared/routing/**&quot;</span>
+<span class="w">    </span><span class="nt">expected_validation</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;make</span><span class="nv"> </span><span class="s">test-front&quot;</span>
+<span class="w">    </span><span class="nt">stop_if</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;The</span><span class="nv"> </span><span class="s">solution</span><span class="nv"> </span><span class="s">requires</span><span class="nv"> </span><span class="s">changing</span><span class="nv"> </span><span class="s">Button,</span><span class="nv"> </span><span class="s">shared</span><span class="nv"> </span><span class="s">state,</span><span class="nv"> </span><span class="s">or</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">router.&quot;</span>
+
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">T-03</span>
+<span class="w">    </span><span class="nt">outcome</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;Check</span><span class="nv"> </span><span class="s">that</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">client</span><span class="nv"> </span><span class="s">consumes</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">backend</span><span class="nv"> </span><span class="s">contract</span><span class="nv"> </span><span class="s">exactly.&quot;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;Check</span><span class="nv"> </span><span class="s">that</span><span class="nv"> </span><span class="s">no</span><span class="nv"> </span><span class="s">URL</span><span class="nv"> </span><span class="s">synchronization</span><span class="nv"> </span><span class="s">has</span><span class="nv"> </span><span class="s">been</span><span class="nv"> </span><span class="s">introduced.&quot;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;Report</span><span class="nv"> </span><span class="s">any</span><span class="nv"> </span><span class="s">inconsistency</span><span class="nv"> </span><span class="s">without</span><span class="nv"> </span><span class="s">opening</span><span class="nv"> </span><span class="s">a</span><span class="nv"> </span><span class="s">new</span><span class="nv"> </span><span class="s">scope.&quot;</span>
+<span class="w">    </span><span class="nt">depends_on</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">T-01</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">T-02</span><span class="p p-Indicator">]</span>
+<span class="w">    </span><span class="nt">writable</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span>
+<span class="w">    </span><span class="nt">read_only_references</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;backend/customers/**&quot;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;frontend/customers/**&quot;</span>
+<span class="w">    </span><span class="nt">expected_validation</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;make</span><span class="nv"> </span><span class="s">build-front&quot;</span>
+</code></pre></div>
+<p>The five expected files are therefore not a flat list attached to the prompt. Two belong to T-01, three to T-02, and none to T-03. This precision helps the agent order its work and makes its report reviewable task by task.</p>
+<p>It does not, however, prove attribution. Because the runner executes the entire package in one session and the workflow takes no Git snapshot between tasks, the independent check will see the package diff. It can confirm that all five paths remain within the overall envelope, but not that a particular line was truly written during T-01 rather than T-02. That attribution remains declarative.</p>
+<p>Validations have the same status at this point. <code>make test-front</code> appears in T-02 because that check must cover the directory behavior. The field is not a result. After the runner and the scope check, the workflow must still run or observe the command, preserve its exit code, and report any missing validation.</p>
+<h2 id="938-am-recording-the-starting-git-state">9:38 a.m.: Recording the Starting Git State<a class="headerlink" href="#938-am-recording-the-starting-git-state" title="Permanent link">&para;</a></h2>
+<p>Immediately before handing the package to the runner, the workflow observes the working tree:</p>
+<div class="highlight"><pre><span></span><code>$ git branch --show-current
+feature/customer-pagination
+
+$ git rev-parse --short HEAD
+7a31c42
+
+$ git status --short --untracked-files=all
+# no output
+</code></pre></div>
+<p>The package therefore records:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">git_start</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">branch</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;feature/customer-pagination&quot;</span>
+<span class="w">  </span><span class="nt">head</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;7a31c42&quot;</span>
+<span class="w">  </span><span class="nt">modified_tracked_files</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span>
+<span class="w">  </span><span class="nt">staged_files</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span>
+<span class="w">  </span><span class="nt">untracked_files</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span>
+<span class="w">  </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;clean&quot;</span>
+</code></pre></div>
+<p>This observation is useful: if five files appear after execution, none of them was visible in the selected starting state. Yet it remains an input, not final evidence. It says nothing about which commands will succeed, does not guarantee that the runner will remain on this branch, and does not replace the Git state recorded at the end.</p>
+<p>An implementation should preserve the full Git object ID even though the article displays its short form. If the working tree were already modified, the package would need to list the affected paths or state explicitly that change attribution will be ambiguous.</p>
+<h2 id="939-am-rendering-the-execution-brief-for-the-runner">9:39 a.m.: Rendering the Execution Brief for the Runner<a class="headerlink" href="#939-am-rendering-the-execution-brief-for-the-runner" title="Permanent link">&para;</a></h2>
+<p>The structured package can now be rendered into a direct instruction for the coding agent:</p>
+<div class="highlight"><pre><span></span><code>Execute T-01, then T-02, then T-03 in this session.
+
+Load the shared context once.
+Respect the write boundary specific to each task.
+Never write under shared/**, tooling/**, generated/**, or workflow-state/**.
+Keep the page in local state; do not synchronize the URL.
+
+Stop the entire package as soon as a stop condition is encountered.
+Do not report a dependent task as complete after that stop.
+
+Return a separate result for T-01, T-02, and T-03 with:
+- the status and outcome achieved;
+- the files you declare you changed;
+- the commands you declare you ran;
+- any remaining questions, warnings, and blockers.
+</code></pre></div>
+<p>The text is shorter than the data that produced it because it can summarize and order what matters to the runner. The complete structure remains available to the workflow for checking the result. This separation avoids treating the rendered text as the only record of the authority granted.</p>
+<p>The expected output contract can be just as explicit:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">runner_result</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">package_status</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;completed</span><span class="nv"> </span><span class="s">|</span><span class="nv"> </span><span class="s">blocked</span><span class="nv"> </span><span class="s">|</span><span class="nv"> </span><span class="s">failed&quot;</span>
+<span class="w">  </span><span class="nt">task_results</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;T-01&quot;</span>
+<span class="w">      </span><span class="nt">status</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;...&quot;</span>
+<span class="w">      </span><span class="nt">summary</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;...&quot;</span>
+<span class="w">      </span><span class="nt">declared_files</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span>
+<span class="w">      </span><span class="nt">declared_commands</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span>
+<span class="w">      </span><span class="nt">blocker</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">null</span>
+<span class="w">  </span><span class="nt">open_questions</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span>
+<span class="w">  </span><span class="nt">warnings</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span>
+</code></pre></div>
+<p>When attempt <code>001</code> begins, none of those results has been filled in. The package defines the shape of the response; it does not prejudge its contents. Once the session ends, the agent's declared file list must be compared with the observed Git state, and the expected validations with their actual executions.</p>
+<h2 id="tracing-every-decision-back-to-its-source">Tracing Every Decision Back to Its Source<a class="headerlink" href="#tracing-every-decision-back-to-its-source" title="Permanent link">&para;</a></h2>
+<p>Provenance becomes concrete when we follow a few package values back to their sources.</p>
 <table>
 <thead>
 <tr>
-<th>Information</th>
-<th>Review question</th>
+<th>Compiled value</th>
+<th>Source</th>
+<th>Authority for this value</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>Source</td>
-<td>Which document, decision, or observation supplied this value?</td>
+<td>Objective and criteria</td>
+<td>Feature brief</td>
+<td>Expected product outcome</td>
 </tr>
 <tr>
-<td>Authority</td>
-<td>Does this value express intent, a rule, a plan, or a fact?</td>
+<td>Page size <code>25</code> and <code>pagination_page_invalide</code> error</td>
+<td><code>docs/customers/pagination.md</code></td>
+<td>Approved domain convention</td>
 </tr>
 <tr>
-<td>Freshness</td>
-<td>Which version, decision, or attempt does it apply to?</td>
+<td>Page retained in local state</td>
+<td>Decision made during qualification</td>
+<td>Trade-off for this release</td>
 </tr>
 <tr>
-<td>Transformation</td>
-<td>Was it copied, summarized, derived, or added by the runtime?</td>
+<td><code>shared/routing/**</code> is read-only</td>
+<td>Repository contract narrowed by the plan</td>
+<td>Architectural boundary for the task</td>
+</tr>
+<tr>
+<td>T-02 depends on T-01</td>
+<td>Executable plan</td>
+<td>Work ordering</td>
+</tr>
+<tr>
+<td>Clean working tree at <code>7a31c42</code></td>
+<td>Git observation at 9:38 a.m.</td>
+<td>Local fact at the start of the attempt</td>
 </tr>
 </tbody>
 </table>
-<p>Consider the page size. If it comes from a human answer recorded after the brief was written, the package must carry the most recent decision and retain a link to its origin. Copying it only into the plan creates two sources that can diverge.</p>
-<p>Now consider the writable paths. They may be derived from the repository's general contract, then narrowed by the plan. The effective result is the intersection of the authorizations, not the most permissive list. The plan can reduce write authority; it should not be able to make a protected area writable.</p>
-<p>This logic also makes the execution brief auditable before the run. A reviewer can inspect not only the expected outcome, but also the decisions the compiler made while assembling the context.</p>
-<h2 id="the-starting-git-state-is-an-input-not-final-evidence">The starting Git state is an input, not final evidence<a class="headerlink" href="#the-starting-git-state-is-an-input-not-final-evidence" title="Permanent link">&para;</a></h2>
-<p>The initial Git state deserves an explicit place in the package because post-execution checks depend on a comparison. At a minimum, the workflow should know whether it is in a repository, which branch it is on, which revision serves as the starting point, and whether the working tree already contains changes to tracked files—staged or unstaged—as well as untracked files.</p>
-<p>An initial view of local state and previously modified paths is enough to reduce some confusion during local execution. It is not enough to claim unambiguously that a change belongs to one attempt or revision.</p>
-<p>Several limitations must remain visible:</p>
+<p>Authority depends on the subject. The plan may narrow the paths allowed by the repository; it cannot make a protected area writable. A Git observation can establish that a file is present; it cannot decide whether that change is desirable.</p>
+<p>Compilation must therefore reject contradictions instead of blending them into ambiguous prose. If T-02 suddenly declared <code>shared/routing/**</code> writable, the package should not launch. If a task set the page size to <code>50</code> while the persisted decision says <code>25</code>, the discrepancy should be resolved before the runner starts.</p>
+<h2 id="what-this-package-enablesand-what-it-does-not">What This Package Enables—and What It Does Not<a class="headerlink" href="#what-this-package-enablesand-what-it-does-not" title="Permanent link">&para;</a></h2>
+<p>At 9:39 a.m., the runner has a more precise mission without receiving the entire project in its context window. It can coordinate the API evolution with its consumer, retain the same decisions across all three tasks, and organize the detailed edits itself.</p>
+<p>The workflow also gains comparison points: expected tasks, the union of writable paths, read-only references, validations, and the output shape. But these benefits have clear limits.</p>
 <ul>
-<li>a local status does not, by itself, bind the package to an immutable base commit;</li>
-<li>a dirty working tree complicates attribution of changes to the runner;</li>
-<li>the index and working tree must be observed separately;</li>
-<li>untracked files must be explicitly included in the observation scope;</li>
-<li>the expected branch does not prove that the complete execution happened on that branch;</li>
-<li>a starting snapshot does not replace the Git state recorded at the end.</li>
+<li>The package <strong>describes authority</strong>; by itself, it does not remove process permissions. Without a sandbox, path checking happens after writing.</li>
+<li>Commands in the package are <strong>expected validations</strong>, not results. An exit code must be observed and recorded separately.</li>
+<li>One snapshot before and one after the session qualifies <strong>the package diff</strong>, not the author of each task-level change.</li>
+<li>A clean starting Git state improves local attribution, but does not yet bind the attempt to a final merge-ready revision.</li>
+<li>A valid structure does not guarantee that the selected context is relevant, complete, or current.</li>
+<li>An oversized package would dilute the objective again. Any router evolution therefore remains a separate unit of work.</li>
 </ul>
-<p>The accurate claim is therefore not, "the package proves that the repository was clean." It is, "the package records this view of the initial state, with this coverage." Linking the evidence to a pull request requires more: base and head commits, index state, environment information, and validations executed on the relevant revision. We will return to this in the article about evidence.</p>
-<h2 id="a-structured-package-can-still-contain-too-much-context">A structured package can still contain too much context<a class="headerlink" href="#a-structured-package-can-still-contain-too-much-context" title="Permanent link">&para;</a></h2>
-<p>Structure reduces amnesia and ambiguity of provenance. It does not guarantee that the selection is relevant.</p>
-<p>Putting the full brief, the plan, every task, every instruction, and a broad view of the repository into the package may seem prudent. Yet it can dilute the executable task block, carry obsolete decisions, and multiply apparent contradictions.</p>
-<p>Before including an element, the workflow can apply four questions:</p>
-<ol>
-<li>Is it necessary to execute one of the package's tasks or decide to stop?</li>
-<li>Is its source sufficiently authoritative and current?</li>
-<li>Is there a smaller representation that preserves the useful meaning?</li>
-<li>Should it be included, or merely referenced with a reason to consult it?</li>
-</ol>
-<p>Minimal context is not the shortest context. Removing a stop condition would be poor compression; copying an entire document when one precise reference is enough adds noise. The package must support action and make reserved decisions recognizable, not replace the repository inside the context window.</p>
-<h2 id="what-the-execution-brief-actually-changes">What the execution brief actually changes<a class="headerlink" href="#what-the-execution-brief-actually-changes" title="Permanent link">&para;</a></h2>
-<p>A well-constructed execution package improves three concrete things.</p>
-<p>First, it makes the run reconstructible: intent, decisions, scope, and expected validations remain accessible without rereading the conversation.</p>
-<p>Second, it makes deviations classifiable. A modification to a read-only area can be compared with an explicit boundary; a missing validation appears as absent instead of disappearing into an optimistic summary.</p>
-<p>Finally, it separates responsibilities more clearly. The agent proposes code and a structured report. The workflow preserves state, checks scope, and runs the planned validations. Humans decide questions beyond the authority of the tasks in the package and judge the residual risk.</p>
-<p>But the package does not repair an unstable brief. It cannot make an overbroad context selection relevant. It does not turn a path policy into a sandbox. It does not guarantee that the selected tests cover the behavior. And by itself, it does not prove that the final diff corresponds to a merge-ready revision.</p>
 <blockquote>
-<p>A precise execution brief does not make the agent infallible. It makes the agent's instructions, boundaries, and deviations inspectable.</p>
+<p>A good package does not prevent the agent from making mistakes. It makes its instructions, boundaries, and deviations comparable with facts.</p>
 </blockquote>
-<h2 id="audit-your-own-execution-package">Audit your own execution package<a class="headerlink" href="#audit-your-own-execution-package" title="Permanent link">&para;</a></h2>
-<p>Before adding more automation, a team can take a real package or reconstruct one from a recent task and check the following points:</p>
+<h2 id="checking-the-package-before-starting-the-attempt">Checking the Package Before Starting the Attempt<a class="headerlink" href="#checking-the-package-before-starting-the-attempt" title="Permanent link">&para;</a></h2>
+<p>For this pagination feature, the pre-execution review fits into ten concrete questions:</p>
 <ul>
-<li>☐ The objective and non-goals come from an identifiable human source.</li>
-<li>☐ Every acceptance criterion describes an observable outcome.</li>
-<li>☐ Executable tasks are distinguished from tasks shown only for context.</li>
-<li>☐ Dependencies prevent premature execution.</li>
-<li>☐ Writable, read-only, and forbidden paths have distinct meanings.</li>
-<li>☐ A context reference is never confused with write authorization.</li>
-<li>☐ Human decisions already made are preserved with their origin.</li>
-<li>☐ Stop conditions identify the required decision and role.</li>
-<li>☐ Expected validations exist independently of the agent's report.</li>
-<li>☐ The initial Git state clearly states what was and was not observed.</li>
-<li>☐ A conflict among the brief, plan, and repository rules either blocks compilation or remains explicitly visible.</li>
-<li>☐ Every context block can justify its presence in the current package.</li>
+<li>☐ Do the criteria name the initial page, boundaries, and interface states?</li>
+<li>☐ Do page size <code>25</code> and the 404 error still come from the current decision source?</li>
+<li>☐ Can T-01, T-02, and T-03 run in sequence without a dependency outside the block?</li>
+<li>☐ Does every writable file belong to a specific task?</li>
+<li>☐ Are <code>shared/ui/**</code>, <code>shared/state/**</code>, and <code>shared/routing/**</code> read-only?</li>
+<li>☐ Do <code>tooling/**</code>, <code>generated/**</code>, and <code>workflow-state/**</code> remain forbidden?</li>
+<li>☐ Do all three expected commands exist independently of the future agent report?</li>
+<li>☐ Does every stop condition say when not to continue to the next task?</li>
+<li>☐ Does the Git state cover tracked, staged, and untracked files?</li>
+<li>☐ Must the runner return a separate result for each of the three tasks?</li>
 </ul>
-<p>If one of these elements exists only in chat, the package is incomplete. If it exists but its origin cannot be recovered, the package lacks provenance. If it is present but cannot be checked, it remains an instruction and must be presented as such.</p>
+<p>If any answer is missing, correcting the package is safer than asking the agent to fill the silence during implementation.</p>
 <h2 id="conclusion">Conclusion<a class="headerlink" href="#conclusion" title="Permanent link">&para;</a></h2>
-<p>What the agent receives before coding affects its ability to stay within the authority it has been granted more than its ability to generate code.</p>
-<p>The brief provides intent. The repository provides rules. The plan provides decomposition and dependencies. Human decisions close questions that have already been settled. The runtime selects a coherent block of tasks that can execute in sequence, adds local state, and hands the runner a bounded execution brief.</p>
-<p>The quality of this assembly is not measured by its length. It is measured by whether, for every important piece of information, we can answer: where did it come from, what is it authoritative for, is it still current, and how will the result be checked against that expectation?</p>
-<p>The remaining question is what happens when execution cannot comply with this brief: a decision is missing, a boundary is crossed, or a validation fails. That is the subject of the next article: <a href="../agent-task-stop-and-resume/"><strong>when the task must stop, and how to resume it without losing its history</strong></a>.</p>
+<p>Attempt <code>001</code> is now ready. The runner will receive the brief, decisions, rules, and starting Git state once. It will execute T-01, T-02, and T-03 in the same session while preserving their dependencies, boundaries, and distinct results.</p>
+<p>The benefit does not come from a particularly persuasive prompt. It comes from precise preparation: selecting a coherent block, removing unrelated context, preserving provenance, announcing validations, and making stops actionable.</p>
+<p>But a well-prepared package does not guarantee an incident-free execution. A decision may be missing, a boundary may be crossed, or a validation may fail. <a href="../agent-task-stop-and-resume/">The next article shows how to classify those stops and resume without erasing the previous attempt</a>.</p>
 <div class="article-footer-contact">
   <p>To discuss this article or leave me a public message:</p>
   <a class="article-contact-link" href="https://github.com/velkouby/ai-based-development/issues/new?template=contact.yml">Message on GitHub</a>

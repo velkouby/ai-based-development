@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="Une décision manquante, une sortie de périmètre et un test en échec ne demandent pas la même réponse. Voici comment arrêter une tâche agentique proprement, conserver les faits utiles et reprendre sans effacer l'histoire.">
+        <meta name="description" content="Un test frontend échoue après une implémentation pourtant restée dans son périmètre. En suivant deux tentatives concrètes, voyons quand réparer, quand demander une décision et quand arrêter sur une frontière d'écriture.">
       
       
         <meta name="author" content="Vincent El Kouby-Benichou, Baracoda">
@@ -407,10 +407,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#trois-arrets-trois-autorites-differentes" class="md-nav__link">
+  <a href="#le-paquet-demarre-depuis-un-etat-connu" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Trois arrêts, trois autorités différentes
+        Le paquet démarre depuis un état connu
       
     </span>
   </a>
@@ -418,10 +418,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#une-decision-manquante-doit-bloquer-avant-le-code" class="md-nav__link">
+  <a href="#tentative-001-cinq-fichiers-attendus-un-test-rouge" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Une décision manquante doit bloquer avant le code
+        Tentative 001 : cinq fichiers attendus, un test rouge
       
     </span>
   </a>
@@ -429,10 +429,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#une-sortie-de-perimetre-est-un-fait-observe-apres-lecriture" class="md-nav__link">
+  <a href="#pourquoi-cet-echec-est-reparable-sans-decision-humaine" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Une sortie de périmètre est un fait observé après l'écriture
+        Pourquoi cet échec est réparable sans décision humaine
       
     </span>
   </a>
@@ -440,10 +440,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#variante-pedagogique-la-pagination-et-lurl" class="md-nav__link">
+  <a href="#le-point-exact-de-reprise" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Variante pédagogique : la pagination et l'URL
+        Le point exact de reprise
       
     </span>
   </a>
@@ -451,10 +451,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#annuler-reessayer-et-redecouper-ne-sont-pas-synonymes" class="md-nav__link">
+  <a href="#tentative-002-un-fichier-repare-trois-controles-verts" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Annuler, réessayer et redécouper ne sont pas synonymes
+        Tentative 002 : un fichier réparé, trois contrôles verts
       
     </span>
   </a>
@@ -462,10 +462,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#lechec-reparable-une-boucle-bornee-pas-une-carte-blanche" class="md-nav__link">
+  <a href="#meme-test-rouge-mais-decision-manquante" class="md-nav__link">
     <span class="md-ellipsis">
       
-        L'échec réparable : une boucle bornée, pas une carte blanche
+        Même test rouge, mais décision manquante
       
     </span>
   </a>
@@ -473,10 +473,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#reprendre-signifie-reconstruire-lautorite-de-la-tache" class="md-nav__link">
+  <a href="#meme-paquet-mais-frontiere-franchie" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Reprendre signifie reconstruire l'autorité de la tâche
+        Même paquet, mais frontière franchie
       
     </span>
   </a>
@@ -484,10 +484,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#ce-que-le-controle-de-frontiere-ne-garantit-pas" class="md-nav__link">
+  <a href="#reessayer-recompiler-et-reclasser-trois-reprises-differentes" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Ce que le contrôle de frontière ne garantit pas
+        Réessayer, recompiler et reclasser : trois reprises différentes
       
     </span>
   </a>
@@ -495,10 +495,32 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#le-dossier-darret-minimal" class="md-nav__link">
+  <a href="#une-boucle-de-reparation-doit-rester-bornee" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Le dossier d'arrêt minimal
+        Une boucle de réparation doit rester bornée
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#une-frontiere-git-nest-pas-une-frontiere-de-securite" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Une frontière Git n'est pas une frontière de sécurité
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#le-dossier-minimal-darret-et-de-reprise" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Le dossier minimal d'arrêt et de reprise
       
     </span>
   </a>
@@ -537,198 +559,313 @@
 
 
 <h1 class="article-title" id="quand-la-tache-doit-sarreter-decisions-frontieres-et-reprise">Quand la tâche doit s'arrêter : décisions, frontières et reprise<a class="headerlink" href="#quand-la-tache-doit-sarreter-decisions-frontieres-et-reprise" title="Permanent link">&para;</a></h1>
-<p class="article-lead">Une décision manquante, une sortie de périmètre et un test en échec ne demandent pas la même réponse. Un workflow agentique fiable doit savoir pourquoi il s'arrête, qui peut débloquer la situation et à partir de quels faits le travail pourra reprendre.</p>
+<p class="article-lead">Le paquet de pagination a produit les cinq fichiers attendus, les tests backend passent et le frontend compile. Pourtant, un test révèle que le bouton « Suivant » reste actif sur la dernière page. Faut-il recommencer, demander une décision humaine ou réparer localement ? Suivons les faits jusqu'au point exact de reprise.</p>
 <p class="article-meta">
   <span>Par <span class="article-author">Vincent El Kouby-Benichou</span>, <a class="article-company-link" href="https://baracoda.com">Baracoda</a></span>
   <a class="article-contact-link" href="https://www.linkedin.com/in/vincentelkoubybenichou/">LinkedIn</a>
 </p>
 
-<p>Dans <a href="../agent-execution-package/">l'article précédent</a>, le brief, le plan, les règles du repository et les décisions déjà prises devenaient un ordre de mission borné. Cet ordre indiquait à l'agent où écrire, quoi consulter, comment valider et dans quels cas ne pas continuer.</p>
-<p>Les conditions d'arrêt ne sont pas une annexe prudente du paquet d'exécution. Elles en sont une partie opérationnelle. Sans elles, l'agent est incité à transformer toute incertitude en choix d'implémentation et tout obstacle en élargissement silencieux du périmètre.</p>
-<p>Mais « la tâche est bloquée » reste une information insuffisante. Une question produit non tranchée avant le code, une modification observée dans une zone protégée et un test unitaire en échec n'ont ni le même responsable, ni la même réparation, ni le même point de reprise.</p>
+<p>Dans <a href="../agent-execution-package/">l'article précédent</a>, le brief, le plan, les règles du repository et les décisions humaines ont été compilés dans un ordre de mission. Le runner a reçu un bloc cohérent de trois tâches : faire évoluer l'API, adapter l'annuaire, puis vérifier leur cohérence.</p>
+<p>Il est temps de laisser ce paquet s'exécuter. La première tentative ne se termine ni par un succès complet, ni par une catastrophe. Elle s'arrête sur un défaut précis, dans une zone autorisée, avec un test capable de vérifier la correction.</p>
+<p>C'est le cas idéal pour comprendre la reprise. Un simple « continue » serait trop vague. Rejouer toute la feature gaspillerait le travail déjà accompli. Ignorer le test rouge serait évidemment faux. Le workflow doit qualifier l'arrêt, conserver la première tentative et construire une seconde mission plus étroite.</p>
 <blockquote>
-<p>Un arrêt utile ne dit pas seulement que le travail n'est pas terminé. Il établit ce qui s'est passé, ce qui manque, qui doit décider et ce qui devra être revérifié.</p>
+<p>Reprendre ne signifie pas recommencer. Cela signifie repartir du dernier état connu avec la même autorité, un diagnostic précis et des contrôles à refaire.</p>
 </blockquote>
-<p>Les mécanismes présentés ici — état persistant, frontières d'écriture, historique des tentatives, décisions humaines et reprises contrôlées — forment un protocole qu'un framework appliquant ces principes peut matérialiser. Les artefacts qui suivent montrent comment rendre ce protocole actionnable.</p>
 <figure class="article-diagram">
-  <img src="../../../articles/agent-task-stop-and-resume/task-stop-resume-paths.png" alt="Trois branches distinguent la décision manquante, la sortie de périmètre et l'échec réparable, avec pour chacune l'autorité, l'action et le point de reprise nécessaires avant une nouvelle tentative compilée." loading="lazy" />
-  <figcaption>La cause de l'arrêt détermine l'autorité nécessaire et le point de reprise.</figcaption>
+  <img src="../../../articles/agent-task-stop-and-resume/task-stop-resume-paths.png" alt="Chronologie de la pagination clients : départ propre sur la révision 7a31c42, tentative 001 arrêtée par le test frontend, tentative 002 limitée à un fichier puis revue locale, avec deux branches de contraste pour une décision humaine manquante et une sortie de périmètre dans le routage partagé." loading="lazy" />
+  <figcaption>La tentative 002 reprend l'échec de validation ; une décision manquante ou une frontière franchie imposerait un autre chemin.</figcaption>
 </figure>
 
-<h2 id="trois-arrets-trois-autorites-differentes">Trois arrêts, trois autorités différentes<a class="headerlink" href="#trois-arrets-trois-autorites-differentes" title="Permanent link">&para;</a></h2>
-<p>Une taxonomie minimale suffit déjà à éviter de nombreuses mauvaises reprises.</p>
+<h2 id="le-paquet-demarre-depuis-un-etat-connu">Le paquet démarre depuis un état connu<a class="headerlink" href="#le-paquet-demarre-depuis-un-etat-connu" title="Permanent link">&para;</a></h2>
+<p>Le point de départ n'est pas « le repository à peu près comme hier ». Le workflow relève un état précis avant de lancer le runner :</p>
+<div class="highlight"><pre><span></span><code><span class="nt">depart</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">branche</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">feature/customer-pagination</span>
+<span class="w">  </span><span class="nt">revision</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">7a31c42</span>
+<span class="w">  </span><span class="nt">copie_de_travail</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">propre</span>
+
+<span class="nt">paquet</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">taches</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">T-01</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">T-02</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">T-03</span><span class="p p-Indicator">]</span>
+<span class="w">  </span><span class="nt">ecriture_autorisee</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">backend/customers/**</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">frontend/customers/**</span>
+<span class="w">  </span><span class="nt">lecture_seule</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">shared/routing/**</span>
+<span class="w">  </span><span class="nt">non_objectifs</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">synchroniser la page dans l&#39;URL</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">modifier une primitive partagée</span>
+</code></pre></div>
+<p>Cette capture donne trois repères utiles pour la suite. La branche et la révision identifient la base locale. La copie de travail propre évite de confondre une modification antérieure avec celle du runner. Enfin, le paquet rappelle que <code>shared/routing/**</code> peut être consulté, mais pas modifié.</p>
+<p>Cela ne transforme pas le paquet en sandbox. Le processus peut encore écrire dans un mauvais dossier si l'environnement lui en donne techniquement la possibilité. Les frontières déclarent l'autorité de la mission ; le contrôle de chemins vérifiera ensuite si les modifications observées la respectent.</p>
+<h2 id="tentative-001-cinq-fichiers-attendus-un-test-rouge">Tentative 001 : cinq fichiers attendus, un test rouge<a class="headerlink" href="#tentative-001-cinq-fichiers-attendus-un-test-rouge" title="Permanent link">&para;</a></h2>
+<p>Le runner exécute le bloc <code>T-01 → T-02 → T-03</code> dans une même session et déclare les trois tâches terminées. Le workflow ne prend pas cette déclaration pour une validation. Il inspecte d'abord Git.</p>
+<p>Cinq chemins ont changé depuis l'état de départ :</p>
+<div class="highlight"><pre><span></span><code>backend/customers/api.py
+backend/customers/tests/test_pagination.py
+frontend/customers/customer-api.ts
+frontend/customers/customer-list.tsx
+frontend/customers/customer-list.test.tsx
+</code></pre></div>
+<p>Ils appartiennent tous aux deux zones produit autorisées. Le contrôle de frontières réussit. Les trois commandes ciblées peuvent alors être lancées :</p>
 <table>
 <thead>
 <tr>
-<th>Situation</th>
-<th>Fait déclencheur</th>
-<th>Qui peut agir ?</th>
-<th>Reprise légitime</th>
+<th>Contrôle</th>
+<th style="text-align: right;">Code de retour</th>
+<th>Fait établi</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><strong>Décision manquante</strong></td>
-<td>Une question change le résultat attendu ou engage une autorité absente</td>
-<td>Responsable produit, architecture, sécurité ou propriétaire du domaine</td>
-<td>Enregistrer la décision, mettre à jour l'entrée concernée, puis recompiler le travail</td>
+<td><code>make test-back</code></td>
+<td style="text-align: right;"><code>0</code></td>
+<td>Les tests backend sélectionnés n'ont pas détecté d'échec</td>
 </tr>
 <tr>
-<td><strong>Sortie de périmètre</strong></td>
-<td>Les fichiers observés touchent une zone non autorisée, en lecture seule ou interdite</td>
-<td>Pilote de la tâche et, si nécessaire, propriétaire du socle</td>
-<td>Isoler ou retirer la modification, redécouper ou reclasser, puis repartir d'un périmètre valide</td>
+<td><code>make test-front</code></td>
+<td style="text-align: right;"><code>1</code></td>
+<td>Au moins un scénario frontend a échoué</td>
 </tr>
 <tr>
-<td><strong>Échec réparable</strong></td>
-<td>Une validation ou une étape mécanique échoue sans ouvrir de nouvelle décision</td>
-<td>Agent ou développeur, dans une politique de réparation bornée</td>
-<td>Corriger la cause, relancer les contrôles affectés et conserver une nouvelle tentative</td>
+<td><code>make build-front</code></td>
+<td style="text-align: right;"><code>0</code></td>
+<td>Le build frontend demandé s'est terminé sans erreur</td>
+</tr>
+<tr>
+<td>Qualité globale</td>
+<td style="text-align: right;">Non exécutée</td>
+<td>Aucune conclusion sur ce contrôle</td>
 </tr>
 </tbody>
 </table>
-<p>La différence essentielle porte sur l'autorité. Un agent peut corriger une erreur de formatage si la commande et la solution sont déterministes. Il ne peut pas décider seul qu'une incompatibilité d'API est acceptable, qu'une primitive partagée peut changer ou qu'une permission doit être élargie.</p>
-<p>Il faut aussi distinguer <strong>arrêt</strong> et <strong>échec</strong>. Attendre une décision produit est un arrêt normal du workflow, pas une panne. Détecter une sortie de périmètre signifie que le garde-fou a fonctionné, même si la tentative ne peut pas être acceptée. À l'inverse, répéter mécaniquement une validation qui échoue sans diagnostic n'est pas une reprise : c'est une boucle.</p>
-<h2 id="une-decision-manquante-doit-bloquer-avant-le-code">Une décision manquante doit bloquer avant le code<a class="headerlink" href="#une-decision-manquante-doit-bloquer-avant-le-code" title="Permanent link">&para;</a></h2>
-<p>Le meilleur moment pour arrêter une tâche est souvent avant que le runner agent ne soit lancé.</p>
-<p>Supposons que le brief demande de paginer l'annuaire clients, mais ne précise pas le comportement lorsqu'une page supérieure au nouveau maximum est demandée. L'API doit-elle renvoyer une page vide, ramener la requête à la dernière page valide ou retourner une erreur explicite ? Ce choix influence l'expérience utilisateur, le contrat de l'interface et les tests.</p>
-<p>Le planificateur peut proposer des options et signaler leurs conséquences. Il ne doit pas faire passer l'une d'elles pour une simple convention technique. Le workflow devrait alors conserver une intervention contenant au minimum :</p>
-<ul>
-<li>le problème formulé sans jargon inutile ;</li>
-<li>la question précise à trancher ;</li>
-<li>les options connues et leurs effets ;</li>
-<li>le rôle attendu pour décider ;</li>
-<li>les tâches et critères concernés ;</li>
-<li>la réponse, sa source et sa justification éventuelle.</li>
-</ul>
-<p>Tant que cette intervention reste ouverte, aucune tâche dépendante ne devrait être exécutable. Une fois la réponse donnée, elle ne doit pas seulement être injectée dans une nouvelle conversation. Elle devient une décision persistante, reliée à l'intervention qui l'a provoquée, puis transmise dans le prochain paquet d'exécution. Si elle modifie le brief, le plan ou le périmètre, l'artefact concerné doit être mis à jour et le travail recompilé avant la reprise.</p>
-<p>Cette séquence évite deux dérives. La première consiste à laisser l'agent coder une hypothèse, puis à présenter le diff comme une manière de « demander confirmation ». La seconde consiste à recevoir une réponse humaine sans mettre à jour l'artefact qui faisait autorité. Dans ce cas, le prochain agent peut reprendre l'ancienne ambiguïté.</p>
-<blockquote>
-<p>Répondre à une question ne suffit pas. La réponse doit modifier durablement la source qui gouverne l'exécution suivante.</p>
-</blockquote>
-<p>Si la question révèle que le brief entier est instable, il ne faut pas reprendre la tâche. Il faut revenir à la définition du besoin. Si elle ne concerne qu'une décision locale déjà prévue par le plan, une mise à jour ciblée peut suffire. Le point de reprise dépend donc de l'endroit où l'incertitude est née.</p>
-<h2 id="une-sortie-de-perimetre-est-un-fait-observe-apres-lecriture">Une sortie de périmètre est un fait observé après l'écriture<a class="headerlink" href="#une-sortie-de-perimetre-est-un-fait-observe-apres-lecriture" title="Permanent link">&para;</a></h2>
-<p>Le deuxième cas est plus inconfortable : l'agent a déjà écrit, puis le workflow constate qu'un fichier modifié ne respecte pas l'ordre de mission.</p>
-<p>Le contrôle utile compare deux sources : le périmètre déclaré pour les tâches exécutées et les chemins réellement observés dans la copie de travail. La liste de fichiers rapportée par l'agent peut aider au diagnostic, mais elle ne doit pas être la seule source. Un agent peut oublier un fichier, mal interpréter un renommage ou produire un résumé incomplet.</p>
-<p>Pour l'annuaire clients, un contrat conceptuel pourrait autoriser l'écriture dans les zones produit du frontend et du backend, autoriser la lecture du routage commun et interdire sa modification :</p>
-<div class="highlight"><pre><span></span><code>écriture autorisée
-  frontend/customers/**
-  backend/customers/**
+<p>Le détail utile se trouve dans la sortie de <code>make test-front</code> :</p>
+<div class="highlight"><pre><span></span><code>FAIL CustomerList &gt; disables Next on the last page
 
-lecture seule
-  shared/routing/**
-
-arrêter si
-  la synchronisation avec l&#39;URL exige de modifier le routage partagé
+Expected: disabled
+Received: enabled
 </code></pre></div>
-<p>Ces chemins illustrent la répartition des responsabilités entre les zones produit et le routage partagé.</p>
-<p>Si le diff observé contient un fichier sous <code>shared/routing/</code>, le résultat n'est pas « presque conforme ». La tentative a franchi une frontière. Les validations fonctionnelles ne doivent pas transformer ce franchissement en autorisation rétroactive : un test vert ne donne pas à la tâche produit le droit de modifier le socle.</p>
-<p>Le workflow doit alors conserver le constat avant toute réparation : chemins concernés, règle violée, phase de détection, état connu au départ et validations déjà exécutées ou non. Cette chronologie compte. Elle permet de distinguer une modification produite pendant la tentative d'un changement qui existait avant son lancement.</p>
-<p>Si la copie de travail était déjà modifiée, retirer automatiquement le fichier fautif peut détruire le travail de quelqu'un d'autre. La bonne réaction est alors de suspendre la réparation et de demander une attribution humaine. La restauration automatique n'est raisonnable que lorsque le système sait précisément quel état de référence il rétablit et quelles modifications appartiennent à la tentative.</p>
-<h2 id="variante-pedagogique-la-pagination-et-lurl">Variante pédagogique : la pagination et l'URL<a class="headerlink" href="#variante-pedagogique-la-pagination-et-lurl" title="Permanent link">&para;</a></h2>
-<p>Le scénario suivant sert d'exemple pédagogique pour suivre un arrêt de périmètre, la décision qui en découle et les conditions de reprise.</p>
-<p>Dans cette variante, l'équipe étend la pagination avec une exigence supplémentaire : la page courante doit apparaître dans l'URL afin qu'un lien puisse être partagé. Comme cette synchronisation était un non-objectif du brief initial, la demande est d'abord requalifiée, le brief est révisé et un nouveau paquet d'exécution est compilé. Le routage partagé y reste en lecture seule, avec une condition d'arrêt explicite. Pendant l'implémentation, l'agent conclut néanmoins que l'interface publique du routeur est insuffisante et modifie une primitive partagée.</p>
-<p>Le contrôle post-exécution observe alors deux catégories de changements : les fichiers produit attendus et un fichier du routage commun. Il classe la tentative comme sortie de périmètre et arrête la chaîne avant de considérer la tâche terminée.</p>
-<p>Voici un dossier d'arrêt compact que l'on pourrait conserver :</p>
-<div class="highlight"><pre><span></span><code><span class="gh"># Dossier d&#39;arrêt — exemple pédagogique</span>
-
-Demande : synchroniser la page de l&#39;annuaire avec l&#39;URL
-Phase : contrôle post-écriture
-Résultat : arrêt sur frontière d&#39;écriture
-
-Éléments consignés dans cet exemple :
-<span class="k">-</span><span class="w"> </span>des fichiers de la fonctionnalité ont été modifiés dans le périmètre autorisé ;
-<span class="k">-</span><span class="w"> </span>un fichier du routage partagé a aussi été modifié ;
-<span class="k">-</span><span class="w"> </span>cette zone était déclarée en lecture seule ;
-<span class="k">-</span><span class="w"> </span>les validations prévues n&#39;ont pas été lancées après l&#39;échec du contrôle de périmètre.
-
-Options soumises à décision :
-<span class="k">1.</span> retirer la synchronisation de l&#39;URL et réviser les critères ;
-<span class="k">2.</span> trouver une adaptation locale utilisant l&#39;interface publique existante ;
-<span class="k">3.</span> ouvrir une évolution séparée du socle, puis reprendre la fonctionnalité.
-
-Décision humaine :
-<span class="k">-</span><span class="w"> </span>maintenir l&#39;exigence de partage par URL ;
-<span class="k">-</span><span class="w"> </span>annuler la modification non autorisée ;
-<span class="k">-</span><span class="w"> </span>traiter l&#39;extension du routeur dans une unité de travail distincte ;
-<span class="k">-</span><span class="w"> </span>reprendre la pagination après intégration de cette extension.
+<p>La pagination sait charger des données et l'application compile, mais l'utilisateur peut encore demander une page située après la dernière. Les deux commandes vertes ne compensent pas cette divergence avec le comportement attendu.</p>
+<p>Le résultat de la tentative doit donc rester explicite :</p>
+<div class="highlight"><pre><span></span><code><span class="nt">tentative</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;001&quot;</span>
+<span class="nt">resultat_runner_declare</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">completed</span>
+<span class="nt">frontieres</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">passed</span>
+<span class="nt">validations</span><span class="p">:</span>
+<span class="w">  </span><span class="s">&quot;make</span><span class="nv"> </span><span class="s">test-back&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">passed</span>
+<span class="w">  </span><span class="s">&quot;make</span><span class="nv"> </span><span class="s">test-front&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">failed</span>
+<span class="w">  </span><span class="s">&quot;make</span><span class="nv"> </span><span class="s">build-front&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">passed</span>
+<span class="nt">qualite_globale</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">not_run</span>
+<span class="nt">statut</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">needs_retry</span>
 </code></pre></div>
-<p>Ce dossier reste volontairement compact : il ne décrit pas toute la mécanique de reprise. Il conserve ce dont une équipe a besoin pour comprendre l'arrêt et autoriser la suite.</p>
-<p>La décision choisie ne consiste pas à ajouter <code>shared/routing/**</code> aux chemins autorisés de la tâche existante. Ce serait maquiller la sortie de périmètre en élargissant le contrat après coup. Le changement partagé devient une <strong>évolution du socle</strong> avec sa propre intention, son analyse d'impact, ses consommateurs, ses validations et sa revue.</p>
-<p>La fonctionnalité de pagination reste arrêtée tant que cette dépendance n'est pas disponible. Après intégration de l'extension partagée, son plan est réévalué : nouvelle révision de départ, nouvelle interface publique à réutiliser, périmètre produit inchangé et validations mises à jour. La tâche peut alors reprendre sans effacer la première tentative.</p>
-<h2 id="annuler-reessayer-et-redecouper-ne-sont-pas-synonymes">Annuler, réessayer et redécouper ne sont pas synonymes<a class="headerlink" href="#annuler-reessayer-et-redecouper-ne-sont-pas-synonymes" title="Permanent link">&para;</a></h2>
-<p>Une fois l'arrêt qualifié, le verbe de reprise doit être précis.</p>
-<p><strong>Annuler une modification interdite</strong> signifie revenir à un état de référence connu pour les seuls chemins concernés, puis relancer le contrôle de périmètre. Cette action ne valide pas le reste du diff. Elle retire un fait incompatible avec le contrat.</p>
-<p><strong>Réessayer une tâche</strong> signifie conserver le même objectif et la même autorité, mais produire une nouvelle tentative après une correction bornée. L'historique précédent reste visible : cause, actions prises, fichiers touchés et résultats de validation.</p>
-<p><strong>Replanifier</strong> signifie que l'entrée a changé. Une décision humaine, un nouveau contrat ou une dépendance intégrée modifie l'ordre de mission. Relancer exactement le même paquet serait incohérent ; il faut en compiler un nouveau.</p>
-<p><strong>Redécouper ou reclasser</strong> signifie que le changement découvert n'appartient plus au dispositif initial. Une évolution du socle doit rester séparée de la tâche produit. Une migration ou une décision de sécurité peut, selon sa portée, imposer une unité distincte ou une reclassification avec l'autorité correspondante.</p>
-<p>Cette distinction protège la traçabilité. Si toutes les actions sont appelées « reprise », une équipe ne sait plus si l'agent a corrigé une faute, reçu une nouvelle décision ou obtenu un périmètre plus large.</p>
-<h2 id="lechec-reparable-une-boucle-bornee-pas-une-carte-blanche">L'échec réparable : une boucle bornée, pas une carte blanche<a class="headerlink" href="#lechec-reparable-une-boucle-bornee-pas-une-carte-blanche" title="Permanent link">&para;</a></h2>
-<p>Le troisième cas concerne un échec mécanique ou de validation. Par exemple, un test ciblé révèle que le bouton « page suivante » reste actif sur la dernière page. L'objectif, le contrat d'API et le périmètre ne changent pas. La cause est localisée dans une zone autorisée et la correction peut être vérifiée par le même test.</p>
-<p>Une tentative de réparation est raisonnable si quatre conditions sont réunies :</p>
+<p>Cette distinction est importante. Le runner a bien terminé ce qu'il pensait devoir faire. Le workflow, lui, a observé que l'ordre de mission n'est pas encore satisfait.</p>
+<h2 id="pourquoi-cet-echec-est-reparable-sans-decision-humaine">Pourquoi cet échec est réparable sans décision humaine<a class="headerlink" href="#pourquoi-cet-echec-est-reparable-sans-decision-humaine" title="Permanent link">&para;</a></h2>
+<p>Avant d'autoriser une nouvelle tentative, il faut regarder la correction nécessaire, pas seulement la couleur du test.</p>
+<p>Ici, quatre faits sont déjà connus :</p>
 <ol>
-<li>l'échec est classé et son diagnostic est suffisamment précis ;</li>
-<li>la correction n'exige ni nouvelle dépendance, ni décision produit, ni élargissement de chemins ;</li>
-<li>les commandes à relancer sont connues ;</li>
-<li>le nombre de tentatives est limité.</li>
+<li>le résultat attendu est explicite : « Suivant » doit être désactivé sur la dernière page ;</li>
+<li>l'échec est localisé dans le comportement de <code>CustomerList</code> ;</li>
+<li>la correction peut rester dans <code>frontend/customers/**</code> ;</li>
+<li>elle ne demande ni nouvelle dépendance, ni changement de contrat, ni arbitrage produit.</li>
 </ol>
-<p>Après la correction, il ne suffit pas de relancer la seule commande rouge si d'autres contrôles peuvent avoir été affectés. Le workflow doit au minimum refaire le contrôle des frontières, puis les validations liées aux fichiers corrigés. Si la réparation a modifié le contrat backend, les tests de l'interface qui le consomme redeviennent pertinents même s'ils étaient verts avant.</p>
-<p>Chaque tentative devrait conserver une mémoire compacte : raison initiale, diagnostic, actions, chemins touchés, validations relancées, résultat et prochaine action. Si la réparation cesse de progresser ou atteint la limite autorisée, la boucle s'arrête. Le système transmet alors les tentatives à un humain au lieu de continuer à consommer du temps tout en augmentant le diff.</p>
-<p>Certains échecs ressemblent à tort à des réparations mécaniques. Un test échoue parce que le comportement attendu n'est pas défini : c'est une décision manquante. Une compilation échoue parce qu'il faudrait ajouter une dépendance : c'est une autorisation à obtenir. Une validation révèle une rupture de compatibilité : c'est potentiellement une décision d'architecture ou de migration. La sortie d'un outil ne détermine donc pas à elle seule la catégorie ; le changement nécessaire pour la résoudre compte davantage.</p>
-<h2 id="reprendre-signifie-reconstruire-lautorite-de-la-tache">Reprendre signifie reconstruire l'autorité de la tâche<a class="headerlink" href="#reprendre-signifie-reconstruire-lautorite-de-la-tache" title="Permanent link">&para;</a></h2>
-<p>Une reprise fiable ne consiste pas à envoyer « continue là où tu t'es arrêté » dans le même chat. Elle reconstruit explicitement l'état autorisé.</p>
-<p>Avant de relancer le runner agent, le workflow devrait vérifier :</p>
+<p>Une cause plausible est que le composant détermine la dernière page à partir des éléments visibles au lieu d'utiliser le total renvoyé par l'API. La correction peut rester très petite :</p>
+<div class="highlight"><pre><span></span><code><span class="gd">- disabled={items.length === 0}</span>
+<span class="gi">+ disabled={page * pageSize &gt;= total}</span>
+</code></pre></div>
+<p>Ce diff est un exemple d'implémentation, pas la conclusion du diagnostic. Ce qui autorise le retry est plus général : l'objectif et l'autorité ne changent pas, le défaut possède un signal de validation reproductible et la réparation reste dans le périmètre initial.</p>
+<p>Nous sommes face à un <strong>échec réparable</strong>. L'agent peut intervenir dans une politique de reprise bornée. Si le correctif exigeait finalement une nouvelle règle produit, un changement du contrat backend ou une primitive partagée, la catégorie devrait changer et la tentative s'arrêter.</p>
+<h2 id="le-point-exact-de-reprise">Le point exact de reprise<a class="headerlink" href="#le-point-exact-de-reprise" title="Permanent link">&para;</a></h2>
+<p>Le workflow ne renvoie pas au runner « la pagination ne marche pas, réessaie ». Il prépare un contexte de reprise à partir de la tentative 001 :</p>
+<div class="highlight"><pre><span></span><code><span class="nt">reprise</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">depuis_tentative</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;001&quot;</span>
+<span class="w">  </span><span class="nt">depuis_la_porte</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">validation_ciblee</span>
+<span class="w">  </span><span class="nt">controle_en_echec</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;make</span><span class="nv"> </span><span class="s">test-front&quot;</span>
+
+<span class="w">  </span><span class="nt">diagnostic</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">test</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;CustomerList</span><span class="nv"> </span><span class="s">&gt;</span><span class="nv"> </span><span class="s">disables</span><span class="nv"> </span><span class="s">Next</span><span class="nv"> </span><span class="s">on</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">last</span><span class="nv"> </span><span class="s">page&quot;</span>
+<span class="w">    </span><span class="nt">attendu</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">disabled</span>
+<span class="w">    </span><span class="nt">observe</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">enabled</span>
+
+<span class="w">  </span><span class="nt">correction_autorisee</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">frontend/customers/customer-list.tsx</span>
+
+<span class="w">  </span><span class="nt">etat_conserve</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">le diff produit par la tentative 001</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">le brief et les décisions existantes</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">les frontières d&#39;écriture initiales</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">les sorties des validations déjà lancées</span>
+
+<span class="w">  </span><span class="nt">validations_a_relancer</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;make</span><span class="nv"> </span><span class="s">test-back&quot;</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;make</span><span class="nv"> </span><span class="s">test-front&quot;</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;make</span><span class="nv"> </span><span class="s">build-front&quot;</span>
+</code></pre></div>
+<p>Le point de reprise est donc la réparation du résultat frontend avant la porte de validation. Le backend n'est pas réimplémenté. Le plan produit n'est pas recalculé. La copie de travail n'est pas remise arbitrairement à <code>7a31c42</code> : elle contient toujours les cinq fichiers de la tentative 001, dont la nouvelle tentative va modifier une partie.</p>
+<p>Les trois commandes sont néanmoins relancées. <code>make test-front</code> doit vérifier le défaut corrigé. <code>make build-front</code> doit vérifier que la modification compile toujours. <code>make test-back</code> confirme que l'ensemble ciblé retenu pour ce paquet reste vert. Une équipe pourrait choisir une sélection différente, mais cette sélection doit être écrite avant de présenter la reprise comme validée.</p>
+<h2 id="tentative-002-un-fichier-repare-trois-controles-verts">Tentative 002 : un fichier réparé, trois contrôles verts<a class="headerlink" href="#tentative-002-un-fichier-repare-trois-controles-verts" title="Permanent link">&para;</a></h2>
+<p>La seconde tentative modifie uniquement :</p>
+<div class="highlight"><pre><span></span><code>frontend/customers/customer-list.tsx
+</code></pre></div>
+<p>Cette liste décrit le <strong>delta de la tentative 002</strong>. Elle ne remplace pas le diff global de la feature, qui contient toujours les cinq fichiers observés après la première exécution.</p>
+<p>Le contrôle de frontières est relancé, puis les trois commandes ciblées retournent <code>0</code> :</p>
+<div class="highlight"><pre><span></span><code><span class="nt">tentative</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;002&quot;</span>
+<span class="nt">derive_de</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;001&quot;</span>
+<span class="nt">fichiers_changes_pendant_la_reparation</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">frontend/customers/customer-list.tsx</span>
+
+<span class="nt">frontieres</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">passed</span>
+<span class="nt">validations</span><span class="p">:</span>
+<span class="w">  </span><span class="s">&quot;make</span><span class="nv"> </span><span class="s">test-back&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">passed</span>
+<span class="w">  </span><span class="s">&quot;make</span><span class="nv"> </span><span class="s">test-front&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">passed</span>
+<span class="w">  </span><span class="s">&quot;make</span><span class="nv"> </span><span class="s">build-front&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">passed</span>
+<span class="nt">qualite_globale</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">not_run</span>
+<span class="nt">statut</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">completed</span>
+</code></pre></div>
+<p>Le paquet peut maintenant être transmis à la revue locale. Il ne faut pas traduire ce statut par « la feature est correcte » ou « elle est prête à merger ». Nous savons que les cinq chemins restent dans l'enveloppe autorisée et que les trois commandes ciblées ont réussi sur l'état local de la tentative 002. Nous savons aussi que le contrôle qualité global n'a pas été lancé.</p>
+<p>Surtout, la tentative verte n'efface pas la rouge :</p>
+<table>
+<thead>
+<tr>
+<th>Tentative</th>
+<th>État observé</th>
+<th>Modification propre à la tentative</th>
+<th>Résultat</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>001</code></td>
+<td>Départ propre sur <code>7a31c42</code>, puis cinq fichiers produit</td>
+<td>Implémentation du paquet</td>
+<td><code>make test-front</code> en échec, <code>needs_retry</code></td>
+</tr>
+<tr>
+<td><code>002</code></td>
+<td>Diff de <code>001</code> conservé</td>
+<td><code>customer-list.tsx</code></td>
+<td>Trois validations ciblées réussies</td>
+</tr>
+</tbody>
+</table>
+<p>Cette histoire permet de comprendre pourquoi une correction a été nécessaire et ce qui a réellement été revérifié.</p>
+<h2 id="meme-test-rouge-mais-decision-manquante">Même test rouge, mais décision manquante<a class="headerlink" href="#meme-test-rouge-mais-decision-manquante" title="Permanent link">&para;</a></h2>
+<p>Le retry précédent était légitime parce que le mot <strong>désactivé</strong> figurait déjà dans le comportement attendu. Imaginons maintenant un brief moins précis : « empêcher l'utilisateur de dépasser la dernière page ».</p>
+<p>Deux interfaces respectent cette phrase : masquer le bouton « Suivant », ou le conserver visible en le désactivant. Ce choix affecte la stabilité de la mise en page, la compréhension de la navigation et son comportement d'accessibilité. Un agent ne devrait pas transformer ce silence en préférence de design.</p>
+<p>Le workflow conserve alors une intervention :</p>
+<div class="highlight"><pre><span></span><code><span class="gh"># Intervention UI-01</span>
+
+Problème : le comportement de « Suivant » sur la dernière page n&#39;est pas défini.
+
+Options :
+<span class="k">1.</span> conserver le bouton visible et le désactiver ;
+<span class="k">2.</span> masquer le bouton.
+
+Autorité attendue : produit et design.
+Éléments affectés : critère de navigation, T-02 et test frontend.
+Point de reprise : mettre à jour le critère et le test, puis recompiler la réparation.
+</code></pre></div>
+<p>Tant que la réponse manque, une nouvelle tentative de code serait prématurée. Lorsque la personne habilitée choisit « visible et désactivé », la décision est enregistrée, le critère concerné est mis à jour et le prochain ordre de mission reçoit cette réponse.</p>
+<p>Ce n'est pas un retry à contrat constant. Une entrée qui gouverne l'exécution vient de changer. Il faut donc <strong>recompiler</strong> le travail affecté avant de reprendre. Dans notre scénario principal, cette intervention n'existe pas : le test de la tentative 001 montre que la décision était déjà prise.</p>
+<h2 id="meme-paquet-mais-frontiere-franchie">Même paquet, mais frontière franchie<a class="headerlink" href="#meme-paquet-mais-frontiere-franchie" title="Permanent link">&para;</a></h2>
+<p>Prenons une autre variante. En cherchant à corriger la navigation, l'agent décide aussi de persister la page dans l'URL et crée :</p>
+<div class="highlight"><pre><span></span><code>shared/routing/customer-page.ts
+</code></pre></div>
+<p>Le choix peut sembler techniquement cohérent. Il viole pourtant deux éléments explicites de l'ordre de mission : <code>shared/routing/**</code> est en lecture seule et la synchronisation URL est un non-objectif.</p>
+<p>Le contrôle de chemins observe alors six fichiers au lieu des cinq chemins produit attendus :</p>
+<div class="highlight"><pre><span></span><code><span class="nt">frontieres</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">statut</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">failed</span>
+<span class="w">  </span><span class="nt">violation</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">chemin</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">shared/routing/customer-page.ts</span>
+<span class="w">    </span><span class="nt">regle</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">read_only</span>
+
+<span class="nt">validations</span><span class="p">:</span>
+<span class="w">  </span><span class="s">&quot;make</span><span class="nv"> </span><span class="s">test-back&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">skipped_due_to_boundary</span>
+<span class="w">  </span><span class="s">&quot;make</span><span class="nv"> </span><span class="s">test-front&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">skipped_due_to_boundary</span>
+<span class="w">  </span><span class="s">&quot;make</span><span class="nv"> </span><span class="s">build-front&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">skipped_due_to_boundary</span>
+</code></pre></div>
+<p>Les validations prévues par le workflow ne sont pas lancées après l'échec de cette porte. Même si le runner affirme avoir testé son code, un vert fonctionnel ne donnerait pas rétroactivement à la tâche produit le droit de modifier le routage partagé.</p>
+<p>Cette variante n'ouvre pas automatiquement une question d'architecture. La décision existante suffit : la synchronisation URL reste hors périmètre. La reprise normale consiste à consigner la violation, retirer ou isoler la modification attribuable à la tentative, puis préparer une réparation dans les zones produit.</p>
+<p>Si le besoin produit changeait réellement, l'équipe pourrait ouvrir séparément une <strong>évolution du socle</strong> avec ses propres consommateurs, validations et autorité de revue. Elle ne devrait pas élargir après coup le paquet qui a franchi sa frontière.</p>
+<h2 id="reessayer-recompiler-et-reclasser-trois-reprises-differentes">Réessayer, recompiler et reclasser : trois reprises différentes<a class="headerlink" href="#reessayer-recompiler-et-reclasser-trois-reprises-differentes" title="Permanent link">&para;</a></h2>
+<p>Les trois branches du même exemple produisent maintenant une règle concrète :</p>
+<table>
+<thead>
+<tr>
+<th>Situation</th>
+<th>Ce qui change</th>
+<th>Autorité nécessaire</th>
+<th>Point de reprise</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Test frontend réparable</td>
+<td>Le code, dans le contrat existant</td>
+<td>Agent ou développeur, dans un budget borné</td>
+<td>Corriger depuis la validation rouge, puis relancer les contrôles concernés</td>
+</tr>
+<tr>
+<td>Comportement de « Suivant » indéfini</td>
+<td>Un critère d'acceptation</td>
+<td>Produit et design</td>
+<td>Enregistrer la décision, mettre à jour l'entrée, puis recompiler</td>
+</tr>
+<tr>
+<td><code>shared/routing/customer-page.ts</code> observé</td>
+<td>Le diff a franchi une frontière</td>
+<td>Pilote de la tâche ; propriétaire du socle seulement si un travail séparé est envisagé</td>
+<td>Isoler ou retirer le changement, rétablir un périmètre valide, puis compiler une nouvelle tentative</td>
+</tr>
+</tbody>
+</table>
+<p>Un <strong>retry</strong> conserve l'objectif, les décisions et l'autorité. Une <strong>recompilation</strong> incorpore une entrée modifiée. Une <strong>reclassification</strong> crée un autre type de travail parce que la portée ou l'autorité nécessaire a changé.</p>
+<p>Employer le même mot « reprise » pour ces trois opérations masque ce qui s'est réellement passé.</p>
+<h2 id="une-boucle-de-reparation-doit-rester-bornee">Une boucle de réparation doit rester bornée<a class="headerlink" href="#une-boucle-de-reparation-doit-rester-bornee" title="Permanent link">&para;</a></h2>
+<p>Une validation rouge n'autorise pas une suite illimitée de corrections. Chaque tentative doit conserver au minimum :</p>
 <ul>
-<li>que les interventions bloquantes sont résolues ;</li>
-<li>que la réponse humaine est enregistrée et reliée aux tâches concernées ;</li>
-<li>que les dépendances précédentes sont terminées ;</li>
-<li>que les modifications interdites ont été isolées ou retirées ;</li>
-<li>que le brief, le plan et les critères sont encore cohérents ;</li>
-<li>que le nouveau paquet contient la décision et le bon état Git de départ ;</li>
-<li>que les validations à refaire sont explicites.</li>
+<li>la signature de l'échec initial ;</li>
+<li>le diagnostic proposé ;</li>
+<li>les actions entreprises ;</li>
+<li>les chemins touchés pendant la réparation ;</li>
+<li>les contrôles relancés et leurs résultats ;</li>
+<li>le budget de tentatives restant ;</li>
+<li>la prochaine action si le problème persiste.</li>
 </ul>
-<p>La nouvelle tentative reçoit alors le contexte utile de la précédente, pas toute sa conversation. Elle sait ce qui a échoué, ce qui a été décidé, ce qui ne doit pas être reproduit et quelles preuves sont attendues. Les tâches déjà terminées peuvent rester terminées si leurs résultats sont encore valables ; la tâche arrêtée redevient exécutable seulement lorsque ses préconditions sont satisfaites.</p>
-<p>Dans la variante pédagogique de l'URL, la reprise inclut la décision d'architecture, la nouvelle interface publique du routeur et l'interdiction maintenue de modifier le socle. Elle ne donne pas à l'agent un accès plus large. Au contraire, elle rend possible une implémentation produit plus étroite.</p>
-<blockquote>
-<p>Une bonne reprise ne supprime pas l'arrêt précédent. Elle en fait une entrée vérifiable de la tentative suivante.</p>
-</blockquote>
-<h2 id="ce-que-le-controle-de-frontiere-ne-garantit-pas">Ce que le contrôle de frontière ne garantit pas<a class="headerlink" href="#ce-que-le-controle-de-frontiere-ne-garantit-pas" title="Permanent link">&para;</a></h2>
-<p>Le contrôle décrit ici intervient après l'écriture dans le flux normal. Il peut détecter qu'un chemin observé sort du périmètre et empêcher l'acceptation du résultat. Un mécanisme séparé et explicitement autorisé peut ensuite restaurer un état connu ou demander une décision humaine. <strong>Ce n'est pas un sandbox.</strong></p>
-<p>Il ne prouve pas que le processus était techniquement incapable d'écrire ailleurs, d'accéder au réseau, de lire un secret ou d'exécuter une commande dangereuse. Ces garanties relèvent d'autres mécanismes : permissions du système, isolation du processus, gestion des secrets, politique réseau et environnement d'exécution.</p>
-<p>Il ne détecte pas non plus une erreur sémantique dans un chemin autorisé. L'agent peut respecter parfaitement les dossiers et introduire un défaut métier. Enfin, la portée du contrôle Git doit être annoncée : fichiers suivis, non suivis, index, changements préexistants et renommages ne sont pas toujours observés de la même manière.</p>
-<p>Le bénéfice du garde-fou est plus précis : comparer une politique d'écriture à un ensemble de modifications observées, puis rendre l'écart visible avant la revue. C'est déjà utile, à condition de ne pas lui attribuer une garantie de sécurité qu'il ne fournit pas.</p>
-<h2 id="le-dossier-darret-minimal">Le dossier d'arrêt minimal<a class="headerlink" href="#le-dossier-darret-minimal" title="Permanent link">&para;</a></h2>
-<p>Une équipe peut appliquer cette méthode sans orchestrateur complet. Pour toute tâche interrompue, conserver une fiche courte :</p>
+<p>Si <code>make test-front</code> échoue une seconde fois avec le même symptôme sans progrès observable, le workflow doit arrêter la boucle au seuil prévu. Il transmet les deux diagnostics et les deux diffs à un humain. Il ne doit ni multiplier les modifications, ni élargir les chemins pour « essayer autre chose ».</p>
+<p>La catégorie peut aussi changer en cours de diagnostic. Si la correction du bouton exige finalement de modifier le contrat de l'API, la reprise n'est plus la petite réparation compilée ci-dessus. Si elle révèle un comportement produit non défini, elle devient une intervention. Si elle nécessite le routeur partagé, elle sort de l'autorité du paquet.</p>
+<h2 id="une-frontiere-git-nest-pas-une-frontiere-de-securite">Une frontière Git n'est pas une frontière de sécurité<a class="headerlink" href="#une-frontiere-git-nest-pas-une-frontiere-de-securite" title="Permanent link">&para;</a></h2>
+<p>Dans ce parcours, le contrôle compare la politique d'écriture avec les chemins observés après le passage du runner. Il peut empêcher qu'un résultat hors périmètre avance vers les validations et la revue. <strong>Ce n'est pas un sandbox.</strong></p>
+<p>Il ne prouve pas que le processus était incapable d'accéder au réseau, de lire un secret ou d'exécuter une commande dangereuse. Ces garanties relèvent des permissions du système, de l'isolation du processus, de la gestion des secrets et de la politique réseau.</p>
+<p>La portée Git doit également être annoncée. Un contrôle fiable pour ce cas doit voir les fichiers suivis, les modifications indexées ou non indexées et le nouveau fichier non suivi <code>shared/routing/customer-page.ts</code>. Les renommages et les changements préexistants compliquent encore l'attribution.</p>
+<p>Notre départ propre sur <code>7a31c42</code> rend la variante simple : le nouveau chemin n'existait pas avant la tentative. Dans une copie de travail déjà modifiée, le supprimer automatiquement pourrait détruire le travail de quelqu'un d'autre. Une restauration n'est raisonnable que si l'état de référence et la propriété des changements sont connus, et après avoir conservé le constat de violation.</p>
+<p>Enfin, respecter les dossiers ne garantit pas la justesse métier. Le défaut du bouton « Suivant » se trouvait dans une zone parfaitement autorisée. Les frontières répondent à la question « où la tâche a-t-elle écrit ? », pas à la question « le comportement est-il correct ? ».</p>
+<h2 id="le-dossier-minimal-darret-et-de-reprise">Le dossier minimal d'arrêt et de reprise<a class="headerlink" href="#le-dossier-minimal-darret-et-de-reprise" title="Permanent link">&para;</a></h2>
+<p>Une équipe peut appliquer ce protocole avec une fiche courte, même sans orchestrateur complet :</p>
 <div class="highlight"><pre><span></span><code><span class="gh"># Arrêt et reprise</span>
 
-Catégorie : décision manquante / sortie de périmètre / échec réparable
+Tentative :
+État Git de départ :
 Phase de détection :
-Tentative concernée :
+Catégorie : décision manquante / frontière franchie / échec réparable
 
 <span class="gu">Faits observés :</span>
 <span class="gu">-</span>
 
-<span class="gu">Ce qui reste déclaré par l&#39;agent :</span>
+<span class="gu">Déclarations du runner :</span>
 <span class="gu">-</span>
 
-Impact sur le résultat attendu :
 Autorité nécessaire :
-
-Options :
-1.
-2.
-
-Décision et source :
-Actions avant reprise :
-Artefacts à mettre à jour :
+Décision ou diagnostic :
+Point exact de reprise :
+Chemins modifiables pendant la reprise :
 Contrôles à relancer :
+Tentatives précédentes à conserver :
+Contrôles non exécutés :
 Risque résiduel :
 </code></pre></div>
-<p>La fiche force trois séparations utiles : faits et déclarations, options et décision, correction et validation. Elle empêche surtout qu'une reprise dépende de la mémoire de la personne qui assistait à l'exécution.</p>
+<p>La fiche sépare les observations, les déclarations, l'autorité et les contrôles. Elle permet surtout à une nouvelle session de reprendre sans dépendre de la mémoire du chat précédent.</p>
 <h2 id="conclusion">Conclusion<a class="headerlink" href="#conclusion" title="Permanent link">&para;</a></h2>
-<p>Savoir s'arrêter est une capacité positive d'un workflow agentique. Une décision manquante doit remonter à la bonne autorité. Une sortie de périmètre doit rester visible, même si la modification est ensuite retirée. Un échec réparable peut déclencher une nouvelle tentative, mais seulement dans une boucle bornée et suivie de contrôles renouvelés.</p>
-<p>Dans les trois cas, la reprise ne doit ni effacer l'histoire, ni élargir silencieusement le contrat. Elle relie un constat, une décision ou une réparation à un nouvel ordre de mission.</p>
-<p>Il reste cependant une question : que vaut la preuve produite par ce workflow ? Un contrôle de chemins réussi et des commandes au vert ne disent pas encore à quelle révision ils se rapportent ni ce qu'ils ont réellement couvert. Pour l'étudier sans confondre le scénario principal avec la variante consacrée à l'URL, l'article suivant revient à l'exécution initiale de la pagination : <a href="../local-proof-agent-workflow/"><strong>« Les tests passent » : que prouve le workflow ?</strong></a>.</p>
+<p>La première tentative de la pagination ne demandait ni une nouvelle feature, ni une décision produit. Elle demandait une correction bornée : le comportement attendu était explicite, le défaut était local, les frontières avaient tenu et un test savait vérifier le résultat.</p>
+<p>La tentative 002 est donc repartie de <code>make test-front</code> en échec, a modifié un seul fichier et a relancé <code>make test-back</code>, <code>make test-front</code> et <code>make build-front</code>. Elle n'a effacé ni la tentative 001, ni le contrôle global resté non exécuté.</p>
+<p>Les variantes montrent pourquoi cette précision compte. Sans comportement décidé, il faut attendre l'autorité humaine et recompiler. Avec <code>shared/routing/customer-page.ts</code> dans le diff, il faut arrêter sur la frontière avant les validations. Dans aucun cas un simple « continue » ne décrit correctement la suite.</p>
+<p>Nous disposons maintenant de deux tentatives locales : une rouge, puis une verte. Que permettent réellement d'affirmer leurs commandes, et à quel état du code s'appliquent-elles ? C'est le sujet de l'article suivant : <a href="../local-proof-agent-workflow/"><strong>« Les tests passent » : que prouve le workflow ?</strong></a>.</p>
 <div class="article-footer-contact">
   <p>Pour discuter de cet article ou me laisser un message public :</p>
   <a class="article-contact-link" href="https://github.com/velkouby/ai-based-development/issues/new?template=contact.yml">Message sur GitHub</a>

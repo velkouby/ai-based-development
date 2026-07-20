@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="A zero exit code is not a verdict on a feature. Here is how to read local evidence, make its gaps visible, and prepare to connect it to Git, CI, and human judgment.">
+        <meta name="description" content="Three green commands do not validate a feature by themselves. Let us inspect two concrete attempts, their Git state, and their manifest to see what local evidence really allows us to claim.">
       
       
         <meta name="author" content="Vincent El Kouby-Benichou, Baracoda">
@@ -407,10 +407,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#green-is-not-a-property-of-the-code" class="md-nav__link">
+  <a href="#start-with-an-identifiable-state" class="md-nav__link">
     <span class="md-ellipsis">
       
-        “Green” is not a property of the code
+        Start with an identifiable state
       
     </span>
   </a>
@@ -418,10 +418,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#four-sources-of-truth-to-keep-separate" class="md-nav__link">
+  <a href="#attempt-001-two-green-commands-one-failing-behavior" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Four sources of truth to keep separate
+        Attempt 001: two green commands, one failing behavior
       
     </span>
   </a>
@@ -429,10 +429,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#inspecting-local-evidence" class="md-nav__link">
+  <a href="#attempt-002-repair-one-behavior-then-revalidate-the-whole-state" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Inspecting local evidence
+        Attempt 002: repair one behavior, then revalidate the whole state
       
     </span>
   </a>
@@ -440,10 +440,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#what-a-framework-can-establish-locally" class="md-nav__link">
+  <a href="#what-git-actually-observes" class="md-nav__link">
     <span class="md-ellipsis">
       
-        What a framework can establish locally
+        What Git actually observes
       
     </span>
   </a>
@@ -451,10 +451,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#a-command-is-only-meaningful-with-its-scope" class="md-nav__link">
+  <a href="#check-the-paths-file-by-file" class="md-nav__link">
     <span class="md-ellipsis">
       
-        A command is only meaningful with its scope
+        Check the paths file by file
       
     </span>
   </a>
@@ -462,10 +462,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#connecting-acceptance-criteria-to-validations" class="md-nav__link">
+  <a href="#open-the-attempt-002-manifest" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Connecting acceptance criteria to validations
+        Open the attempt 002 manifest
       
     </span>
   </a>
@@ -473,10 +473,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#gaps-must-be-data" class="md-nav__link">
+  <a href="#map-each-criterion-to-a-check" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Gaps must be data
+        Map each criterion to a check
       
     </span>
   </a>
@@ -484,10 +484,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#from-local-evidence-to-revision-bound-evidence" class="md-nav__link">
+  <a href="#what-we-can-claimand-nothing-more" class="md-nav__link">
     <span class="md-ellipsis">
       
-        From local evidence to revision-bound evidence
+        What we can claim—and nothing more
       
     </span>
   </a>
@@ -495,10 +495,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#the-target-manifest" class="md-nav__link">
+  <a href="#the-final-review-record" class="md-nav__link">
     <span class="md-ellipsis">
       
-        The target manifest
+        The final review record
       
     </span>
   </a>
@@ -506,21 +506,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#what-ci-addsand-what-it-does-not" class="md-nav__link">
+  <a href="#from-working-tree-to-commit-and-ci" class="md-nav__link">
     <span class="md-ellipsis">
       
-        What CI adds—and what it does not
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#a-review-checklist-that-resists-the-green-badge" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        A review checklist that resists the green badge
+        From working tree to commit and CI
       
     </span>
   </a>
@@ -559,370 +548,383 @@
 
 
 <h1 class="article-title" id="the-tests-pass-what-does-the-workflow-prove">“The Tests Pass”: What Does the Workflow Prove?<a class="headerlink" href="#the-tests-pass-what-does-the-workflow-prove" title="Permanent link">&para;</a></h1>
-<p class="article-lead">A passing test result is a useful fact. It is not yet a conclusion about the feature. To understand what it proves, we need to know which command ran, what it covered, which revision it concerned, which environment it used, and everything it did not verify.</p>
+<p class="article-lead">Three commands return <code>0</code> on the second attempt. Five files have changed, all within scope. Yet the precise conclusion is not “the feature is validated”: an identified local state passed specific checks after a first failing attempt that the workflow preserved.</p>
 <p class="article-meta">
   <span>By <span class="article-author">Vincent El Kouby-Benichou</span>, <a class="article-company-link" href="https://baracoda.com">Baracoda</a></span>
   <a class="article-contact-link" href="https://www.linkedin.com/in/vincentelkoubybenichou/">LinkedIn</a>
 </p>
 
-<p>In the <a href="../agent-task-stop-and-resume/">previous article</a>, a teaching scenario involving URL synchronization helped us examine stopping and resuming work. To analyze evidence without mixing that scenario into the main execution, let us return to the original pagination feature described in the <a href="../agentic-feature-end-to-end/">end-to-end trace</a>, without the URL extension. Assume that its tasks are complete, the observed files remain within the authorized scope, and every command that ran returned <code>0</code>.</p>
-<p>Can we now write, “customer directory pagination has been validated”?</p>
-<p>Not yet. We can make a more precise claim: in a given local context, certain commands completed without errors against the observed working-tree state. That sentence may sound less impressive. It is far more useful to the person reviewing the change.</p>
-<p>A framework applying these principles can retain some of these facts: attempts, detected files, scope checks, executed commands, exit codes, and a review summary. That does not turn the local artifact it produces into a complete attestation for a pull request.</p>
+<p>In the <a href="../agent-task-stop-and-resume/">previous article</a>, we followed attempt 001's frontend failure to the bounded repair in attempt 002. We also saw why a URL-synchronization change under <code>shared/routing/**</code> would require a different stop. We now stay with the successful local-repair path, whose package only writes under <code>backend/customers/**</code> and <code>frontend/customers/**</code>.</p>
+<p>The runner has just completed a second attempt. Before summarizing the outcome as “the tests pass,” let us inspect the Git state, commands, and evidence manifest that the reviewer will actually receive.</p>
+<p>The point to establish is simple: a green result becomes useful when we can answer five questions.</p>
+<ol>
+<li>Which state of the code did the command run against?</li>
+<li>What did it actually execute?</li>
+<li>Which observable result did it produce?</li>
+<li>Which part of the change does that result cover?</li>
+<li>What remains unrun, unknown, or subject to human judgment?</li>
+</ol>
 <blockquote>
-<p>The color of a check summarizes a result. The evidence must make it possible to reconstruct that result's scope.</p>
+<p>Green summarizes the outcome of a command. Evidence preserves the state, scope, history, and gaps required to interpret it.</p>
 </blockquote>
+<h2 id="start-with-an-identifiable-state">Start with an identifiable state<a class="headerlink" href="#start-with-an-identifiable-state" title="Permanent link">&para;</a></h2>
+<p>Before the first attempt, the workflow records the branch, starting revision, and working-tree state:</p>
+<div class="highlight"><pre><span></span><code><span class="gp">$ </span>git<span class="w"> </span>branch<span class="w"> </span>--show-current
+<span class="go">feature/customer-pagination</span>
+
+<span class="gp">$ </span>git<span class="w"> </span>rev-parse<span class="w"> </span>--short<span class="w"> </span>HEAD
+<span class="go">7a31c42</span>
+
+<span class="gp">$ </span>git<span class="w"> </span>status<span class="w"> </span>--short<span class="w"> </span>--untracked-files<span class="o">=</span>all
+</code></pre></div>
+<p>The final command prints no lines. In this observation, the working tree, Git index, and list of untracked files are empty. The package therefore starts on <code>feature/customer-pagination</code>, from commit <code>7a31c42</code>, with no detected local changes.</p>
+<p>This snapshot does not guarantee that the repository will remain clean. It only establishes the comparison point before the runner executes T-01, T-02, and T-03: evolve the backend contract, adapt the frontend directory, and then review their consistency.</p>
+<p>The runner loads the package, modifies the five expected files, and reports all three tasks as complete. That declaration triggers the checks; it does not replace them.</p>
+<h2 id="attempt-001-two-green-commands-one-failing-behavior">Attempt 001: two green commands, one failing behavior<a class="headerlink" href="#attempt-001-two-green-commands-one-failing-behavior" title="Permanent link">&para;</a></h2>
+<p>The path check passes: every observed file belongs to an authorized product area. The workflow then runs the three targeted validations declared in the execution brief.</p>
+<div class="highlight"><pre><span></span><code>Attempt 001
+
+Path check
+  status: passed
+
+$ make test-back
+  exit code: 0
+
+$ make test-front
+  FAIL CustomerList &gt; disables Next on the last page
+  expected: disabled
+  received: enabled
+  exit code: 1
+
+$ make build-front
+  exit code: 0
+
+Global quality
+  status: not_run
+
+Attempt status
+  needs_retry
+</code></pre></div>
+<p>This combination is informative. The backend passes. The frontend builds. Yet an observable behavior remains wrong: on the last page, the “Next” button is still enabled.</p>
+<p>The green build does not cancel the red test. These commands ask different questions. <code>make build-front</code> establishes that the requested frontend can be built in this environment; it does not verify that navigation respects pagination boundaries.</p>
+<p>The attempt therefore moves to <code>needs_retry</code>. The workflow keeps the test name, expected result, received result, and the other two green commands. It neither replaces the evidence with a vague “the tests fail” nor marks the feature complete because two out of three checks succeeded.</p>
+<h2 id="attempt-002-repair-one-behavior-then-revalidate-the-whole-state">Attempt 002: repair one behavior, then revalidate the whole state<a class="headerlink" href="#attempt-002-repair-one-behavior-then-revalidate-the-whole-state" title="Permanent link">&para;</a></h2>
+<p>The diagnosis requires no new product decision, dependency, or scope extension. The repair can remain in the component that owns the behavior:</p>
+<div class="highlight"><pre><span></span><code>file changed during attempt 002
+  frontend/customers/customer-list.tsx
+</code></pre></div>
+<p>Attempt 002 receives the previous failure, the same write authority, and the same validations. After the repair, the workflow checks the paths again and reruns the three commands declared for the package:</p>
+<div class="highlight"><pre><span></span><code>Attempt 002
+
+Path check
+  status: passed
+
+$ make test-back
+  exit code: 0
+
+$ make test-front
+  exit code: 0
+
+$ make build-front
+  exit code: 0
+
+Global quality
+  status: not_run
+
+Attempt status
+  completed
+</code></pre></div>
+<p>Rerunning all three commands produces coherent evidence for the package's final state. Another policy could select a justified subset based on the repair's impact; in this path, the contract requires all three validations, so all three run again.</p>
+<p>The latest green result does not rewrite history. Attempt 001 remains visible with its failure, while attempt 002 shows the bounded repair that produced the new result.</p>
 <figure class="article-diagram">
-  <img src="local-proof-context.png" alt="A PASSED check with a zero exit code is surrounded by its revision, environment, command, scope, time, output, and known limits, while NOT RUN and UNKNOWN gaps remain visible." loading="lazy" />
-  <figcaption>A green check can be interpreted only with its context, scope, and known limitations.</figcaption>
+  <img src="local-proof-context.png" alt="Two customer-pagination attempts are connected: the first preserves a failing frontend test, and the second passes three targeted commands after a bounded repair. The current HEAD, five observed paths, unrun global quality check, and missing result commit remain visible." loading="lazy" />
+  <figcaption>Attempt 002's green result can only be interpreted with its Git state, scope, previous failing attempt, and missing checks.</figcaption>
 </figure>
 
-<h2 id="green-is-not-a-property-of-the-code">“Green” is not a property of the code<a class="headerlink" href="#green-is-not-a-property-of-the-code" title="Permanent link">&para;</a></h2>
-<p>Saying that a test passes almost always omits the rest of the sentence: which test, run where, when, against what, and under which assumptions?</p>
-<p>A validation result can be represented as a tuple:</p>
-<div class="highlight"><pre><span></span><code>result = (
-  revision or working state,
-  environment,
-  command,
-  covered scope,
-  timestamp,
-  exit code,
-  useful output,
-  known limitations
-)
+<h2 id="what-git-actually-observes">What Git actually observes<a class="headerlink" href="#what-git-actually-observes" title="Permanent link">&para;</a></h2>
+<p>At the end of attempt 001, the workflow retained the same Git observations it will now collect again. At the end of attempt 002, the working tree still contains the feature's complete diff. The runner changed only one file during this second attempt, but the other four modifications produced during the first remain present.</p>
+<div class="highlight"><pre><span></span><code><span class="gp">$ </span>git<span class="w"> </span>branch<span class="w"> </span>--show-current
+<span class="go">feature/customer-pagination</span>
+
+<span class="gp">$ </span>git<span class="w"> </span>rev-parse<span class="w"> </span>--short<span class="w"> </span>HEAD
+<span class="go">7a31c42</span>
+
+<span class="gp">$ </span>git<span class="w"> </span>diff<span class="w"> </span>--name-only
+<span class="go">backend/customers/api.py</span>
+<span class="go">backend/customers/tests/test_pagination.py</span>
+<span class="go">frontend/customers/customer-api.ts</span>
+<span class="go">frontend/customers/customer-list.tsx</span>
+<span class="go">frontend/customers/customer-list.test.tsx</span>
+
+<span class="gp">$ </span>git<span class="w"> </span>diff<span class="w"> </span>--cached<span class="w"> </span>--name-only
+
+<span class="gp">$ </span>git<span class="w"> </span>ls-files<span class="w"> </span>--others<span class="w"> </span>--exclude-standard
 </code></pre></div>
-<p>Removing one of these elements does not necessarily make the result false. It reduces what someone else can conclude from it.</p>
-<p>A backend unit-test command returning <code>0</code> establishes that the cases present in that suite did not fail in that environment. It does not demonstrate that the interface can consume the new contract. A frontend type check does not demonstrate that the pagination controls behave correctly. A successful build does not demonstrate that the <code>loading</code>, <code>empty</code>, and <code>error</code> states are understandable to a user.</p>
-<p>Even an end-to-end suite does not “prove the feature” in an absolute sense. It exercises the paths it contains, with the data and environment it is given. Its value may be high; its scope remains bounded.</p>
-<p>The right question is therefore not:</p>
-<blockquote>
-<p>Are the tests green?</p>
-</blockquote>
-<p>But:</p>
-<blockquote>
-<p>Which hypotheses does the green result rule out, and which ones remain open?</p>
-</blockquote>
-<h2 id="four-sources-of-truth-to-keep-separate">Four sources of truth to keep separate<a class="headerlink" href="#four-sources-of-truth-to-keep-separate" title="Permanent link">&para;</a></h2>
-<p>An agentic execution can easily mix several categories of information. They must remain distinct during review.</p>
+<p>The first two commands confirm that the runner remained on the starting branch and that <code>HEAD</code> is still <code>7a31c42</code>. <code>git diff --name-only</code> compares the working tree with the index; because the index is empty of changes and still points to that same <code>HEAD</code>, its five paths also form the diff from the starting commit. The last command finds no untracked files.</p>
+<p>Comparing the snapshots supports two distinct claims:</p>
+<ul>
+<li>between the clean start and final state, five files appeared in the feature diff;</li>
+<li>between the start and end of attempt 002, only <code>frontend/customers/customer-list.tsx</code> changed.</li>
+</ul>
+<p>This distinction prevents the repair attempt from receiving credit for the entire feature. It also prevents the agent-reported file list from being confused with the list observed by Git. Without intermediate checkpoints between T-01, T-02, and T-03, Git still cannot establish which task produced each line.</p>
+<h2 id="check-the-paths-file-by-file">Check the paths file by file<a class="headerlink" href="#check-the-paths-file-by-file" title="Permanent link">&para;</a></h2>
+<p>The execution brief allows writes under <code>backend/customers/**</code> and <code>frontend/customers/**</code>. Shared layers remain read-only; tooling, generated files, and workflow state are forbidden.</p>
 <table>
 <thead>
 <tr>
-<th>Source</th>
-<th>Example</th>
-<th>What we can claim</th>
-<th>Main limitation</th>
+<th>Observed path</th>
+<th>Matching rule</th>
+<th>Conclusion</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><strong>Agent declaration</strong></td>
-<td>“I added pagination and the tests pass”</td>
-<td>The agent reports completion and describes its result</td>
-<td>The declaration is not an independent check</td>
+<td><code>backend/customers/api.py</code></td>
+<td><code>backend/customers/**</code></td>
+<td>Writable</td>
 </tr>
 <tr>
-<td><strong>Workflow observation</strong></td>
-<td>A command returned <code>0</code> between two timestamps</td>
-<td>The command completed successfully according to its exit code</td>
-<td>By default, the workflow does not know whether the command is sufficient</td>
+<td><code>backend/customers/tests/test_pagination.py</code></td>
+<td><code>backend/customers/**</code></td>
+<td>Writable</td>
 </tr>
 <tr>
-<td><strong>Git-reported state</strong></td>
-<td>Paths are modified in the working tree</td>
-<td>Git sees those differences at inspection time</td>
-<td>Without identified base and head commits, attribution to a revision remains incomplete</td>
+<td><code>frontend/customers/customer-api.ts</code></td>
+<td><code>frontend/customers/**</code></td>
+<td>Writable</td>
 </tr>
 <tr>
-<td><strong>Human decision</strong></td>
-<td>“These checks are sufficient to submit the change for merge”</td>
-<td>An authorized person accepts the level of residual risk</td>
-<td>The decision depends on the quality of the facts available to that person</td>
+<td><code>frontend/customers/customer-list.tsx</code></td>
+<td><code>frontend/customers/**</code></td>
+<td>Writable</td>
+</tr>
+<tr>
+<td><code>frontend/customers/customer-list.test.tsx</code></td>
+<td><code>frontend/customers/**</code></td>
+<td>Writable</td>
 </tr>
 </tbody>
 </table>
-<p>These four sources can agree without being interchangeable. The agent may report one modified file while the workflow observes a different list in Git. When they diverge, the difference itself becomes a fact to examine.</p>
-<p>Likewise, a tool may record “completed” because every declared command succeeded. That status does not say whether an important validation was omitted. An absent command has no red exit code.</p>
-<blockquote>
-<p>An omitted validation must never appear as a successful check. It must appear as missing information, an explicit choice, or a residual risk.</p>
-</blockquote>
-<h2 id="inspecting-local-evidence">Inspecting local evidence<a class="headerlink" href="#inspecting-local-evidence" title="Permanent link">&para;</a></h2>
-<p>For the pagination example, imagine the following local artifact. Its field names and values were chosen for teaching purposes: they illustrate one way a framework can retain the facts that matter during review.</p>
-<div class="highlight"><pre><span></span><code><span class="nt">attempt</span><span class="p">:</span>
-<span class="w">  </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">run-002</span>
-<span class="w">  </span><span class="nt">created_at</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2026-07-17T09:42:18Z</span>
+<p>No observed path touches <code>shared/ui/**</code>, <code>shared/state/**</code>, <code>shared/routing/**</code>, <code>tooling/**</code>, <code>generated/**</code>, or <code>workflow-state/**</code>. The <code>passed</code> status therefore means: <strong>every path included in this observation matches a writable area in the package</strong>.</p>
+<p>It does not mean that the process was technically unable to write elsewhere. The check happens after writing; it is not a sandbox. Nor does it detect a business error inside an authorized path—exactly the kind of error the frontend test found in attempt 001.</p>
+<h2 id="open-the-attempt-002-manifest">Open the attempt 002 manifest<a class="headerlink" href="#open-the-attempt-002-manifest" title="Permanent link">&para;</a></h2>
+<p>The manifest gathers the facts required to reconstruct the latest result without erasing the previous attempt:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">evidence</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">attempt</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;002&quot;</span>
+<span class="w">    </span><span class="nt">previous_attempt</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;001&quot;</span>
+<span class="w">    </span><span class="nt">status</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">completed</span>
+<span class="w">    </span><span class="nt">source</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">local</span>
 
-<span class="nt">agent</span><span class="p">:</span>
-<span class="w">  </span><span class="nt">declared_result</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">completed</span>
-<span class="w">  </span><span class="nt">summary</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">&gt;-</span>
-<span class="w">    </span><span class="no">Pagination contract added to the API and integrated into the directory.</span>
+<span class="w">  </span><span class="nt">revision</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">branch</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">feature/customer-pagination</span>
+<span class="w">    </span><span class="nt">base_commit</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">7a31c42</span>
+<span class="w">    </span><span class="nt">current_head</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">7a31c42</span>
+<span class="w">    </span><span class="nt">result_commit</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">null</span>
+<span class="w">    </span><span class="nt">feature_started_clean</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">    </span><span class="nt">mutable_working_tree</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
 
-<span class="nt">git_observed</span><span class="p">:</span>
-<span class="w">  </span><span class="nt">before</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">already_modified_files</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span>
-<span class="w">  </span><span class="nt">after</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">modified_files</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">git</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">carried_from_attempt_001</span><span class="p">:</span>
 <span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">backend/customers/api.py</span>
 <span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">backend/customers/tests/test_pagination.py</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">frontend/customers/customer-api.ts</span>
 <span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">frontend/customers/customer-list.tsx</span>
 <span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">frontend/customers/customer-list.test.tsx</span>
-<span class="w">  </span><span class="nt">changed_during_attempt</span><span class="p">:</span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">backend/customers/api.py</span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">backend/customers/tests/test_pagination.py</span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">frontend/customers/customer-list.tsx</span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">frontend/customers/customer-list.test.tsx</span>
+<span class="w">    </span><span class="nt">changed_during_attempt_002</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">frontend/customers/customer-list.tsx</span>
+<span class="w">    </span><span class="nt">final_modified_files</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">backend/customers/api.py</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">backend/customers/tests/test_pagination.py</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">frontend/customers/customer-api.ts</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">frontend/customers/customer-list.tsx</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">frontend/customers/customer-list.test.tsx</span>
+<span class="w">    </span><span class="nt">staged_files</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span>
+<span class="w">    </span><span class="nt">untracked_files</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span>
 
-<span class="nt">boundaries</span><span class="p">:</span>
-<span class="w">  </span><span class="nt">status</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">passed</span>
-<span class="w">  </span><span class="nt">violations</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span>
+<span class="w">  </span><span class="nt">path_policy</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">status</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">passed</span>
+<span class="w">    </span><span class="nt">violations</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span>
 
-<span class="nt">validations</span><span class="p">:</span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">command</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">backend-tests customers</span>
-<span class="w">    </span><span class="nt">exit_code</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0</span>
-<span class="w">    </span><span class="nt">started_at</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2026-07-17T09:43:02Z</span>
-<span class="w">    </span><span class="nt">ended_at</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2026-07-17T09:43:07Z</span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">command</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">frontend-tests customer-list</span>
-<span class="w">    </span><span class="nt">exit_code</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0</span>
-<span class="w">    </span><span class="nt">started_at</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2026-07-17T09:43:07Z</span>
-<span class="w">    </span><span class="nt">ended_at</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2026-07-17T09:43:13Z</span>
+<span class="w">  </span><span class="nt">validations</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">command</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">make test-back</span>
+<span class="w">      </span><span class="nt">exit_code</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0</span>
+<span class="w">      </span><span class="nt">status</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">passed</span>
+<span class="w">      </span><span class="nt">criteria</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">AC-1</span><span class="p p-Indicator">]</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">command</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">make test-front</span>
+<span class="w">      </span><span class="nt">exit_code</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0</span>
+<span class="w">      </span><span class="nt">status</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">passed</span>
+<span class="w">      </span><span class="nt">criteria</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">AC-2</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">AC-3</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">AC-4</span><span class="p p-Indicator">]</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">command</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">make build-front</span>
+<span class="w">      </span><span class="nt">exit_code</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0</span>
+<span class="w">      </span><span class="nt">status</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">passed</span>
+<span class="w">      </span><span class="nt">criteria</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span>
 
-<span class="nt">global_quality</span><span class="p">:</span>
-<span class="w">  </span><span class="nt">status</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">not_run</span>
+<span class="w">  </span><span class="nt">global_quality</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">status</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">not_run</span>
+
+<span class="w">  </span><span class="nt">previous_attempt</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;001&quot;</span>
+<span class="w">    </span><span class="nt">status</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">needs_retry</span>
+<span class="w">    </span><span class="nt">failed_command</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">make test-front</span>
+<span class="w">    </span><span class="nt">failure</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Next</span><span class="nv"> </span><span class="s">remained</span><span class="nv"> </span><span class="s">enabled</span><span class="nv"> </span><span class="s">on</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">last</span><span class="nv"> </span><span class="s">page&quot;</span>
+
+<span class="w">  </span><span class="nt">agent_declaration</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">status</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">completed</span>
+<span class="w">    </span><span class="nt">open_questions</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span>
+
+<span class="w">  </span><span class="nt">human_review</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">status</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pending</span>
 </code></pre></div>
-<p>The paths and commands are illustrative. The excerpt nevertheless raises concrete questions:</p>
-<ul>
-<li>were there truly no files modified before execution, or were they captured incorrectly?</li>
-<li>does the final list include staged, unstaged, and untracked changes?</li>
-<li>were the commands selected from the repository contract, from the plan, or by the agent?</li>
-<li>is their complete output retained elsewhere, or only an excerpt?</li>
-<li>why was the global quality check not run?</li>
-<li>which acceptance criterion does each command exercise?</li>
-<li>on which commit can this attempt be replayed?</li>
-</ul>
-<p>Useful evidence does not make these questions disappear. It makes them visible early enough for review to address them.</p>
-<h2 id="what-a-framework-can-establish-locally">What a framework can establish locally<a class="headerlink" href="#what-a-framework-can-establish-locally" title="Permanent link">&para;</a></h2>
-<p>To make local evidence inspectable, an implementation can:</p>
-<ul>
-<li>give each attempt an identifier, a timestamp, and a link to its detailed result;</li>
-<li>inspect Git state before and after the runner executes;</li>
-<li>calculate which files changed during execution, rather than automatically treating the entire working tree as the agent's work;</li>
-<li>compare observed paths with declared boundaries;</li>
-<li>run configured validations only after certain structural checks;</li>
-<li>retain each command's exit code, timestamps, and a portion of its standard output and error streams;</li>
-<li>keep earlier attempts when a correction and another validation pass are required;</li>
-<li>gather files, checks, risks, and open questions into a summary that prepares the review.</li>
-</ul>
-<p>With these capabilities, the workflow can support a precise claim: a significant part of the local execution is inspectable.</p>
-<p>This setup does not, however, establish that:</p>
-<ul>
-<li>the Git capture necessarily covers every possible state of the index and working tree;</li>
-<li>the initial state was clean or explicitly accepted;</li>
-<li>the artifact identifies immutable base and head commits;</li>
-<li>all system, runtime, dependency, and tool versions were recorded;</li>
-<li>the commands that ran cover every acceptance criterion;</li>
-<li>CI repeated the checks in an isolated environment;</li>
-<li>the retained output is exhaustive;</li>
-<li>the business behavior is correct.</li>
-</ul>
-<p>These gaps do not invalidate local evidence. They simply prevent claims that exceed its actual scope.</p>
-<h2 id="a-command-is-only-meaningful-with-its-scope">A command is only meaningful with its scope<a class="headerlink" href="#a-command-is-only-meaningful-with-its-scope" title="Permanent link">&para;</a></h2>
-<p>For pagination, validations can be classified by the question they answer.</p>
-<table>
-<thead>
-<tr>
-<th>Check</th>
-<th>Question actually tested</th>
-<th>What it does not cover by itself</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Backend unit tests</td>
-<td>Do boundary calculations and metadata satisfy the coded cases?</td>
-<td>Actual serialization, database behavior, consumers</td>
-</tr>
-<tr>
-<td>API integration test</td>
-<td>Does the route return the expected contract with test data?</td>
-<td>Interface rendering and compatibility with every client</td>
-</tr>
-<tr>
-<td>Frontend type check</td>
-<td>Do the interface and its calls satisfy the types known at compile time?</td>
-<td>Runtime behavior and visual quality</td>
-</tr>
-<tr>
-<td>Component tests</td>
-<td>Do the “previous” and “next” controls and the implemented states behave as expected in the test scenarios?</td>
-<td>Complete navigation, real network behavior, exhaustive accessibility</td>
-</tr>
-<tr>
-<td>End-to-end test</td>
-<td>Does the tested user journey work in the test environment?</td>
-<td>Cases absent from the scenario, load, production</td>
-</tr>
-<tr>
-<td>Visual review</td>
-<td>Do the main states appear correct with the observed data?</td>
-<td>Automated regression detection and behaviors not exercised during review</td>
-</tr>
-</tbody>
-</table>
-<p>This table prevents two opposite mistakes. The first is mechanically requiring every possible validation. The second is treating a few green checks as implicit coverage of the entire feature.</p>
-<p>The level of validation should remain proportional to the <a href="../agent-coding-modes/">mode selected for the change</a>. A full-stack Structured Feature requires a combination of checks across its surfaces and contracts. It does not necessarily require testing the entire monorepo on every local attempt. Any check not run must be deferred to an identified stage or explicitly accepted as a risk.</p>
-<h2 id="connecting-acceptance-criteria-to-validations">Connecting acceptance criteria to validations<a class="headerlink" href="#connecting-acceptance-criteria-to-validations" title="Permanent link">&para;</a></h2>
-<p>The pagination brief can contain four observable criteria:</p>
+<p>Several separations are deliberate. <code>agent_declaration</code> reports what the runner says it completed; <code>git</code>, <code>path_policy</code>, and <code>validations</code> contain workflow observations. <code>previous_attempt</code> preserves the failure that explains the retry. <code>human_review</code> remains <code>pending</code>, even when every targeted validation is green.</p>
+<p>Two values are particularly effective at preventing an overbroad conclusion. <code>global_quality: not_run</code> says that the global quality profile did not run. <code>result_commit: null</code> says that the manifest still describes a mutable working tree, not a commit containing exactly the reviewed change. <code>current_head: 7a31c42</code> records the real Git <code>HEAD</code>; it is the base below the uncommitted diff, not an identity for that diff.</p>
+<h2 id="map-each-criterion-to-a-check">Map each criterion to a check<a class="headerlink" href="#map-each-criterion-to-a-check" title="Permanent link">&para;</a></h2>
+<p>A command does not cover a feature “in general.” The plan must say which question it is meant to exercise, and review must then confirm that the tests present actually match that intention.</p>
 <table>
 <thead>
 <tr>
 <th>Acceptance criterion</th>
-<th>Planned validation</th>
-<th>Result source</th>
-<th>Remaining gap or human follow-up</th>
+<th>Planned check</th>
+<th>Observed in attempt 002</th>
+<th>What remains to review</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>The API returns the items, current page, and total result count</td>
-<td>Unit tests and API integration test</td>
-<td>Local workflow, then CI</td>
-<td>Verify compatibility with existing consumers</td>
+<td><strong>AC-1.</strong> The API returns items, current page, and total count; an invalid page returns HTTP 404 with code <code>pagination_page_invalide</code></td>
+<td><code>make test-back</code></td>
+<td>Exit code <code>0</code></td>
+<td>The cases in the suite and compatibility with known consumers</td>
 </tr>
 <tr>
-<td>The user can move forward and backward without going past the first or last page</td>
-<td>Component tests and end-to-end journey</td>
-<td>Local workflow or CI, depending on the environment</td>
-<td>Verify keyboard behavior and focus</td>
+<td><strong>AC-2.</strong> Users can move forward and backward without crossing the first or last page</td>
+<td><code>make test-front</code></td>
+<td>Exit code <code>0</code>; the upper bound failed in attempt 001</td>
+<td>Whether the test scenario faithfully represents the intended interaction</td>
 </tr>
 <tr>
-<td>The <code>loading</code>, <code>empty</code>, and <code>error</code> states remain distinct</td>
-<td>Component tests</td>
-<td>Local workflow</td>
-<td>Visual review with representative data</td>
+<td><strong>AC-3.</strong> The <code>loading</code>, <code>empty</code>, and <code>error</code> states remain distinct</td>
+<td><code>make test-front</code></td>
+<td>Exit code <code>0</code></td>
+<td>Visual rendering, keyboard behavior, and accessibility</td>
 </tr>
 <tr>
-<td>The directory loads the first page when opened</td>
-<td>Targeted component test</td>
-<td>Local workflow</td>
-<td>Confirm the default value in the brief and contract</td>
+<td><strong>AC-4.</strong> The directory loads the first page when opened</td>
+<td><code>make test-front</code></td>
+<td>Exit code <code>0</code></td>
+<td>Whether the default still matches the brief</td>
+</tr>
+<tr>
+<td>The frontend must remain buildable</td>
+<td><code>make build-front</code></td>
+<td>Exit code <code>0</code></td>
+<td>This structural gate does not judge product behavior</td>
 </tr>
 </tbody>
 </table>
-<p>This matrix does not guarantee that the tests are good. It reveals when a criterion has no validation, when a test claims to cover too much, or when a product decision is hiding inside a technical scenario.</p>
-<p>It also reveals the role of manual review. “Manual review completed” is neither a weakness nor equivalent to <code>passed</code>. Proper evidence records who checked what, against which version, and with what result. If that information is unavailable, the status must remain “to do” or “unknown.”</p>
-<h2 id="gaps-must-be-data">Gaps must be data<a class="headerlink" href="#gaps-must-be-data" title="Permanent link">&para;</a></h2>
-<p>A workflow interface is tempted to show only green and red. Evidence needs at least two additional states: <strong>not run</strong> and <strong>unknown</strong>.</p>
-<ul>
-<li><strong>Not run</strong> means the check was identified but did not execute. The reason may be legitimate: unavailable environment, cost, a check deferred to CI, or a planned manual validation.</li>
-<li><strong>Unknown</strong> means the information needed to reach a conclusion was not captured. Examples include the initial state of the index or the exact version of a tool.</li>
-<li><strong>Truncated</strong> must be explicit when only part of the output is retained. The exit code remains available, but detailed analysis may require the complete artifact.</li>
-<li><strong>Unstable</strong> means a check failed and then passed without a known cause. The latest green result does not erase the previous attempt.</li>
-</ul>
-<p>An execution can therefore be acceptable overall while still containing gaps. The manifest is not meant to turn everything into a failure. It enables the reviewer to distinguish a known absence from an invisible omission.</p>
-<h2 id="from-local-evidence-to-revision-bound-evidence">From local evidence to revision-bound evidence<a class="headerlink" href="#from-local-evidence-to-revision-bound-evidence" title="Permanent link">&para;</a></h2>
-<p>The <a href="../agentic-feature-end-to-end/">end-to-end trace</a> prepares the handoff to Git; it does not replace it. As long as the evidence describes a mutable working tree, another change can be added, removed, or staged after the evidence is produced.</p>
-<p>To connect results to a proposed change, we must at least identify:</p>
-<ul>
-<li>the base commit from which the work started;</li>
-<li>the head commit containing exactly the reviewed change;</li>
-<li>the branch or pull request reference;</li>
-<li>the state of the working tree and index at the relevant time;</li>
-<li>the source of the result: local workstation, ephemeral environment, or CI;</li>
-<li>essential environment versions;</li>
-<li>the artifacts or logs that make the output retrievable.</li>
-</ul>
-<p>Git then provides a content identity and a stable diff between two revisions. CI can run checks against the pull request head in an environment described by the pipeline. Neither decides whether the coverage is sufficient. Together, they make the connection between a revision and its results much stronger.</p>
-<p>There is also a timing problem. If a fix is added after a green run, the previous validation does not automatically apply to the new commit. A review interface should make that mismatch visible rather than preserving a green badge detached from its revision.</p>
-<h2 id="the-target-manifest">The target manifest<a class="headerlink" href="#the-target-manifest" title="Permanent link">&para;</a></h2>
-<p>The following example is a <strong>design target</strong>: one possible manifest for moving from inspectable local evidence to revision-bound provenance. It remains a proposed structure; every field should be populated from a real, verifiable observation if it is to support the associated conclusion.</p>
-<div class="highlight"><pre><span></span><code><span class="nt">evidence</span><span class="p">:</span>
-<span class="w">  </span><span class="nt">execution</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">stable-run-id</span>
-<span class="w">    </span><span class="nt">attempt</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span>
-<span class="w">    </span><span class="nt">source</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">local</span><span class="w">  </span><span class="c1"># local | ci</span>
-<span class="w">    </span><span class="nt">started_at</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2026-07-17T09:42:18Z</span>
-<span class="w">    </span><span class="nt">ended_at</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2026-07-17T09:43:19Z</span>
+<p>The “planned check” column comes from the plan. The “observed result” column comes from execution. Confusing them would make a command name look like a guarantee of coverage. The manifest can strengthen the connection by retaining relevant test identifiers or inspectable outputs; review is still responsible for judging whether the mapping is credible.</p>
+<h2 id="what-we-can-claimand-nothing-more">What we can claim—and nothing more<a class="headerlink" href="#what-we-can-claimand-nothing-more" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Evidence</th>
+<th>Legitimate claim</th>
+<th>Unsupported claim</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Clean start and final Git inspection</td>
+<td>These five paths make up the local diff observed since <code>7a31c42</code></td>
+<td>Every line can be independently attributed to a precise task</td>
+</tr>
+<tr>
+<td>Path policy <code>passed</code></td>
+<td>Every observed path matches a write rule</td>
+<td>The process could not write anywhere else</td>
+</tr>
+<tr>
+<td><code>make test-back</code> returns <code>0</code></td>
+<td>That backend command passed against the final local state</td>
+<td>The API is correct in every environment</td>
+</tr>
+<tr>
+<td><code>make test-front</code> returns <code>0</code> in attempt 002</td>
+<td>The existing frontend scenarios passed after the repair</td>
+<td>Every browser, visual state, and accessible interaction is correct</td>
+</tr>
+<tr>
+<td><code>make build-front</code> returns <code>0</code></td>
+<td>The requested build completed successfully</td>
+<td>The feature is usable or acceptable</td>
+</tr>
+<tr>
+<td><code>global_quality: not_run</code></td>
+<td>No global quality result exists for this attempt</td>
+<td>Global quality implicitly passed</td>
+</tr>
+<tr>
+<td><code>result_commit: null</code></td>
+<td>No commit contains exactly the locally validated diff yet</td>
+<td>The same results already apply to a pull request revision</td>
+</tr>
+</tbody>
+</table>
+<p>Gaps must remain data. <strong>Not run</strong> means an identified check did not execute. <strong>Unknown</strong> means required information—such as an uncaptured tool version—is missing. <strong>Truncated</strong> must appear when only part of an output is retained. <strong>Unstable</strong> must remain visible when a check passes after a failure whose cause is not understood.</p>
+<p>Our frontend test is not classified as unstable: a precise cause was observed, one file was repaired, and a new attempt was recorded. That does not prove that the diagnosis was exhaustive; it at least makes the sequence open to challenge.</p>
+<h2 id="the-final-review-record">The final review record<a class="headerlink" href="#the-final-review-record" title="Permanent link">&para;</a></h2>
+<p>The manifest is designed for tools. The reviewer needs a more direct summary that does not lose provenance:</p>
+<div class="highlight"><pre><span></span><code><span class="gh"># Local review — customer directory pagination</span>
 
-<span class="w">  </span><span class="nt">revision</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">base_commit</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">abc123</span>
-<span class="w">    </span><span class="nt">head_commit</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">def456</span>
-<span class="w">    </span><span class="nt">branch</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">feature/customer-pagination</span>
-<span class="w">    </span><span class="nt">working_tree_clean_before</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
-<span class="w">    </span><span class="nt">index_clean_before</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+Starting point:
+<span class="k">-</span><span class="w"> </span>branch: feature/customer-pagination
+<span class="k">-</span><span class="w"> </span>base commit: 7a31c42
+<span class="k">-</span><span class="w"> </span>clean working tree before attempt 001
 
-<span class="w">  </span><span class="nt">changes</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">observed_files</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span>
-<span class="w">    </span><span class="nt">allowed_files</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span>
-<span class="w">    </span><span class="nt">violations</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span>
+Execution:
+<span class="k">-</span><span class="w"> </span>attempt 001: needs_retry
+<span class="k">-</span><span class="w"> </span>attempt 002: completed
+<span class="k">-</span><span class="w"> </span>bounded repair: frontend/customers/customer-list.tsx
 
-<span class="w">  </span><span class="nt">environment</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">system</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">linux</span>
-<span class="w">    </span><span class="nt">runtime</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">identified-version</span>
-<span class="w">    </span><span class="nt">dependencies</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">identified-lockfile</span>
+Observed change:
+<span class="k">-</span><span class="w"> </span>5 modified files
+<span class="k">-</span><span class="w"> </span>0 staged files
+<span class="k">-</span><span class="w"> </span>0 untracked files
+<span class="k">-</span><span class="w"> </span>path policy: passed
 
-<span class="w">  </span><span class="nt">validations</span><span class="p">:</span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">backend-pagination</span>
-<span class="w">      </span><span class="nt">command</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">stable-repository-command</span>
-<span class="w">      </span><span class="nt">status</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">passed</span>
-<span class="w">      </span><span class="nt">exit_code</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0</span>
-<span class="w">      </span><span class="nt">validated_revision</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">def456</span>
-<span class="w">      </span><span class="nt">index_at_check</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">clean</span>
-<span class="w">      </span><span class="nt">working_tree_at_check</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">clean</span>
-<span class="w">      </span><span class="nt">criteria</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">AC-1</span><span class="p p-Indicator">]</span>
-<span class="w">      </span><span class="nt">output</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">artifact://validation/backend-pagination</span>
+Targeted validations on attempt 002:
+<span class="k">-</span><span class="w"> </span>make test-back: passed
+<span class="k">-</span><span class="w"> </span>make test-front: passed
+<span class="k">-</span><span class="w"> </span>make build-front: passed
 
-<span class="w">  </span><span class="nt">checks_not_run</span><span class="p">:</span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">end-to-end</span>
-<span class="w">      </span><span class="nt">reason</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">deferred_to_ci</span>
-<span class="w">      </span><span class="nt">risk</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">browser_integration_not_verified_locally</span>
+Not run:
+<span class="k">-</span><span class="w"> </span>global quality profile
+<span class="k">-</span><span class="w"> </span>CI
+<span class="k">-</span><span class="w"> </span>human visual and accessibility review
 
-<span class="w">  </span><span class="nt">agent_declarations</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">result</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">completed</span>
-
-<span class="w">  </span><span class="nt">human_review</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">status</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pending</span>
-<span class="w">    </span><span class="nt">residual_risks</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span>
+Decision:
+<span class="k">-</span><span class="w"> </span>ready for local diff review
+<span class="k">-</span><span class="w"> </span>not yet bound to a result commit
+<span class="k">-</span><span class="w"> </span>not yet approved for merge
 </code></pre></div>
-<p>A few details matter:</p>
-<ul>
-<li><code>passed</code>, <code>not_run</code>, and <code>unknown</code> are distinct;</li>
-<li>the agent's declaration remains separate from workflow observations;</li>
-<li>the acceptance-criteria-to-validation matrix is readable without interpreting command names;</li>
-<li>the risk attached to a deferred validation does not disappear;</li>
-<li>human review remains <code>pending</code> even when every command is green.</li>
-</ul>
-<p>The manifest can be shorter for a local fix and richer for a Foundation Evolution effort. Its function does not change: expose provenance, scope, and gaps before the decision.</p>
-<h2 id="what-ci-addsand-what-it-does-not">What CI adds—and what it does not<a class="headerlink" href="#what-ci-addsand-what-it-does-not" title="Permanent link">&para;</a></h2>
-<p>CI provides three important properties: execution tied to a revision, a more reproducible environment, and visibility shared across the team. It can also enforce a version matrix, retain artifacts, and block merges when certain checks fail.</p>
-<p>It does not automatically correct a poor choice of validations. A pipeline can be perfectly green while ignoring an acceptance criterion. It can also succeed because a command has become too permissive or because a suite does not exercise the new behavior.</p>
-<p>The local workflow and CI are therefore complementary:</p>
-<div class="highlight"><pre><span></span><code>local evidence
-  -&gt; prepares review and detects problems early
-  -&gt; is tied to a commit
-  -&gt; CI repeats or completes the checks on that revision
-  -&gt; the PR gathers the diff, results, decisions, and risks
-  -&gt; a human accepts, requests another attempt, or rejects
+<p>This summary does not say “pagination is validated.” It says why the diff can now be reviewed, which targeted validations passed, which failure preceded that result, and which gates remain closed.</p>
+<h2 id="from-working-tree-to-commit-and-ci">From working tree to commit and CI<a class="headerlink" href="#from-working-tree-to-commit-and-ci" title="Permanent link">&para;</a></h2>
+<p>Local evidence ends with <code>current_head: 7a31c42</code> and <code>result_commit: null</code>. As long as the change remains in a working tree, a file can still be edited after the green commands. Attempt 002's results do not automatically apply to that new state.</p>
+<p>The expected handoff is therefore explicit:</p>
+<div class="highlight"><pre><span></span><code>attempt 002 on a mutable working tree
+  -&gt; human review of the local diff
+  -&gt; a commit containing exactly that diff
+  -&gt; CI validations on that head commit
+  -&gt; a pull request gathering the diff, results, gaps, and decisions
+  -&gt; human acceptance, request for another attempt, or rejection
 </code></pre></div>
-<p>The best handoff is not “everything was green on my machine.” It is an evidence manifest that says which checks can be replayed, which are reserved for CI, and which checks still require human judgment.</p>
-<h2 id="a-review-checklist-that-resists-the-green-badge">A review checklist that resists the green badge<a class="headerlink" href="#a-review-checklist-that-resists-the-green-badge" title="Permanent link">&para;</a></h2>
-<p>Before accepting the sentence “the tests pass,” the reviewer can ask ten questions:</p>
-<ol>
-<li>Is the exact revision or working-tree state that was checked identifiable?</li>
-<li>Was the initial state clean, or are its pre-existing changes known?</li>
-<li>Are the commands that actually ran visible?</li>
-<li>Are their exit codes, timestamps, and useful outputs available?</li>
-<li>Does their scope match the modified surfaces?</li>
-<li>Does every acceptance criterion have a check or an explicit decision?</li>
-<li>Are unrun validations and unknown information visible?</li>
-<li>Was a red attempt, a retry, or an unstable result retained?</li>
-<li>Did CI check the commit currently under review?</li>
-<li>Who has the authority to accept the residual risk?</li>
-</ol>
-<p>If the answers are accessible without reopening the conversation with the agent, the workflow has already become more valuable. If they are connected to the revision and CI artifacts, the pull request becomes substantially easier to challenge and approve.</p>
+<p>Git then provides a content identity. CI runs checks against that identity in an environment described by the pipeline. Neither decides that the commands are sufficient, that the criteria are covered correctly, or that the residual risk is acceptable.</p>
+<p>If another fix is added after the validated commit, the link must be rebuilt: new head commit, new results. A reliable review interface makes a stale green result visible instead of leaving it attached to the pull request as though it still applied to the latest state.</p>
 <h2 id="conclusion">Conclusion<a class="headerlink" href="#conclusion" title="Permanent link">&para;</a></h2>
-<p>“The tests pass” is neither useless nor sufficient. It is the beginning of a demonstration: one or more commands completed without error in a given context.</p>
-<p>Local evidence makes that context inspectable. Git ties the change to revisions. CI replays or completes the checks on an identified head commit. The acceptance-criteria-to-validation matrix shows the expected coverage. Human review ultimately decides whether the facts and gaps are compatible with the risk.</p>
-<p>A framework applying these principles can already make this first step substantially more useful. The target manifest shows how to connect it to a revision without presenting a design intention as an achieved guarantee.</p>
-<p>One question remains: how many decisions can reasonably be stabilized in a brief before its gray areas become more expensive than writing a specification? That will be the subject of the next article: <strong>When the Brief Is Not Enough: Introducing a Spec Without Bureaucracy</strong>.</p>
+<p>In this example, “the tests pass” can be replaced with a verifiable sentence: on attempt 002, from base commit <code>7a31c42</code>, all five observed files remain within the authorized scope, and <code>make test-back</code>, <code>make test-front</code>, and <code>make build-front</code> return <code>0</code>. Global quality did not run, no result commit contains the diff yet, and human review remains pending.</p>
+<p>This wording is less triumphant. It is also far more actionable.</p>
+<p>It closes the path opened at the start of this series: <a href="../ai-agent-based-coding-best-practices/">the overview establishes the full workflow</a>, <a href="../agent-ready-repository/">the repository makes rules visible</a>, <a href="../agent-coding-modes/">the mode determines the level of control</a>, <a href="../agentic-feature-end-to-end/">the feature follows an end-to-end path</a>, the plan becomes <a href="../agent-execution-package/">an execution brief</a>, the runner proposes a change, <a href="../agent-task-stop-and-resume/">stops remain traceable</a>, and local evidence finally prepares Git, CI, and human judgment without replacing them.</p>
+<p>A reliable agentic workflow does not promise that the agent will always be right. It makes a better question possible: <strong>which precise facts support our acceptance of this change, and which risks are we still choosing to carry?</strong></p>
 <div class="article-footer-contact">
   <p>To discuss this article or leave me a public message:</p>
   <a class="article-contact-link" href="https://github.com/velkouby/ai-based-development/issues/new?template=contact.yml">Message on GitHub</a>
